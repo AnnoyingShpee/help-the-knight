@@ -4,13 +4,7 @@ import sys
 import pygame as pg
 import numpy as np
 import random
-import pygame.time
 import timeit
-
-import Knight
-# import ChessBoard
-# import BacktrackTour
-import WarnsdorffTour
 
 pg.init()
 
@@ -24,8 +18,8 @@ SCREEN.fill(BACKGROUND_COLOUR)  # Set background color
 BUTTON_FONT = pg.font.SysFont('Arial', 30)  # Font for buttons
 BOARD_FONT = pg.font.SysFont('Arial', 20)  # Font for numbering the steps
 # DEFAULT_CURSOR = pg.mouse.get_cursor()
-FPS = 60
-clock = pygame.time.Clock()
+FPS = 10
+clock = pg.time.Clock()
 
 # Buttons
 start_button = pg.Rect(600, 50, 230, 40)
@@ -61,7 +55,8 @@ pg.display.set_icon(icon)
 # Create knight piece image
 knight_piece = pg.image.load("knight_piece.png")
 # Replaces cursor with a knight image
-knight_cursor = pg.image.load("knight_piece.png")
+# knight_cursor = pg.image.load("knight_piece.png")
+movement = 0
 
 
 def draw_board(screen):
@@ -76,15 +71,14 @@ def draw_board(screen):
                          # SQ_SIZE means the length and width of the squares
                          pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE, SQ_SIZE))
 
-movement = 0
+
 class ChessState:
-    # Board is n x n matrix
     def __init__(self, dimensions):
         self.dimensions = dimensions  # Dimension of chessboard
-        # Initialise board array
+        # Initialise board array. Board is n x n matrix
         self.board = np.negative(np.ones([dimensions, dimensions], dtype=int))
         # Tuple of moves (x, y) that can be done by the knight. Tuple because it will not be changed in any way.
-        # x = horizontal movement. POSITIVE value moves knight to the RIGHT while NEGATIVE value moves knight to the LEFT
+        # x = horizontal movement. POSITIVE value moves knight to the RIGHT while NEGATIVE value moves it to the LEFT
         # y = vertical movement. POSITIVE value moves knight DOWN while NEGATIVE value moves knight UP
         self.knight_moves = ((2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1))
         # State of chessboard (start, ready, touring, fail)
@@ -102,6 +96,7 @@ class ChessState:
     def reset_board(self):
         self.board = np.negative(np.ones([self.dimensions, self.dimensions], dtype=int))
         self.state = "start"
+        self.tour_found = False
         self.knight_placed = False
         self.knight_initial_pos = None
         self.knight_pos = None
@@ -114,6 +109,8 @@ class ChessState:
         self.board = np.negative(np.ones([self.dimensions, self.dimensions], dtype=int))
         self.knight_step = 1
         self.move_log = []
+        self.state = "touring"
+        self.knight_pos = self.knight_initial_pos
         SCREEN.fill(BACKGROUND_COLOUR)
         draw_board(SCREEN)
 
@@ -158,27 +155,34 @@ class ChessState:
                     pg.draw.rect(screen, color,
                                  pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE,
                                          SQ_SIZE))
-                    screen.blit(knight_piece,
-                                pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE,
-                                        SQ_SIZE))
+                    if furthest_node == 64:
+                        self.draw_number(screen, row, column)
+                    else:
+                        screen.blit(knight_piece,
+                                    pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE,
+                                            SQ_SIZE))
                 else:
                     color = BOARD_COLORS[(row + column) % 2]
                     pg.draw.rect(screen, color,
                                  pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE,
                                          SQ_SIZE))
                     self.draw_number(screen, row, column)
-
         pg.display.update()
 
     def draw_number(self, screen, row, col):
         '''
         This function is responsible for drawing the numbers of the steps made by the knight
         :param screen: Pygame screen
-        :param row: Row of board
-        :param col: Column of board
+        :param row: Row number of board
+        :param col: Column number of board
         :return:None
         '''
         if self.board[row][col] != -1:
+            if self.board[row][col] == 64:
+                color = BOARD_COLORS[(row + col) % 2]
+                pg.draw.rect(screen, color,
+                             pg.Rect((col * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE,
+                                     SQ_SIZE))
             stamp = ((col * SQ_SIZE) + OFFSET[0] + 30, (row * SQ_SIZE) + OFFSET[1] + 30)
             pg.draw.circle(screen, (255, 0, 0), stamp, 20)
             screen.blit(BOARD_FONT.render(str(self.board[row][col]), True, (255, 255, 255)),
@@ -278,6 +282,16 @@ class ChessState:
                 count += 1
         return count
 
+    # def print_solution(self):
+    #     '''
+    #         A utility function to print Chessboard matrix
+    #     '''
+    #     for i in range(self.dimensions):
+    #         for j in range(self.dimensions):
+    #             print(self.board[i][j], end=' ')
+    #         print()
+    #     print()
+
     def find_tour(self):
         '''
             This function acts as the main component for finding tour, performs operations and is called .
@@ -289,7 +303,7 @@ class ChessState:
                     self.find_tour_warnsdorff()
                 else:
                     self.tour_found = True
-                    self.running = False
+                    # self.print_solution()
             else:
                 if len(self.move_log) == 0:
                     self.state = "fail"
@@ -297,7 +311,6 @@ class ChessState:
                     self.find_tour_backtrack_iterative()
                 else:
                     self.tour_found = True
-                    self.running = False
 
     def find_tour_warnsdorff(self):
         most_empty = 9
@@ -314,6 +327,9 @@ class ChessState:
             if self.is_valid_move(new_x, new_y) and empty_sq_count < most_empty:
                 most_empty_index = index
                 most_empty = empty_sq_count
+            if self.is_valid_move(new_x, new_y) and empty_sq_count == most_empty:
+                possible_move = (new_x, new_y)
+                self.move_log.append(possible_move)
 
         if most_empty_index == -1:
             self.state = "fail"
@@ -326,38 +342,6 @@ class ChessState:
         self.knight_pos = (new_x, new_y)
         self.move_log.append((new_x, new_y))
         self.draw_knight(SCREEN)
-
-    # def pick_square(self):
-    #     # Maximum number of traversable squares is 8
-    #     most_empty = 9
-    #     most_empty_index = -1
-    #
-    #     # To give some randomness when choosing a square. Only useful for next squares with the same number of next
-    #     # valid squares
-    #     random_num = random.randint(0, 1000) % 8
-    #     for i in range(self.dimensions):
-    #         index = (random_num + i) % 8
-    #         new_x = self.knight_pos[0] + self.knight_moves[index][0]
-    #         new_y = self.knight_pos[1] + self.knight_moves[index][1]
-    #         empty_count = self.count_empty_squares(new_x, new_y)
-    #         if self.is_valid_move(new_x, new_y) and empty_count < most_empty:
-    #             most_empty_index = index
-    #             most_empty = empty_count
-    #
-    #     if most_empty_index == -1:
-    #         print("No moves found")
-    #         self.reset_board()
-    #         return None
-    #
-    #     new_x = self.knight_pos[0] + self.knight_moves[most_empty_index][0]
-    #     new_y = self.knight_pos[1] + self.knight_moves[most_empty_index][1]
-    #
-    #     self.knight_step += 1
-    #     self.board[new_x][new_y] = self.knight_step
-    #     self.knight_pos = (new_x, new_y)
-    #     self.draw_knight(SCREEN)
-    #
-    #     return self.knight_pos
 
     def find_tour_backtrack_iterative(self):
         '''
@@ -382,76 +366,32 @@ class ChessState:
                 new_pos = (new_x, new_y, 0)
                 self.move_log.append(new_pos)
                 contains_valid = True
+                break
         # If no valid squares are present, remove square from stack
         if not contains_valid:
             self.board[self.knight_pos[0]][self.knight_pos[1]] = -1
             self.knight_step -= 1
             self.move_log.pop()
             self.knight_pos = (self.move_log[-1][0], self.move_log[-1][1])
+
+        # self.print_solution()
         self.draw_knight(SCREEN)
         pg.display.update()
-
-    # def find_tour_backtrack_iterative(self):
-    #     '''
-    #     This function uses a non-recursive backtracking algorithm to solve the knight's tour. This is a brute force
-    #     method which isn't practical as the time complexity is O(8**(N**2)).
-    #     :return: Boolean whether a solution was found
-    #     '''
-    #     # move_log stores list of squares traversed by the knight
-    #     # Each square contains (row, column, last used index of knight_moves list)
-    #     move_log = [(self.knight_pos[0], self.knight_pos[1], 0)]
-    #     # movements = 0
-    #     self.knight_step = 1
-    #     while len(move_log) != 0 or self.knight_step < 64:
-    #         # movements += 1
-    #         contains_valid = False
-    #         last_used_square = move_log[-1]
-    #         for i in range(last_used_square[2], 8):
-    #             new_x = last_used_square[0] + self.knight_moves[i][0]
-    #             new_y = last_used_square[1] + self.knight_moves[i][1]
-    #             if self.is_valid_move(new_x, new_y):
-    #                 move_log[-1] = (self.knight_pos[0], self.knight_pos[1], i+1)
-    #                 self.knight_step += 1
-    #                 self.board[new_x][new_y] = self.knight_step
-    #                 self.knight_pos = (new_x, new_y)
-    #                 # print(self.knight_pos, self.knight_step)
-    #                 new_pos = (new_x, new_y, 0)
-    #                 move_log.append(new_pos)
-    #                 contains_valid = True
-    #                 if self.knight_step == 64:
-    #                     print("Hit")
-    #                     # print(movements)
-    #                     return True
-    #                 break
-    #         if not contains_valid:
-    #             self.board[self.knight_pos[0]][self.knight_pos[1]] = -1
-    #             self.knight_step -= 1
-    #             move_log.pop()
-    #             # print("change")
-    #             self.knight_pos = (move_log[-1][0], move_log[-1][1])
-    #         #     print(self.knight_pos, self.knight_step)
-    #         # print(self.board)
-    #         # self.draw_game_state(SCREEN)
-    #         # pygame.display.flip()
-    #     return False
 
     def update_frame(self):
         if self.state == "touring":
             self.find_tour()
         if self.state == "fail":
             self.redo_tour()
-            self.state = "touring"
         if not self.running:
             stop = timeit.default_timer()
-            print('Time: ', stop - start)
-            print(movement)
+            print('Time: ', stop - start, "seconds")
+            print(movement, "Iterations")
             pg.quit()
             sys.exit()
         self.check_event()
         pg.event.pump()
 
-
-# Driver C
 
 def main():
     chess_state = ChessState(DIMENSIONS)
