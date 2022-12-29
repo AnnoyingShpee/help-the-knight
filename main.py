@@ -22,7 +22,7 @@ OFFSET = (50, 50)  # Amount of offset of the board from the border
 BUTTON_FONT = pg.font.SysFont('Arial', 30)  # Font for buttons
 BOARD_FONT = pg.font.SysFont('Arial', 20)  # Font for numbering the steps
 # DEFAULT_CURSOR = pg.mouse.get_cursor()
-FPS = 10
+FPS = 5
 clock = pg.time.Clock()
 
 # Buttons
@@ -116,6 +116,10 @@ class Board:
             screen.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
                         (stamp[0] - SQ_SIZE*0.14, stamp[1] - SQ_SIZE*0.13))
 
+    # def draw_line(self, screen, curr_pos, new_pos):
+    #     start_point = (curr_pos[0]*SQ_SIZE + SQ_SIZE//2, curr_pos[1]*SQ_SIZE + SQ_SIZE//2)
+    #     end_point = (new_pos[0]*SQ_SIZE + SQ_SIZE//2, new_pos[1]*SQ_SIZE + SQ_SIZE//2)
+    #     pg.draw.line(screen, (255, 0, 0), start_point, end_point, 5)
 
 class Knight:
     def __init__(self):
@@ -225,6 +229,7 @@ class ChessState:
                 if self.board.graph[row][column] != -1 and self.board.graph[row][column] == furthest_node:
                     # If it is the final node, just add the number
                     if furthest_node == self.board.dimension**2:
+                        self.draw_line(screen)
                         self.board.draw_number(screen, row, column)
                     # Else, overlay the cell (in case a number label is on it) and add a knight
                     else:
@@ -232,24 +237,28 @@ class ChessState:
                         pg.draw.rect(screen, color,
                                      pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE,
                                              SQ_SIZE))
+                        self.draw_line(screen)
                         screen.blit(knight_piece,
                                     pg.Rect((column * SQ_SIZE) + OFFSET[0] + SQ_SIZE//8,
                                             (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE//8,
                                             SQ_SIZE, SQ_SIZE))
+                # If cell is 
                 else:
                     color = BOARD_COLORS[(row + column) % 2]
                     pg.draw.rect(screen, color,
                                  pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE,
                                          SQ_SIZE))
-
+                    self.draw_line(screen)
                     self.board.draw_number(screen, row, column)
         pg.display.update()
 
-    def draw_line(self, screen, curr_pos, next_pos):
-        start_point = (curr_pos[0]*SQ_SIZE + SQ_SIZE//2, curr_pos[1]*SQ_SIZE + SQ_SIZE//2)
-        end_point = (next_pos[0]*SQ_SIZE + SQ_SIZE//2, next_pos[1]*SQ_SIZE + SQ_SIZE//2)
-        pg.draw.line(screen, (255, 0, 0), start_point, end_point, 5)
-
+    def draw_line(self, screen):
+        if len(self.knight.move_log) > 1:
+            start_point = self.knight.move_log[-2]
+            start_loc = (start_point[0]*SQ_SIZE + SQ_SIZE//2, start_point[1]*SQ_SIZE + SQ_SIZE//2)
+            end_point = self.knight.move_log[-1]
+            end_loc = (end_point[0] * SQ_SIZE + SQ_SIZE // 2, end_point[1] * SQ_SIZE + SQ_SIZE // 2)
+            pg.draw.line(screen, (255, 0, 0), start_loc, end_loc, 5)
 
     # def draw_number(self, screen, row, col):
     #     '''
@@ -352,15 +361,6 @@ class ChessState:
         SCREEN.blit(quit_text, (quit_details[0] + (4*quit_details[2]//10), quit_details[1] + 5))
 
         pg.display.update()
-
-    # def draw_step_label(self, screen):
-    #     for row in range(self.board.dimension):
-    #         for column in range(self.board.dimension):
-    #             if self.board.graph[row][column] != -1:
-    #                 square = ((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1])
-    #                 # pg.draw.circle(screen, )
-    #                 label = BUTTON_FONT.render(str(self.board.graph[row][column]), True, (255, 0, 0))
-    #                 screen.blit(label, (square[0] + 10, square[1] + 10))
 
     def is_valid_move(self, x, y):
         """
