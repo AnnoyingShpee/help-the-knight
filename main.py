@@ -13,16 +13,16 @@ SCREEN = pg.display.set_mode(size=(0, 0))  # Set game window
 BACKGROUND_COLOUR = (180, 241, 255)
 SCREEN.fill(BACKGROUND_COLOUR)  # Set background color
 x_axis, y_axis = SCREEN.get_size()
-print(x_axis, y_axis)
+# print(x_axis, y_axis)
 BOARD_SIZE = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
-print(BOARD_SIZE)
+# print(BOARD_SIZE)
 OFFSET = (50, 50)  # Amount of offset of the board from the border
 # SCREEN_SIZE = (900, 600)  # Size of game window
 # SCREEN = pg.display.set_mode(SCREEN_SIZE)  # Set game window
 BUTTON_FONT = pg.font.SysFont('Arial', 30)  # Font for buttons
 BOARD_FONT = pg.font.SysFont('Arial', 20)  # Font for numbering the steps
 # DEFAULT_CURSOR = pg.mouse.get_cursor()
-FPS = 60
+FPS = 5
 clock = pg.time.Clock()
 
 # Buttons
@@ -102,18 +102,30 @@ class Board:
     def draw_board(self):
         # Draw chessboard. Top left square is always light color
         for row in range(self.dimension):
-            for column in range(self.dimension):
-                color = BOARD_COLORS[(row + column) % 2]
+            for col in range(self.dimension):
+                color = BOARD_COLORS[(row + col) % 2]
                 pg.draw.rect(SCREEN, color,
                              # x-axis = column (left to right) , y-axis = row (top to bottom)
                              # Draw the starting point of the square
                              # Add off set if chessboard not touching the border of window
                              # SQ_SIZE means the length and width of the squares
-                             pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE, SQ_SIZE))
+                             pg.Rect((col * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE, SQ_SIZE))
 
     def draw_square(self, row, col):
         color = BOARD_COLORS[(row + col) % 2]
         pg.draw.rect(SCREEN, color, pg.Rect((col * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE, SQ_SIZE))
+
+    def draw_numbers(self):
+        for row in range(self.dimension):
+            for col in range(self.dimension):
+                self.draw_number(row, col)
+                # if self.graph[row][col] != -1:
+                #     stamp = ((col * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2, (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
+                #     # print((row, col), "stamp = ", stamp)
+                #     pg.draw.circle(SCREEN, (255, 0, 0), stamp, 30)
+                #     number = self.graph[row][col]
+                #     SCREEN.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
+                #                 (stamp[0] - SQ_SIZE * 0.14, stamp[1] - SQ_SIZE * 0.13))
 
     def draw_number(self, row, col):
         '''
@@ -123,12 +135,15 @@ class Board:
         :param col: Column number of board
         :return:None
         '''
-        if self.graph[row][col] != -1:
+        furthest_node = self.graph.max()
+        if self.graph[row][col] != -1 and self.graph[row][col] != furthest_node:
             stamp = ((col * SQ_SIZE) + OFFSET[0] + SQ_SIZE//2, (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE//2)
+            print((row, col), "stamp = ", stamp)
             pg.draw.circle(SCREEN, (255, 0, 0), stamp, 30)
             number = self.graph[row][col]
             SCREEN.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
                         (stamp[0] - SQ_SIZE*0.14, stamp[1] - SQ_SIZE*0.13))
+
 
     # def draw_line(self, screen, curr_pos, new_pos):
     #     start_point = (curr_pos[0]*SQ_SIZE + SQ_SIZE//2, curr_pos[1]*SQ_SIZE + SQ_SIZE//2)
@@ -160,26 +175,6 @@ class Knight:
 
 
 class ChessState:
-    # def __init__(self, dimensions):
-    #     self.dimensions = dimensions  # Dimension of chessboard
-    #     # Initialise board array. Board is n x n matrix
-    #     self.board = np.negative(np.ones([dimensions, dimensions], dtype=int))
-    #     # Tuple of moves (x, y) that can be done by the knight. Tuple because it will not be changed in any way.
-    #     # x = horizontal movement. POSITIVE value moves knight to the RIGHT while NEGATIVE value moves it to the LEFT
-    #     # y = vertical movement. POSITIVE value moves knight DOWN while NEGATIVE value moves knight UP
-    #     self.knight_moves = ((2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1))
-    #     # State of chessboard (start, ready, touring, fail)
-    #     self.state = "start"
-    #     self.tour_found = False
-    #     # Whether game is running
-    #     self.running = True
-    #     self.knight_placed = False
-    #     self.knight_initial_pos = None
-    #     self.knight_pos = None
-    #     self.knight_step = 1
-    #     self.warnsdorff = False
-    #     self.move_log = []
-
     def __init__(self, board: Board, knight: Knight):
         # Initialise board array. Board is n x n matrix
         self.board = board
@@ -220,7 +215,7 @@ class ChessState:
         col = selected_sq[1]
         # Checks if user selected the same square twice. If so, remove the knight
         if selected_sq == self.knight.knight_pos:
-            print("Same Square")
+            # print("Same Square")
             self.board.draw_square(self.knight.knight_pos[0], self.knight.knight_pos[1])
             self.board.graph[row][col] = -1
             self.knight.knight_placed = False
@@ -237,9 +232,9 @@ class ChessState:
             self.knight.draw_knight()
             self.knight.move_log.append((row, col, 0))
         elif self.knight.knight_placed:
-            self.board.draw_square(self.knight.knight_pos[0], self.knight.knight_pos[1])
             self.knight.move_log.pop()
             self.board.graph[self.knight.knight_pos[0]][self.knight.knight_pos[1]] = -1
+            self.board.draw_square(self.knight.knight_pos[0], self.knight.knight_pos[1])
             self.knight.knight_pos = (row, col)
             self.knight.knight_initial_pos = (row, col)
             self.board.graph[row][col] = 1
@@ -248,22 +243,31 @@ class ChessState:
         # self.redraw_board()
 
     def draw_lines(self):
-        i = 0
-        while i < len(self.knight.move_log):
-            if i > 0:
-                start_point = self.knight.move_log[i - 1]
-                line_start_point = (start_point[0] * SQ_SIZE + SQ_SIZE // 2, start_point[1] * SQ_SIZE + SQ_SIZE // 2)
-                end_point = self.knight.move_log[i]
-                line_end_point = (end_point[0] * SQ_SIZE + SQ_SIZE // 2, end_point[1] * SQ_SIZE + SQ_SIZE // 2)
-                pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
-                i += 1
+        i = 1
+        while i <= len(self.knight.move_log):
+            start_point = self.knight.move_log[i - 2]
+            line_start_point = ((start_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
+                                (start_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
+            end_point = self.knight.move_log[i - 1]
+            line_end_point = ((end_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
+                              (end_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
+            pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
+            i += 1
 
-    def draw_line(self):
-        start_point = self.knight.move_log[-2]
-        line_start_point = (start_point[0] * SQ_SIZE + SQ_SIZE // 2, start_point[1] * SQ_SIZE + SQ_SIZE // 2)
-        end_point = self.knight.move_log[-1]
-        line_end_point = (end_point[0] * SQ_SIZE + SQ_SIZE // 2, end_point[1] * SQ_SIZE + SQ_SIZE // 2)
-        pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
+    # def draw_line(self):
+    #     if len(self.knight.move_log) > 1:
+    #         start_point = self.knight.move_log[-2]
+    #         line_start_point = ((start_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
+    #                             (start_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
+    #         end_point = self.knight.move_log[-1]
+    #         line_end_point = ((end_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
+    #                           (end_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
+    #         pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
+    #         print((self.knight.move_log[-2][0], self.knight.move_log[-2][1]),
+    #               "line start point = ", line_start_point,
+    #               (self.knight.knight_pos[0], self.knight.knight_pos[1]),
+    #               "line end point = ", line_end_point)
+    #         pg.display.update()
 
     def redraw_board(self):
         furthest_node = self.board.graph.max()
@@ -271,6 +275,7 @@ class ChessState:
 
         self.board.draw_board()
         self.draw_lines()
+        self.board.draw_numbers()
 
         if furthest_node == self.board.dimension ** 2:
             self.board.draw_number(self.knight.knight_pos[0], self.knight.knight_pos[1])
@@ -280,22 +285,6 @@ class ChessState:
                                 (self.knight.knight_pos[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 8,
                                 SQ_SIZE, SQ_SIZE)
                         )
-
-        # for row in range(self.board.dimension):
-        #     for column in range(self.board.dimension):
-        #         if self.board.graph[row][column] != -1:
-        #             if self.board.graph[row][column] == furthest_node:
-        #                 if furthest_node == self.board.dimension ** 2:
-        #                     self.board.draw_number(row, column)
-        #                 else:
-        #                     # pg.draw.rect(screen, color,
-        #                     #              pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE,
-        #                     #                      SQ_SIZE))
-        #                     # self.draw_line()
-        #                     SCREEN.blit(knight_piece,
-        #                                 pg.Rect((column * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 8,
-        #                                         (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 8,
-        #                                         SQ_SIZE, SQ_SIZE))
 
         pg.display.update()
 
@@ -455,12 +444,14 @@ class ChessState:
 
         new_x = self.knight.knight_pos[0] + self.knight.knight_moves[most_empty_index][0]
         new_y = self.knight.knight_pos[1] + self.knight.knight_moves[most_empty_index][1]
+        # self.board.draw_square(self.knight.knight_pos[0], self.knight.knight_pos[1])
+        # self.board.draw_number(self.knight.knight_pos[0], self.knight.knight_pos[1])
         self.knight.knight_step += 1
         self.board.graph[new_x][new_y] = self.knight.knight_step
         self.knight.knight_pos = (new_x, new_y)
         self.knight.move_log.append((new_x, new_y))
-        self.knight.draw_knight()
-        # self.redraw_board()
+        # self.knight.draw_knight()
+        self.redraw_board()
 
     def find_tour_backtrack_iterative(self):
         """
@@ -484,6 +475,8 @@ class ChessState:
             new_y = last_used_square[1] + self.knight.knight_moves[i][1]
             if self.is_valid_move(new_x, new_y):
                 # Update the last square of move_log so that the next knight move to check will be the next one
+                # self.board.draw_square(self.knight.knight_pos[0], self.knight.knight_pos[1])
+                # self.draw_line()
                 self.knight.move_log[-1] = (self.knight.knight_pos[0], self.knight.knight_pos[1], i + 1)
                 self.knight.knight_step += 1
                 self.board.graph[new_x][new_y] = self.knight.knight_step
@@ -498,8 +491,8 @@ class ChessState:
             self.knight.knight_step -= 1
             self.knight.move_log.pop()
             self.knight.knight_pos = (self.knight.move_log[-1][0], self.knight.move_log[-1][1])
+            # self.redraw_board()
 
-        # self.print_solution()
         self.redraw_board()
         # pg.display.update()
 
