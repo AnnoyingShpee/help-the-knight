@@ -136,7 +136,8 @@ class Board:
         :return:None
         '''
         furthest_node = self.graph.max()
-        if self.graph[row][col] != -1 and self.graph[row][col] != furthest_node:
+        if (self.graph[row][col] != -1 and self.graph[row][col] != furthest_node) \
+                or self.graph[row][col] == self.dimension ** 2:
             stamp = ((col * SQ_SIZE) + OFFSET[0] + SQ_SIZE//2, (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE//2)
             # print((row, col), "stamp = ", stamp)
             pg.draw.circle(SCREEN, (255, 0, 0), stamp, 30)
@@ -244,22 +245,18 @@ class ChessState:
 
     def draw_lines(self):
         i = 2
-        print("Moves =", self.knight.move_log)
+        # print("Moves =", self.knight.move_log)
         while i <= len(self.knight.move_log):
-            print("i =", i)
             start_point = self.knight.move_log[i - 2]
             line_start_point = ((start_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
                                 (start_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
             end_point = self.knight.move_log[i - 1]
             line_end_point = ((end_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
                               (end_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
-            print("Start =", start_point)
-            print("End =", end_point)
+            # print("Start =", start_point)
+            # print("End =", end_point)
             pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
             i += 1
-
-    # def draw_lines(self):
-    #     pg.draw.lines(SCREEN, (255, 0, 0), False, self.knight.move_log, 5)
 
     # def draw_line(self):
     #     if len(self.knight.move_log) > 1:
@@ -278,21 +275,22 @@ class ChessState:
 
     def redraw_board(self):
         furthest_node = self.board.graph.max()
-        # print("Furthest:", furthest_node)
 
         self.board.draw_board()
         self.draw_lines()
         self.board.draw_numbers()
 
+        print(furthest_node)
         if furthest_node == self.board.dimension ** 2:
+            print("Draw Number")
             self.board.draw_number(self.knight.knight_pos[0], self.knight.knight_pos[1])
         else:
+            print("Draw Knight")
             SCREEN.blit(knight_piece,
                         pg.Rect((self.knight.knight_pos[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 8,
                                 (self.knight.knight_pos[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 8,
                                 SQ_SIZE, SQ_SIZE)
                         )
-
         pg.display.update()
 
     # Handles mouse input
@@ -408,16 +406,17 @@ class ChessState:
 
     def find_tour(self):
         """
-            This function acts as the main component for finding tour, performs operations and is called .
+        Function chooses the algorithm selected to find the tour
+        :return:
         """
         # First checks whether tour has already been found
         if not self.tour_found:
+            # Checks type of algorithm used to find tour
             if self.warnsdorff:
                 if self.knight.knight_step < 64:
                     self.find_tour_warnsdorff()
                 else:
                     self.tour_found = True
-                    # self.print_solution()
             else:
                 if len(self.knight.move_log) == 0:
                     self.state = "fail"
@@ -498,17 +497,20 @@ class ChessState:
             # self.redraw_board()
 
         self.redraw_board()
-        # pg.display.update()
 
     def update_frame(self):
+        """
+        Process flow that determines the next behaviour of the game state before updating display
+        :return:
+        """
         if self.state == "touring":
             self.find_tour()
         if self.state == "fail":
             self.redo_tour()
         if not self.running:
             stop = timeit.default_timer()
-            print('Time: ', stop - start, "seconds")
-            print(movement, "Iterations")
+            # print('Time: ', stop - start, "seconds")
+            # print(movement, "Iterations")
             pg.quit()
             sys.exit()
         self.check_event()
@@ -520,7 +522,7 @@ def main():
     knight = Knight()
     chess_state = ChessState(board, knight)
     while True:
-        clock.tick(FPS)
+        clock.tick(FPS)  # Determines the frames per second of game
         chess_state.update_frame()
 
 
