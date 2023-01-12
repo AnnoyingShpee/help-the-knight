@@ -138,7 +138,7 @@ class Board:
         furthest_node = self.graph.max()
         if self.graph[row][col] != -1 and self.graph[row][col] != furthest_node:
             stamp = ((col * SQ_SIZE) + OFFSET[0] + SQ_SIZE//2, (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE//2)
-            print((row, col), "stamp = ", stamp)
+            # print((row, col), "stamp = ", stamp)
             pg.draw.circle(SCREEN, (255, 0, 0), stamp, 30)
             number = self.graph[row][col]
             SCREEN.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
@@ -243,16 +243,23 @@ class ChessState:
         # self.redraw_board()
 
     def draw_lines(self):
-        i = 1
+        i = 2
+        print("Moves =", self.knight.move_log)
         while i <= len(self.knight.move_log):
+            print("i =", i)
             start_point = self.knight.move_log[i - 2]
             line_start_point = ((start_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
                                 (start_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
             end_point = self.knight.move_log[i - 1]
             line_end_point = ((end_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
                               (end_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
+            print("Start =", start_point)
+            print("End =", end_point)
             pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
             i += 1
+
+    # def draw_lines(self):
+    #     pg.draw.lines(SCREEN, (255, 0, 0), False, self.knight.move_log, 5)
 
     # def draw_line(self):
     #     if len(self.knight.move_log) > 1:
@@ -444,13 +451,10 @@ class ChessState:
 
         new_x = self.knight.knight_pos[0] + self.knight.knight_moves[most_empty_index][0]
         new_y = self.knight.knight_pos[1] + self.knight.knight_moves[most_empty_index][1]
-        # self.board.draw_square(self.knight.knight_pos[0], self.knight.knight_pos[1])
-        # self.board.draw_number(self.knight.knight_pos[0], self.knight.knight_pos[1])
         self.knight.knight_step += 1
         self.board.graph[new_x][new_y] = self.knight.knight_step
         self.knight.knight_pos = (new_x, new_y)
         self.knight.move_log.append((new_x, new_y))
-        # self.knight.draw_knight()
         self.redraw_board()
 
     def find_tour_backtrack_iterative(self):
