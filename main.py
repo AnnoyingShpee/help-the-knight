@@ -1,10 +1,10 @@
 # Python3 program to solve Knight Tour problem using Backtracking or Warnsdorff
 import sys
-
 import pygame as pg
 import numpy as np
 import random
 import timeit
+import Components
 
 pg.init()
 
@@ -21,37 +21,52 @@ OFFSET = (50, 50)  # Amount of offset of the board from the border
 # SCREEN = pg.display.set_mode(SCREEN_SIZE)  # Set game window
 BUTTON_FONT = pg.font.SysFont('Arial', 30)  # Font for buttons
 BOARD_FONT = pg.font.SysFont('Arial', 20)  # Font for numbering the steps
+TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text
 # DEFAULT_CURSOR = pg.mouse.get_cursor()
 FPS = 5
 clock = pg.time.Clock()
 
-# Buttons
-# pg.Rect(x_position, y_position, width, height)
 # start_button = pg.Rect(600, 50, 230, 40)
 # reset_button = pg.Rect(600, 170, 230, 40)
 # backtrack_button = pg.Rect(600, 290, 230, 40)
 # warnsdorff_button = pg.Rect(600, 410, 230, 40)
 # quit_button = pg.Rect(600, 530, 230, 40)
-start_details = ((x_axis//10)*8, y_axis//10, (x_axis//100)*15, y_axis//20)
-reset_details = ((x_axis//10)*8, (y_axis//10)*3, (x_axis//100)*15, y_axis//20)
-backtrack_details = ((x_axis//10)*8, (y_axis//10)*5, (x_axis//100)*15, y_axis//20)
-warnsdorff_details = ((x_axis//10)*8, (y_axis//10)*7, (x_axis//100)*15, y_axis//20)
-quit_details = ((x_axis//10)*8, (y_axis//10)*9, (x_axis//100)*15, y_axis//20)
-start_button = pg.Rect(start_details[0], start_details[1], start_details[2], start_details[3])
-reset_button = pg.Rect(reset_details[0], reset_details[1], reset_details[2], reset_details[3])
-backtrack_button = pg.Rect(backtrack_details[0], backtrack_details[1], backtrack_details[2], backtrack_details[3])
-warnsdorff_button = pg.Rect(warnsdorff_details[0], warnsdorff_details[1], warnsdorff_details[2], warnsdorff_details[3])
-quit_button = pg.Rect(quit_details[0], quit_details[1], quit_details[2], quit_details[3])
+
+# Buttons
+button_text_color = (255, 255, 255)
 button_color = (100, 100, 100)  # Default button color
 hover_button_color = (170, 170, 170)  # Color of button when cursor hovers over
-
+# Play, Reset, and Quit buttons in one group
+start_details = Components.Button((x_axis//10) * 8, (y_axis//10) * 2, (x_axis//100) * 15, y_axis//20,
+                                  button_color, hover_button_color, button_text_color)
+reset_details = Components.Button((x_axis//10) * 8, (y_axis//10) * 4, (x_axis//100) * 15, y_axis//20,
+                                  button_color, hover_button_color, button_text_color)
+quit_details = Components.Button((x_axis//10) * 8, (y_axis//10) * 6, (x_axis//100) * 15, y_axis//20,
+                                 button_color, hover_button_color, button_text_color)
+# Touring type buttons in another group
+backtrack_details = Components.Button((x_axis//10) * 6, (y_axis//10) * 3, (x_axis//100) * 15, y_axis//20,
+                                      button_color, hover_button_color, button_text_color)
+warnsdorff_details = Components.Button((x_axis//10) * 6, (y_axis//10) * 5, (x_axis//100) * 15, y_axis//20,
+                                       button_color, hover_button_color, button_text_color)
+# pg.Rect(x_position, y_position, width, height)
+start_button = pg.Rect(start_details.x_pos, start_details.y_pos, start_details.width, start_details.height)
+reset_button = pg.Rect(reset_details.x_pos, reset_details.y_pos, reset_details.width, reset_details.height)
+quit_button = pg.Rect(quit_details.x_pos, quit_details.y_pos, quit_details.width, quit_details.height)
+backtrack_button = pg.Rect(backtrack_details.x_pos, backtrack_details.y_pos,
+                           backtrack_details.width, backtrack_details.height)
+warnsdorff_button = pg.Rect(warnsdorff_details.x_pos, warnsdorff_details.y_pos,
+                            warnsdorff_details.width, warnsdorff_details.height)
 # Button text color
-text_color = (255, 255, 255)
-start_text = BUTTON_FONT.render("Start", True, text_color)
-reset_text = BUTTON_FONT.render("Reset", True, text_color)
-backtrack_text = BUTTON_FONT.render("Backtrack Method", True, text_color)
-warnsdorff_text = BUTTON_FONT.render("Warnsdoff's Method", True, text_color)
-quit_text = BUTTON_FONT.render("Quit", True, text_color)
+start_text = BUTTON_FONT.render("Start", True, start_details.text_color)
+reset_text = BUTTON_FONT.render("Reset", True, reset_details.text_color)
+quit_text = BUTTON_FONT.render("Quit", True, quit_details.text_color)
+backtrack_text = BUTTON_FONT.render("Backtrack Method", True, backtrack_details.text_color)
+warnsdorff_text = BUTTON_FONT.render("Warnsdoff's Method", True, warnsdorff_details.text_color)
+
+# Game text under the chessboard
+text_color = (0, 0, 0)
+under_board_details = Components.TextArea(50, 50, (y_axis // 10) * 8, (y_axis // 10), text_color, BACKGROUND_COLOUR)
+board_text = TEXT_FONT.render("", True, under_board_details)
 
 # Chess board data
 DIMENSIONS = 8  # Chessboard Size
@@ -71,19 +86,6 @@ knight_piece = pg.image.load("knight_piece.png")
 # knight_cursor = pg.image.load("knight_piece.png")
 movement = 0
 
-
-# def draw_board(screen):
-#     # Draw chessboard. Top left square is always light color
-#     for row in range(DIMENSIONS):
-#         for column in range(DIMENSIONS):
-#             color = BOARD_COLORS[(row + column) % 2]
-#             pg.draw.rect(screen, color,
-#                          # x-axis = column (left to right) , y-axis = row (top to bottom)
-#                          # Draw the starting point of the square
-#                          # Add off set if chessboard not touching the border of window
-#                          # SQ_SIZE means the length and width of the squares
-#                          pg.Rect((column * SQ_SIZE) + OFFSET[0], (row * SQ_SIZE) + OFFSET[1], SQ_SIZE, SQ_SIZE))
-
 # class Cell:
 #     def __init__(self):
 #         self.color = None
@@ -94,10 +96,6 @@ class Board:
     def __init__(self, dimension):
         self.dimension = dimension
         self.graph = np.negative(np.ones([dimension, dimension], dtype=int))
-        # self.graph = np.ones([dimension, dimension], dtype=int)
-        # for row in range(self.dimension):
-        #     for column in range(self.dimension):
-        #         self.graph[row][column] = (0, 0)
 
     def draw_board(self):
         # Draw chessboard. Top left square is always light color
@@ -119,22 +117,14 @@ class Board:
         for row in range(self.dimension):
             for col in range(self.dimension):
                 self.draw_number(row, col)
-                # if self.graph[row][col] != -1:
-                #     stamp = ((col * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2, (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
-                #     # print((row, col), "stamp = ", stamp)
-                #     pg.draw.circle(SCREEN, (255, 0, 0), stamp, 30)
-                #     number = self.graph[row][col]
-                #     SCREEN.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
-                #                 (stamp[0] - SQ_SIZE * 0.14, stamp[1] - SQ_SIZE * 0.13))
 
     def draw_number(self, row, col):
-        '''
+        """
         This function is responsible for drawing the numbers of the steps made by the knight
-        :param screen: Pygame screen
         :param row: Row number of board
         :param col: Column number of board
         :return:None
-        '''
+        """
         furthest_node = self.graph.max()
         if (self.graph[row][col] != -1 and self.graph[row][col] != furthest_node) \
                 or self.graph[row][col] == self.dimension ** 2:
@@ -144,12 +134,6 @@ class Board:
             number = self.graph[row][col]
             SCREEN.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
                         (stamp[0] - SQ_SIZE*0.14, stamp[1] - SQ_SIZE*0.13))
-
-
-    # def draw_line(self, screen, curr_pos, new_pos):
-    #     start_point = (curr_pos[0]*SQ_SIZE + SQ_SIZE//2, curr_pos[1]*SQ_SIZE + SQ_SIZE//2)
-    #     end_point = (new_pos[0]*SQ_SIZE + SQ_SIZE//2, new_pos[1]*SQ_SIZE + SQ_SIZE//2)
-    #     pg.draw.line(screen, (255, 0, 0), start_point, end_point, 5)
 
 
 class Knight:
@@ -297,8 +281,9 @@ class ChessState:
     def check_event(self):
         mouse_pos = pg.mouse.get_pos()
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 self.running = False
+            # Checks if mouse click is on a component
             elif event.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = pg.mouse.get_pos()
                 # Checks if mouse clicks on board area
@@ -309,70 +294,71 @@ class ChessState:
                     sq_selected = (row, col)
                     self.place_first_knight(sq_selected)
                 # Start Button. To start the tour
-                elif start_details[0] <= mouse_pos[0] <= start_details[0] + start_details[2] \
-                        and start_details[1] <= mouse_pos[1] <= start_details[1] + start_details[3] \
+                elif start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
+                        and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height \
                         and self.knight.knight_placed:
                     self.state = "touring"
                 # Reset Button. Resets the board
-                elif reset_details[0] <= mouse_pos[0] <= reset_details[0] + reset_details[2] \
-                        and reset_details[1] <= mouse_pos[1] <= reset_details[1] + reset_details[3]:
+                elif reset_details.x_pos <= mouse_pos[0] <= reset_details.x_pos + reset_details.width \
+                        and reset_details.y_pos <= mouse_pos[1] <= reset_details.y_pos + reset_details.height:
                     self.reset_board()
                 # Backtrack Button. Change the tour finding method to backtracking
-                elif backtrack_details[0] <= mouse_pos[0] <= backtrack_details[0] + backtrack_details[2] \
-                        and backtrack_details[1] <= mouse_pos[1] <= backtrack_details[1] + backtrack_details[3] \
+                elif backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
+                        and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height \
                         and self.state != "touring":
                     self.warnsdorff = False
+                    pg.draw.rect(SCREEN, BACKGROUND_COLOUR, )
                 # Warnsdorff Button. Change the tour finding method to Warnsdorff
-                elif warnsdorff_details[0] <= mouse_pos[0] <= warnsdorff_details[0] + warnsdorff_details[2] \
-                        and warnsdorff_details[1] <= mouse_pos[1] <= warnsdorff_details[1] + warnsdorff_details[3] \
+                elif warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
+                        and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height \
                         and self.state != "touring":
                     self.warnsdorff = True
                 # Quit Button. Stops the game
-                elif quit_details[0] <= mouse_pos[0] <= quit_details[0] + quit_details[2] \
-                        and quit_details[1] <= mouse_pos[1] <= quit_details[1] + quit_details[3]:
+                elif quit_details.x_pos <= mouse_pos[0] <= quit_details.x_pos + quit_details.width \
+                        and quit_details.y_pos <= mouse_pos[1] <= quit_details.y_pos + quit_details.height:
                     self.running = False
 
         # Display Start button and text
-        if start_details[0] <= mouse_pos[0] <= start_details[0] + start_details[2] \
-                and start_details[1] <= mouse_pos[1] <= start_details[1] + start_details[3]:
+        if start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
+                and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height:
             pg.draw.rect(SCREEN, hover_button_color, start_button)
         else:
             pg.draw.rect(SCREEN, button_color, start_button)
-        SCREEN.blit(start_text, (start_details[0] + (4*start_details[2]//10), start_details[1] + 5))
+        SCREEN.blit(start_text, (start_details.x_pos + (4*start_details.width//10), start_details.y_pos + 5))
         # Display Reset button and text
-        if reset_details[0] <= mouse_pos[0] <= reset_details[0] + reset_details[2] \
-                and reset_details[1] <= mouse_pos[1] <= reset_details[1] + reset_details[3]:
+        if reset_details.x_pos <= mouse_pos[0] <= reset_details.x_pos + reset_details.width \
+                and reset_details.y_pos <= mouse_pos[1] <= reset_details.y_pos + reset_details.height:
             pg.draw.rect(SCREEN, hover_button_color, reset_button)
         else:
             pg.draw.rect(SCREEN, button_color, reset_button)
-        SCREEN.blit(reset_text, (reset_details[0] + (3.5*reset_details[2]//10), reset_details[1] + 5))
+        SCREEN.blit(reset_text, (reset_details.x_pos + (3.5*reset_details.width//10), reset_details.y_pos + 5))
         if self.warnsdorff:
             # Display Backtrack button and text
-            if backtrack_details[0] <= mouse_pos[0] <= backtrack_details[0] + backtrack_details[2] \
-                    and backtrack_details[1] <= mouse_pos[1] <= backtrack_details[1] + backtrack_details[3]:
+            if backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
+                    and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height:
                 pg.draw.rect(SCREEN, hover_button_color, backtrack_button)
             else:
                 pg.draw.rect(SCREEN, button_color, backtrack_button)
-            SCREEN.blit(backtrack_text, (backtrack_details[0]+(0.5*backtrack_details[2]//10), backtrack_details[1] + 5))
+            SCREEN.blit(backtrack_text, (backtrack_details.x_pos+(0.5*backtrack_details.width//10), backtrack_details.y_pos + 5))
             # Remove Warnsdorff button
             pg.draw.rect(SCREEN, BACKGROUND_COLOUR, warnsdorff_button)
         else:
             # Display Warnsdorff button and text
-            if warnsdorff_details[0] <= mouse_pos[0] <= warnsdorff_details[0] + warnsdorff_details[2] \
-                    and warnsdorff_details[1] <= mouse_pos[1] <= warnsdorff_details[1] + warnsdorff_details[3]:
+            if warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
+                    and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height:
                 pg.draw.rect(SCREEN, hover_button_color, warnsdorff_button)
             else:
                 pg.draw.rect(SCREEN, button_color, warnsdorff_button)
-            SCREEN.blit(warnsdorff_text, (warnsdorff_details[0], warnsdorff_details[1] + 5))
+            SCREEN.blit(warnsdorff_text, (warnsdorff_details.x_pos, warnsdorff_details.y_pos + 5))
             # Remove Backtrack button
             pg.draw.rect(SCREEN, BACKGROUND_COLOUR, backtrack_button)
         # Quit button
-        if quit_details[0] <= mouse_pos[0] <= quit_details[0] + quit_details[2] \
-                and quit_details[1] <= mouse_pos[1] <= quit_details[1] + quit_details[3]:
+        if quit_details.x_pos <= mouse_pos[0] <= quit_details.x_pos + quit_details.width \
+                and quit_details.y_pos <= mouse_pos[1] <= quit_details.y_pos + quit_details.height:
             pg.draw.rect(SCREEN, hover_button_color, quit_button)
         else:
             pg.draw.rect(SCREEN, button_color, quit_button)
-        SCREEN.blit(quit_text, (quit_details[0] + (4*quit_details[2]//10), quit_details[1] + 5))
+        SCREEN.blit(quit_text, (quit_details.x_pos + (4*quit_details.width//10), quit_details.y_pos + 5))
 
         pg.display.update()
 
