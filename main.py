@@ -23,7 +23,7 @@ BUTTON_FONT = pg.font.SysFont('Arial', 30)  # Font for buttons
 BOARD_FONT = pg.font.SysFont('Arial', 20)  # Font for numbering the steps
 TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text
 # DEFAULT_CURSOR = pg.mouse.get_cursor()
-FPS = 5
+FPS = 60
 clock = pg.time.Clock()
 
 # start_button = pg.Rect(600, 50, 230, 40)
@@ -37,36 +37,79 @@ button_text_color = (255, 255, 255)
 button_color = (100, 100, 100)  # Default button color
 hover_button_color = (170, 170, 170)  # Color of button when cursor hovers over
 # Play, Reset, and Quit buttons in one group
-start_details = Components.Button((x_axis//10) * 8, (y_axis//10) * 2, (x_axis//100) * 15, y_axis//20,
-                                  button_color, hover_button_color, button_text_color)
-reset_details = Components.Button((x_axis//10) * 8, (y_axis//10) * 4, (x_axis//100) * 15, y_axis//20,
-                                  button_color, hover_button_color, button_text_color)
-quit_details = Components.Button((x_axis//10) * 8, (y_axis//10) * 6, (x_axis//100) * 15, y_axis//20,
-                                 button_color, hover_button_color, button_text_color)
+# Button(x_pos, y_pos, width, height, button_colour, hover_colour, button_text_colour)
+start_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 2, (x_axis // 100) * 15, y_axis // 20, pg,
+                                  button_color, button_text_color, hover_button_color)
+reset_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 4, (x_axis // 100) * 15, y_axis // 20, pg,
+                                  button_color, button_text_color, hover_button_color)
+quit_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 6, (x_axis // 100) * 15, y_axis // 20, pg,
+                                 button_color, button_text_color, hover_button_color)
 # Touring type buttons in another group
-backtrack_details = Components.Button((x_axis//10) * 6, (y_axis//10) * 3, (x_axis//100) * 15, y_axis//20,
-                                      button_color, hover_button_color, button_text_color)
-warnsdorff_details = Components.Button((x_axis//10) * 6, (y_axis//10) * 5, (x_axis//100) * 15, y_axis//20,
-                                       button_color, hover_button_color, button_text_color)
-# pg.Rect(x_position, y_position, width, height)
-start_button = pg.Rect(start_details.x_pos, start_details.y_pos, start_details.width, start_details.height)
-reset_button = pg.Rect(reset_details.x_pos, reset_details.y_pos, reset_details.width, reset_details.height)
-quit_button = pg.Rect(quit_details.x_pos, quit_details.y_pos, quit_details.width, quit_details.height)
-backtrack_button = pg.Rect(backtrack_details.x_pos, backtrack_details.y_pos,
-                           backtrack_details.width, backtrack_details.height)
-warnsdorff_button = pg.Rect(warnsdorff_details.x_pos, warnsdorff_details.y_pos,
-                            warnsdorff_details.width, warnsdorff_details.height)
+backtrack_details = Components.Square((x_axis // 10) * 6, (y_axis // 10), (x_axis // 100) * 15, y_axis // 20, pg,
+                                      button_color, button_text_color, hover_button_color)
+warnsdorff_details = Components.Square((x_axis // 10) * 6, (y_axis // 10) * 3, (x_axis // 100) * 15, y_axis // 20, pg,
+                                       button_color, button_text_color, hover_button_color)
+# Buttons to change FPS
+fps_down_details = Components.Square((x_axis // 10) * 6, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+                                     button_color, button_text_color, hover_button_color)
+fps_up_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+                                   button_color, button_text_color, hover_button_color)
+
+start_button = start_details.rect
+reset_button = reset_details.rect
+quit_button = quit_details.rect
+backtrack_button = backtrack_details.rect
+warnsdorff_button = warnsdorff_details.rect
+fps_down_button = fps_down_details.rect
+fps_up_button = fps_up_details.rect
+
 # Button text color
 start_text = BUTTON_FONT.render("Start", True, start_details.text_color)
 reset_text = BUTTON_FONT.render("Reset", True, reset_details.text_color)
 quit_text = BUTTON_FONT.render("Quit", True, quit_details.text_color)
 backtrack_text = BUTTON_FONT.render("Backtrack Method", True, backtrack_details.text_color)
 warnsdorff_text = BUTTON_FONT.render("Warnsdoff's Method", True, warnsdorff_details.text_color)
+fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
+fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
+
+# Center the text in their buttons
+start_text_rect = start_text.get_rect(
+    center=(start_details.x_pos + (start_details.width//2), start_details.y_pos + (start_details.height//2))
+)
+reset_text_rect = reset_text.get_rect(
+    center=(reset_details.x_pos + (reset_details.width//2), reset_details.y_pos + (reset_details.height//2))
+)
+quit_text_rect = quit_text.get_rect(
+    center=(quit_details.x_pos + (quit_details.width//2), quit_details.y_pos + (quit_details.height//2))
+)
+backtrack_text_rect = backtrack_text.get_rect(
+    center=(backtrack_details.x_pos + (backtrack_details.width//2), backtrack_details.y_pos + (backtrack_details.height//2))
+)
+warnsdorff_text_rect = warnsdorff_text.get_rect(
+    center=(warnsdorff_details.x_pos + (warnsdorff_details.width//2), warnsdorff_details.y_pos + (warnsdorff_details.height//2))
+)
+fps_down_text_rect = fps_down_text.get_rect(
+    center=(fps_down_details.x_pos + (fps_down_details.width//2), fps_down_details.y_pos + (fps_down_details.height//2))
+)
+fps_up_text_rect = fps_up_text.get_rect(
+    center=(fps_up_details.x_pos + (fps_up_details.width//2), fps_up_details.y_pos + (fps_up_details.height//2))
+)
 
 # Game text under the chessboard
 text_color = (0, 0, 0)
-under_board_details = Components.TextArea(50, 50, (y_axis // 10) * 8, (y_axis // 10), text_color, BACKGROUND_COLOUR)
-board_text = TEXT_FONT.render("", True, under_board_details)
+under_board_details = Components.Square(50, 50, (y_axis // 10) * 8, (y_axis // 10), pg, BACKGROUND_COLOUR, text_color)
+board_text = TEXT_FONT.render("Backtrack Method at 30 FPS", True, under_board_details.text_color)
+board_text_rect = board_text.get_rect(
+    center=(under_board_details.x_pos+(under_board_details.width//2), under_board_details.y_pos+(under_board_details.height//2))
+)
+# Area to display FPS text
+fps_details = Components.Square((x_axis // 10) * 7, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+                                button_color, text_color)
+fps_text = BUTTON_FONT.render("FPS", True, fps_details.text_color)
+fps_text_rect = fps_text.get_rect(
+    center=(fps_details.x_pos+(fps_details.width//2), fps_details.y_pos+(fps_details.height//2))
+)
+# fps_text_rect = fps_text.get_rect(center=(fps_details.x_pos + fps_details.x_pos + ))
 
 # Chess board data
 DIMENSIONS = 8  # Chessboard Size
@@ -84,7 +127,6 @@ pg.display.set_icon(icon)
 knight_piece = pg.image.load("knight_piece.png")
 # Replaces cursor with a knight image
 # knight_cursor = pg.image.load("knight_piece.png")
-movement = 0
 
 # class Cell:
 #     def __init__(self):
@@ -96,6 +138,8 @@ class Board:
     def __init__(self, dimension):
         self.dimension = dimension
         self.graph = np.negative(np.ones([dimension, dimension], dtype=int))
+        self.fps = 30
+        self.last_frame_tick = 0
 
     def draw_board(self):
         # Draw chessboard. Top left square is always light color
@@ -135,6 +179,40 @@ class Board:
             SCREEN.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
                         (stamp[0] - SQ_SIZE*0.14, stamp[1] - SQ_SIZE*0.13))
 
+    def increase_fps(self):
+        global fps_up_text, fps_down_text
+        if self.fps < 10:
+            self.fps += 1
+        elif self.fps < 30:
+            self.fps += 5
+        elif self.fps < 60:
+            self.fps += 10
+        self.check_fps()
+
+    def decrease_fps(self):
+        global fps_down_text, fps_up_text
+        if self.fps > 30:
+            self.fps -= 10
+        elif self.fps > 10:
+            self.fps -= 5
+        elif self.fps > 1:
+            self.fps -= 1
+        self.check_fps()
+
+    def check_fps(self):
+        global fps_down_text, fps_up_text
+        if self.fps == 30:
+            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
+            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
+        elif 10 < self.fps < 30:
+            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
+            fps_up_text = BUTTON_FONT.render("+5", True, fps_up_details.text_color)
+        elif 1 < self.fps < 10:
+            fps_down_text = BUTTON_FONT.render("-1", True, fps_down_details.text_color)
+            fps_up_text = BUTTON_FONT.render("+1", True, fps_up_details.text_color)
+        elif 30 < self.fps < 60:
+            fps_down_text = BUTTON_FONT.render("-10", True, fps_down_details.text_color)
+            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
 
 class Knight:
     def __init__(self):
@@ -169,6 +247,7 @@ class ChessState:
         self.tour_found = False  # Whether knight tour is found
         self.running = True  # Whether game is running
         self.warnsdorff = False
+        self.move_done = False
         self.board.draw_board()
 
     def reset_board(self):
@@ -191,6 +270,28 @@ class ChessState:
         self.knight.knight_pos = self.knight.knight_initial_pos
         SCREEN.fill(BACKGROUND_COLOUR)
         self.board.draw_board()
+
+    def redraw_board(self):
+        if self.board.move_done and (pg.time.get_ticks() - self.board.last_frame_tick) > 1000/self.board.fps:
+            furthest_node = self.board.graph.max()
+            self.board.draw_board()
+            self.draw_lines()
+            self.board.draw_numbers()
+
+            # print(furthest_node)
+            if furthest_node == self.board.dimension ** 2:
+                # print("Draw Number")
+                self.board.draw_number(self.knight.knight_pos[0], self.knight.knight_pos[1])
+            else:
+                # print("Draw Knight")
+                SCREEN.blit(knight_piece,
+                            pg.Rect((self.knight.knight_pos[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 8,
+                                    (self.knight.knight_pos[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 8,
+                                    SQ_SIZE, SQ_SIZE)
+                            )
+            pg.display.update()
+            self.board.last_frame_tick = pg.time.get_ticks()
+            self.board.move_done = False
 
     # Checks if user selected the same square twice. If so, remove the knight
     def place_first_knight(self, selected_sq):
@@ -225,7 +326,6 @@ class ChessState:
             self.board.graph[row][col] = 1
             self.knight.move_log.append((row, col, 0))
             self.knight.draw_knight()
-        # self.redraw_board()
 
     def draw_lines(self):
         i = 2
@@ -237,45 +337,8 @@ class ChessState:
             end_point = self.knight.move_log[i - 1]
             line_end_point = ((end_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
                               (end_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
-            # print("Start =", start_point)
-            # print("End =", end_point)
             pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
             i += 1
-
-    # def draw_line(self):
-    #     if len(self.knight.move_log) > 1:
-    #         start_point = self.knight.move_log[-2]
-    #         line_start_point = ((start_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
-    #                             (start_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
-    #         end_point = self.knight.move_log[-1]
-    #         line_end_point = ((end_point[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2,
-    #                           (end_point[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
-    #         pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
-    #         print((self.knight.move_log[-2][0], self.knight.move_log[-2][1]),
-    #               "line start point = ", line_start_point,
-    #               (self.knight.knight_pos[0], self.knight.knight_pos[1]),
-    #               "line end point = ", line_end_point)
-    #         pg.display.update()
-
-    def redraw_board(self):
-        furthest_node = self.board.graph.max()
-
-        self.board.draw_board()
-        self.draw_lines()
-        self.board.draw_numbers()
-
-        print(furthest_node)
-        if furthest_node == self.board.dimension ** 2:
-            print("Draw Number")
-            self.board.draw_number(self.knight.knight_pos[0], self.knight.knight_pos[1])
-        else:
-            print("Draw Knight")
-            SCREEN.blit(knight_piece,
-                        pg.Rect((self.knight.knight_pos[1] * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 8,
-                                (self.knight.knight_pos[0] * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 8,
-                                SQ_SIZE, SQ_SIZE)
-                        )
-        pg.display.update()
 
     # Handles mouse input
     def check_event(self):
@@ -286,80 +349,112 @@ class ChessState:
             # Checks if mouse click is on a component
             elif event.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = pg.mouse.get_pos()
-                # Checks if mouse clicks on board area
+                # On board area
                 if OFFSET[0] < mouse_pos[0] < OFFSET[0] + BOARD_SIZE[0] and \
                    OFFSET[1] < mouse_pos[1] < OFFSET[1] + BOARD_SIZE[1]:
                     row = (mouse_pos[1] - OFFSET[1]) // SQ_SIZE
                     col = (mouse_pos[0] - OFFSET[0]) // SQ_SIZE
                     sq_selected = (row, col)
                     self.place_first_knight(sq_selected)
-                # Start Button. To start the tour
+                # On Start Button. To start the tour
                 elif start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
-                        and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height \
+                    and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height \
                         and self.knight.knight_placed:
                     self.state = "touring"
-                # Reset Button. Resets the board
+                # On Reset Button. Resets the board
                 elif reset_details.x_pos <= mouse_pos[0] <= reset_details.x_pos + reset_details.width \
                         and reset_details.y_pos <= mouse_pos[1] <= reset_details.y_pos + reset_details.height:
                     self.reset_board()
-                # Backtrack Button. Change the tour finding method to backtracking
-                elif backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
-                        and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height \
-                        and self.state != "touring":
-                    self.warnsdorff = False
-                    pg.draw.rect(SCREEN, BACKGROUND_COLOUR, )
-                # Warnsdorff Button. Change the tour finding method to Warnsdorff
-                elif warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
-                        and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height \
-                        and self.state != "touring":
-                    self.warnsdorff = True
                 # Quit Button. Stops the game
                 elif quit_details.x_pos <= mouse_pos[0] <= quit_details.x_pos + quit_details.width \
                         and quit_details.y_pos <= mouse_pos[1] <= quit_details.y_pos + quit_details.height:
                     self.running = False
+                # On Backtrack Button. Change the tour finding method to backtracking
+                elif backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
+                    and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height \
+                        and self.state != "touring":
+                    self.warnsdorff = False
+                    # pg.draw.rect(SCREEN, BACKGROUND_COLOUR, )
+                # On Warnsdorff Button. Change the tour finding method to Warnsdorff
+                elif warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
+                    and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height \
+                        and self.state != "touring":
+                    self.warnsdorff = True
+                elif fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
+                        and fps_down_details.y_pos <= mouse_pos[1] <= fps_down_details.y_pos + fps_down_details.height:
+                    self.board.decrease_fps()
+                elif fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
+                        and fps_down_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
+                    self.board.increase_fps()
 
-        # Display Start button and text
+        # Draw the buttons and text
+        # Display Start button
         if start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
                 and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height:
             pg.draw.rect(SCREEN, hover_button_color, start_button)
         else:
             pg.draw.rect(SCREEN, button_color, start_button)
-        SCREEN.blit(start_text, (start_details.x_pos + (4*start_details.width//10), start_details.y_pos + 5))
-        # Display Reset button and text
+        # SCREEN.blit(start_text, (start_details.x_pos + (5*start_details.width//10), start_details.y_pos + 5))
+        SCREEN.blit(start_text, start_text_rect)
+        # Display Reset button
         if reset_details.x_pos <= mouse_pos[0] <= reset_details.x_pos + reset_details.width \
                 and reset_details.y_pos <= mouse_pos[1] <= reset_details.y_pos + reset_details.height:
             pg.draw.rect(SCREEN, hover_button_color, reset_button)
         else:
             pg.draw.rect(SCREEN, button_color, reset_button)
-        SCREEN.blit(reset_text, (reset_details.x_pos + (3.5*reset_details.width//10), reset_details.y_pos + 5))
-        if self.warnsdorff:
-            # Display Backtrack button and text
-            if backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
-                    and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height:
-                pg.draw.rect(SCREEN, hover_button_color, backtrack_button)
-            else:
-                pg.draw.rect(SCREEN, button_color, backtrack_button)
-            SCREEN.blit(backtrack_text, (backtrack_details.x_pos+(0.5*backtrack_details.width//10), backtrack_details.y_pos + 5))
-            # Remove Warnsdorff button
-            pg.draw.rect(SCREEN, BACKGROUND_COLOUR, warnsdorff_button)
-        else:
-            # Display Warnsdorff button and text
-            if warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
-                    and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height:
-                pg.draw.rect(SCREEN, hover_button_color, warnsdorff_button)
-            else:
-                pg.draw.rect(SCREEN, button_color, warnsdorff_button)
-            SCREEN.blit(warnsdorff_text, (warnsdorff_details.x_pos, warnsdorff_details.y_pos + 5))
-            # Remove Backtrack button
-            pg.draw.rect(SCREEN, BACKGROUND_COLOUR, backtrack_button)
-        # Quit button
+        # SCREEN.blit(reset_text, (reset_details.x_pos + (3.5*reset_details.width//10), reset_details.y_pos + 5))
+        SCREEN.blit(reset_text, reset_text_rect)
+        # Display Quit button
         if quit_details.x_pos <= mouse_pos[0] <= quit_details.x_pos + quit_details.width \
                 and quit_details.y_pos <= mouse_pos[1] <= quit_details.y_pos + quit_details.height:
             pg.draw.rect(SCREEN, hover_button_color, quit_button)
         else:
             pg.draw.rect(SCREEN, button_color, quit_button)
-        SCREEN.blit(quit_text, (quit_details.x_pos + (4*quit_details.width//10), quit_details.y_pos + 5))
-
+        # SCREEN.blit(quit_text, (quit_details.x_pos + (4 * quit_details.width // 10), quit_details.y_pos + 5))
+        SCREEN.blit(quit_text, quit_text_rect)
+        # Sets visibility of knight's tour buttons
+        if self.warnsdorff:
+            # Display Backtrack button
+            if backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
+                    and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height:
+                pg.draw.rect(SCREEN, hover_button_color, backtrack_button)
+            else:
+                pg.draw.rect(SCREEN, button_color, backtrack_button)
+            # SCREEN.blit(backtrack_text, (backtrack_details.x_pos+(0.5*backtrack_details.width//10), backtrack_details.y_pos + 5))
+            SCREEN.blit(backtrack_text, backtrack_text_rect)
+            # Remove Warnsdorff button
+            pg.draw.rect(SCREEN, BACKGROUND_COLOUR, warnsdorff_button)
+        else:
+            # Display Warnsdorff button
+            if warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
+                    and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height:
+                pg.draw.rect(SCREEN, hover_button_color, warnsdorff_button)
+            else:
+                pg.draw.rect(SCREEN, button_color, warnsdorff_button)
+            # SCREEN.blit(warnsdorff_text, (warnsdorff_details.x_pos, warnsdorff_details.y_pos + 5))
+            SCREEN.blit(warnsdorff_text, warnsdorff_text_rect)
+            # Remove Backtrack button
+            pg.draw.rect(SCREEN, BACKGROUND_COLOUR, backtrack_button)
+        # Display fps decrease button
+        if fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
+                and fps_down_details.y_pos <= mouse_pos[1] <= fps_down_details.y_pos + fps_down_details.height:
+            pg.draw.rect(SCREEN, hover_button_color, fps_down_button)
+        else:
+            pg.draw.rect(SCREEN, button_color, fps_down_button)
+        # SCREEN.blit(fps_down_text, (fps_down_details.x_pos + (fps_down_details.width // 10), fps_down_details.y_pos + 5))
+        SCREEN.blit(fps_down_text, fps_down_text_rect)
+        # Display fps increase button
+        if fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
+                and fps_up_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
+            pg.draw.rect(SCREEN, hover_button_color, fps_up_button)
+        else:
+            pg.draw.rect(SCREEN, button_color, fps_up_button)
+        # SCREEN.blit(fps_up_text, (fps_up_details.x_pos + (fps_up_details.width // 10), fps_up_details.y_pos + 5))
+        SCREEN.blit(fps_up_text, fps_up_text_rect)
+        # Display FPS text
+        SCREEN.blit(fps_text, fps_text_rect)
+        # Display text underneath board
+        SCREEN.blit(board_text, board_text_rect)
         pg.display.update()
 
     def is_valid_move(self, x, y):
@@ -390,6 +485,28 @@ class ChessState:
     #         print()
     #     print()
 
+    # def find_tour(self):
+    #     """
+    #     Function chooses the algorithm selected to find the tour
+    #     :return:
+    #     """
+    #     # First checks whether tour has already been found
+    #     if not self.tour_found:
+    #         # Checks type of algorithm used to find tour
+    #         if self.warnsdorff:
+    #             if self.knight.knight_step < 64:
+    #                 self.find_tour_warnsdorff()
+    #             else:
+    #                 self.tour_found = True
+    #         else:
+    #             if len(self.knight.move_log) == 0:
+    #                 self.state = "fail"
+    #             if self.knight.knight_step < 64:
+    #                 self.find_tour_backtrack_iterative()
+    #             else:
+    #                 self.tour_found = True
+    #     self.redraw_board()
+
     def find_tour(self):
         """
         Function chooses the algorithm selected to find the tour
@@ -397,19 +514,21 @@ class ChessState:
         """
         # First checks whether tour has already been found
         if not self.tour_found:
-            # Checks type of algorithm used to find tour
-            if self.warnsdorff:
-                if self.knight.knight_step < 64:
-                    self.find_tour_warnsdorff()
+            if not self.board.move_done:
+                # Checks type of algorithm used to find tour
+                if self.warnsdorff:
+                    if self.knight.knight_step < 64:
+                        self.find_tour_warnsdorff()
+                    else:
+                        self.tour_found = True
                 else:
-                    self.tour_found = True
-            else:
-                if len(self.knight.move_log) == 0:
-                    self.state = "fail"
-                if self.knight.knight_step < 64:
-                    self.find_tour_backtrack_iterative()
-                else:
-                    self.tour_found = True
+                    if len(self.knight.move_log) == 0:
+                        self.state = "fail"
+                    if self.knight.knight_step < 64:
+                        self.find_tour_backtrack_iterative()
+                    else:
+                        self.tour_found = True
+        self.redraw_board()
 
     def find_tour_warnsdorff(self):
         most_empty = 9
@@ -440,7 +559,7 @@ class ChessState:
         self.board.graph[new_x][new_y] = self.knight.knight_step
         self.knight.knight_pos = (new_x, new_y)
         self.knight.move_log.append((new_x, new_y))
-        self.redraw_board()
+        self.board.move_done = True
 
     def find_tour_backtrack_iterative(self):
         """
@@ -480,9 +599,9 @@ class ChessState:
             self.knight.knight_step -= 1
             self.knight.move_log.pop()
             self.knight.knight_pos = (self.knight.move_log[-1][0], self.knight.move_log[-1][1])
-            # self.redraw_board()
 
-        self.redraw_board()
+        self.board.move_done = True
+
 
     def update_frame(self):
         """
@@ -494,7 +613,7 @@ class ChessState:
         if self.state == "fail":
             self.redo_tour()
         if not self.running:
-            stop = timeit.default_timer()
+            # stop = timeit.default_timer()
             # print('Time: ', stop - start, "seconds")
             # print(movement, "Iterations")
             pg.quit()
@@ -508,7 +627,7 @@ def main():
     knight = Knight()
     chess_state = ChessState(board, knight)
     while True:
-        clock.tick(FPS)  # Determines the frames per second of game
+        # clock.tick(FPS)  # Determines the frames per second of game
         chess_state.update_frame()
 
 
