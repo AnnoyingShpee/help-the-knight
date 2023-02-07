@@ -138,8 +138,7 @@ class Board:
     def __init__(self, dimension):
         self.dimension = dimension
         self.graph = np.negative(np.ones([dimension, dimension], dtype=int))
-        self.fps = 30
-        self.last_frame_tick = 0
+
 
     def draw_board(self):
         # Draw chessboard. Top left square is always light color
@@ -179,40 +178,7 @@ class Board:
             SCREEN.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
                         (stamp[0] - SQ_SIZE*0.14, stamp[1] - SQ_SIZE*0.13))
 
-    def increase_fps(self):
-        global fps_up_text, fps_down_text
-        if self.fps < 10:
-            self.fps += 1
-        elif self.fps < 30:
-            self.fps += 5
-        elif self.fps < 60:
-            self.fps += 10
-        self.check_fps()
 
-    def decrease_fps(self):
-        global fps_down_text, fps_up_text
-        if self.fps > 30:
-            self.fps -= 10
-        elif self.fps > 10:
-            self.fps -= 5
-        elif self.fps > 1:
-            self.fps -= 1
-        self.check_fps()
-
-    def check_fps(self):
-        global fps_down_text, fps_up_text
-        if self.fps == 30:
-            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
-        elif 10 < self.fps < 30:
-            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+5", True, fps_up_details.text_color)
-        elif 1 < self.fps < 10:
-            fps_down_text = BUTTON_FONT.render("-1", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+1", True, fps_up_details.text_color)
-        elif 30 < self.fps < 60:
-            fps_down_text = BUTTON_FONT.render("-10", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
 
 class Knight:
     def __init__(self):
@@ -248,6 +214,8 @@ class ChessState:
         self.running = True  # Whether game is running
         self.warnsdorff = False
         self.move_done = False
+        self.fps = 30
+        self.last_frame_tick = 0
         self.board.draw_board()
 
     def reset_board(self):
@@ -272,7 +240,7 @@ class ChessState:
         self.board.draw_board()
 
     def redraw_board(self):
-        if self.board.move_done and (pg.time.get_ticks() - self.board.last_frame_tick) > 1000/self.board.fps:
+        if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000/self.fps:
             furthest_node = self.board.graph.max()
             self.board.draw_board()
             self.draw_lines()
@@ -290,8 +258,43 @@ class ChessState:
                                     SQ_SIZE, SQ_SIZE)
                             )
             pg.display.update()
-            self.board.last_frame_tick = pg.time.get_ticks()
-            self.board.move_done = False
+            self.last_frame_tick = pg.time.get_ticks()
+            self.move_done = False
+
+    def increase_fps(self):
+        global fps_up_text, fps_down_text
+        if self.fps < 10:
+            self.fps += 1
+        elif self.fps < 30:
+            self.fps += 5
+        elif self.fps < 60:
+            self.fps += 10
+        self.check_fps()
+
+    def decrease_fps(self):
+        global fps_down_text, fps_up_text
+        if self.fps > 30:
+            self.fps -= 10
+        elif self.fps > 10:
+            self.fps -= 5
+        elif self.fps > 1:
+            self.fps -= 1
+        self.check_fps()
+
+    def check_fps(self):
+        global fps_down_text, fps_up_text
+        if self.fps == 30:
+            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
+            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
+        elif 10 < self.fps < 30:
+            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
+            fps_up_text = BUTTON_FONT.render("+5", True, fps_up_details.text_color)
+        elif 1 < self.fps < 10:
+            fps_down_text = BUTTON_FONT.render("-1", True, fps_down_details.text_color)
+            fps_up_text = BUTTON_FONT.render("+1", True, fps_up_details.text_color)
+        elif 30 < self.fps < 60:
+            fps_down_text = BUTTON_FONT.render("-10", True, fps_down_details.text_color)
+            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
 
     # Checks if user selected the same square twice. If so, remove the knight
     def place_first_knight(self, selected_sq):
@@ -382,11 +385,15 @@ class ChessState:
                     self.warnsdorff = True
                 elif fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
                         and fps_down_details.y_pos <= mouse_pos[1] <= fps_down_details.y_pos + fps_down_details.height:
-                    self.board.decrease_fps()
+                    self.decrease_fps()
                 elif fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
                         and fps_down_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
-                    self.board.increase_fps()
+                    self.increase_fps()
 
+        self.display_components(mouse_pos)
+        pg.display.update()
+
+    def display_components(self, mouse_pos):
         # Draw the buttons and text
         # Display Start button
         if start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
@@ -455,7 +462,6 @@ class ChessState:
         SCREEN.blit(fps_text, fps_text_rect)
         # Display text underneath board
         SCREEN.blit(board_text, board_text_rect)
-        pg.display.update()
 
     def is_valid_move(self, x, y):
         """
@@ -514,7 +520,7 @@ class ChessState:
         """
         # First checks whether tour has already been found
         if not self.tour_found:
-            if not self.board.move_done:
+            if not self.move_done:
                 # Checks type of algorithm used to find tour
                 if self.warnsdorff:
                     if self.knight.knight_step < 64:
@@ -559,7 +565,7 @@ class ChessState:
         self.board.graph[new_x][new_y] = self.knight.knight_step
         self.knight.knight_pos = (new_x, new_y)
         self.knight.move_log.append((new_x, new_y))
-        self.board.move_done = True
+        self.move_done = True
 
     def find_tour_backtrack_iterative(self):
         """
@@ -599,9 +605,7 @@ class ChessState:
             self.knight.knight_step -= 1
             self.knight.move_log.pop()
             self.knight.knight_pos = (self.knight.move_log[-1][0], self.knight.move_log[-1][1])
-
-        self.board.move_done = True
-
+        self.move_done = True
 
     def update_frame(self):
         """
