@@ -45,14 +45,17 @@ reset_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 4, (x_axi
 quit_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 6, (x_axis // 100) * 15, y_axis // 20, pg,
                                  button_color, button_text_color, hover_button_color)
 # Touring type buttons in another group
-backtrack_details = Components.Square((x_axis // 10) * 6, (y_axis // 10), (x_axis // 100) * 15, y_axis // 20, pg,
+backtrack_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2, y_axis // 20, pg,
                                       button_color, button_text_color, hover_button_color)
-warnsdorff_details = Components.Square((x_axis // 10) * 6, (y_axis // 10) * 3, (x_axis // 100) * 15, y_axis // 20, pg,
+warnsdorff_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 3, (x_axis // 10) * 2, y_axis // 20, pg,
                                        button_color, button_text_color, hover_button_color)
 # Buttons to change FPS
-fps_down_details = Components.Square((x_axis // 10) * 6, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+fps_down_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
                                      button_color, button_text_color, hover_button_color)
-fps_up_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+# fps_up_details = Components.Square((x_axis // 10) * 6.5, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+#                                    button_color, button_text_color, hover_button_color)
+fps_up_details = Components.Square(warnsdorff_details.x_pos+warnsdorff_details.width - (x_axis // 100) * 5,
+                                   (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
                                    button_color, button_text_color, hover_button_color)
 
 start_button = start_details.rect
@@ -74,40 +77,50 @@ fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
 
 # Center the text in their buttons
 start_text_rect = start_text.get_rect(
-    center=(start_details.x_pos + (start_details.width//2), start_details.y_pos + (start_details.height//2))
+    center=(start_details.x_pos + (start_details.width//2),
+            start_details.y_pos + (start_details.height//2))
 )
 reset_text_rect = reset_text.get_rect(
-    center=(reset_details.x_pos + (reset_details.width//2), reset_details.y_pos + (reset_details.height//2))
+    center=(reset_details.x_pos + (reset_details.width//2),
+            reset_details.y_pos + (reset_details.height//2))
 )
 quit_text_rect = quit_text.get_rect(
-    center=(quit_details.x_pos + (quit_details.width//2), quit_details.y_pos + (quit_details.height//2))
+    center=(quit_details.x_pos + (quit_details.width//2),
+            quit_details.y_pos + (quit_details.height//2))
 )
 backtrack_text_rect = backtrack_text.get_rect(
-    center=(backtrack_details.x_pos + (backtrack_details.width//2), backtrack_details.y_pos + (backtrack_details.height//2))
+    center=(backtrack_details.x_pos + (backtrack_details.width//2),
+            backtrack_details.y_pos + (backtrack_details.height//2))
 )
 warnsdorff_text_rect = warnsdorff_text.get_rect(
-    center=(warnsdorff_details.x_pos + (warnsdorff_details.width//2), warnsdorff_details.y_pos + (warnsdorff_details.height//2))
+    center=(warnsdorff_details.x_pos + (warnsdorff_details.width//2),
+            warnsdorff_details.y_pos + (warnsdorff_details.height//2))
 )
 fps_down_text_rect = fps_down_text.get_rect(
-    center=(fps_down_details.x_pos + (fps_down_details.width//2), fps_down_details.y_pos + (fps_down_details.height//2))
+    center=(fps_down_details.x_pos + (fps_down_details.width//2),
+            fps_down_details.y_pos + (fps_down_details.height//2))
 )
 fps_up_text_rect = fps_up_text.get_rect(
-    center=(fps_up_details.x_pos + (fps_up_details.width//2), fps_up_details.y_pos + (fps_up_details.height//2))
+    center=(fps_up_details.x_pos + (fps_up_details.width//2),
+            fps_up_details.y_pos + (fps_up_details.height//2))
 )
 
 # Game text under the chessboard
 text_color = (0, 0, 0)
-under_board_details = Components.Square(50, 50, (y_axis // 10) * 8, (y_axis // 10), pg, BACKGROUND_COLOUR, text_color)
-board_text = TEXT_FONT.render("Backtrack Method at 30 FPS", True, under_board_details.text_color)
-board_text_rect = board_text.get_rect(
-    center=(under_board_details.x_pos+(under_board_details.width//2), under_board_details.y_pos+(under_board_details.height//2))
+under_board_details = Components.Square(50, 50+BOARD_SIZE[1], BOARD_SIZE[0], BOARD_SIZE[1]//8, pg, BACKGROUND_COLOUR, text_color)
+under_board_rect = under_board_details.rect
+under_board_text = TEXT_FONT.render("Backtrack Method at 30 FPS", True, under_board_details.text_color)
+board_text_rect = under_board_text.get_rect(
+    center=(under_board_details.x_pos+(under_board_details.width//2),
+            under_board_details.y_pos+(under_board_details.height//2))
 )
 # Area to display FPS text
-fps_details = Components.Square((x_axis // 10) * 7, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+fps_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 10) * 2, y_axis // 20, pg,
                                 button_color, text_color)
 fps_text = BUTTON_FONT.render("FPS", True, fps_details.text_color)
 fps_text_rect = fps_text.get_rect(
-    center=(fps_details.x_pos+(fps_details.width//2), fps_details.y_pos+(fps_details.height//2))
+    center=(fps_details.x_pos+(fps_details.width//2),
+            fps_details.y_pos+(fps_details.height//2))
 )
 # fps_text_rect = fps_text.get_rect(center=(fps_details.x_pos + fps_details.x_pos + ))
 
@@ -394,6 +407,7 @@ class ChessState:
         pg.display.update()
 
     def display_components(self, mouse_pos):
+        global under_board_text
         # Draw the buttons and text
         # Display Start button
         if start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
@@ -427,7 +441,6 @@ class ChessState:
                 pg.draw.rect(SCREEN, hover_button_color, backtrack_button)
             else:
                 pg.draw.rect(SCREEN, button_color, backtrack_button)
-            # SCREEN.blit(backtrack_text, (backtrack_details.x_pos+(0.5*backtrack_details.width//10), backtrack_details.y_pos + 5))
             SCREEN.blit(backtrack_text, backtrack_text_rect)
             # Remove Warnsdorff button
             pg.draw.rect(SCREEN, BACKGROUND_COLOUR, warnsdorff_button)
@@ -438,7 +451,6 @@ class ChessState:
                 pg.draw.rect(SCREEN, hover_button_color, warnsdorff_button)
             else:
                 pg.draw.rect(SCREEN, button_color, warnsdorff_button)
-            # SCREEN.blit(warnsdorff_text, (warnsdorff_details.x_pos, warnsdorff_details.y_pos + 5))
             SCREEN.blit(warnsdorff_text, warnsdorff_text_rect)
             # Remove Backtrack button
             pg.draw.rect(SCREEN, BACKGROUND_COLOUR, backtrack_button)
@@ -448,7 +460,6 @@ class ChessState:
             pg.draw.rect(SCREEN, hover_button_color, fps_down_button)
         else:
             pg.draw.rect(SCREEN, button_color, fps_down_button)
-        # SCREEN.blit(fps_down_text, (fps_down_details.x_pos + (fps_down_details.width // 10), fps_down_details.y_pos + 5))
         SCREEN.blit(fps_down_text, fps_down_text_rect)
         # Display fps increase button
         if fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
@@ -456,12 +467,16 @@ class ChessState:
             pg.draw.rect(SCREEN, hover_button_color, fps_up_button)
         else:
             pg.draw.rect(SCREEN, button_color, fps_up_button)
-        # SCREEN.blit(fps_up_text, (fps_up_details.x_pos + (fps_up_details.width // 10), fps_up_details.y_pos + 5))
         SCREEN.blit(fps_up_text, fps_up_text_rect)
         # Display FPS text
         SCREEN.blit(fps_text, fps_text_rect)
         # Display text underneath board
-        SCREEN.blit(board_text, board_text_rect)
+        if self.warnsdorff:
+            under_board_text = TEXT_FONT.render(f"Warnsdorff's Method at {self.fps} FPS", True, under_board_details.text_color)
+        else:
+            under_board_text = TEXT_FONT.render(f"Backtrack Method at {self.fps} FPS", True, under_board_details.text_color)
+        pg.draw.rect(SCREEN, under_board_details.color, under_board_rect)
+        SCREEN.blit(under_board_text, board_text_rect)
 
     def is_valid_move(self, x, y):
         """
