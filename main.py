@@ -274,6 +274,7 @@ class ChessState:
             self.last_frame_tick = pg.time.get_ticks()
             self.move_done = False
 
+
     def increase_fps(self):
         global fps_up_text, fps_down_text
         if self.fps < 10:
@@ -342,6 +343,17 @@ class ChessState:
             self.board.graph[row][col] = 1
             self.knight.move_log.append((row, col, 0))
             self.knight.draw_knight()
+
+    def update_text(self, text_shown):
+        """
+        Used to update the text box below the board.
+        :param text_component: The component for the text
+        :param text_shown: The string to be displayed underneath the board
+        :return:
+        """
+        global under_board_text
+        under_board_text = TEXT_FONT.render(text_shown, True, under_board_details.text_color)
+
 
     def draw_lines(self):
         i = 2
@@ -496,6 +508,15 @@ class ChessState:
                 count += 1
         return count
 
+    def check_if_closed_tour(self):
+        if (abs(self.knight.knight_initial_pos[0] - self.knight.knight_pos[0]) == 2
+            and abs(self.knight.knight_initial_pos[1] - self.knight.knight_pos[1]) == 1) or \
+                (abs(self.knight.knight_initial_pos[0] - self.knight.knight_pos[0]) == 1 and
+                 abs(self.knight.knight_initial_pos[1] - self.knight.knight_pos[1]) == 2):
+            return True
+        else:
+            return False
+
     # def print_solution(self):
     #     '''
     #         A utility function to print Chessboard matrix
@@ -549,7 +570,15 @@ class ChessState:
                         self.find_tour_backtrack_iterative()
                     else:
                         self.tour_found = True
+        else:
+            if self.check_if_closed_tour():
+                self.update_text("Closed Knight's Tour found.")
+            else:
+                self.update_text("Open Knight's Tour found.")
+
+
         self.redraw_board()
+
 
     def find_tour_warnsdorff(self):
         most_empty = 9

@@ -1,17 +1,22 @@
 from random import randint
 import numpy as np
 
-warnsdorff_open_tour_file_path = "warnsdorff_open_structured_tours.txt"
-warnsdorff_closed_tour_file_path = "warnsdorff_closed_structured_tours.txt"
+
+warnsdorff_open_tour_6_6_file_path = "warnsdorff_open_structured_tours_6_6.txt"
+warnsdorff_closed_tour_6_6_file_path = "warnsdorff_closed_structured_tours_6_6.txt"
+warnsdorff_open_tour_7_7_file_path = "warnsdorff_open_structured_tours_7_7.txt"
+warnsdorff_closed_tour_7_7_file_path = "warnsdorff_closed_structured_tours_7_7.txt"
+warnsdorff_open_tour_8_8_file_path = "warnsdorff_open_structured_tours_8_8.txt"
+warnsdorff_closed_tour_8_8_file_path = "warnsdorff_closed_structured_tours_8_8.txt"
 random_open_tour_file_path = "random_open_structured_tours.txt"
 random_closed_tour_file_path = "random_closed_structured_tours.txt"
 
 
 
 class Tour:
-    def __init__(self, dimension, tour_type="random", total_successful_tours=100):
-        x = randint(0, 7)
-        y = randint(0, 7)
+    def __init__(self, dimension, file_paths, tour_type="random", total_successful_tours=100):
+        x = randint(0, dimension-1)
+        y = randint(0, dimension-1)
         self.dimension = dimension
         self.total_squares = dimension**2
         self.graph = np.negative(np.ones([dimension, dimension], dtype=int))
@@ -30,8 +35,8 @@ class Tour:
             self.closed_tour_path = random_closed_tour_file_path
             self.open_tour_path = random_open_tour_file_path
         elif tour_type == "warnsdorff":
-            self.closed_tour_path = warnsdorff_closed_tour_file_path
-            self.open_tour_path = warnsdorff_open_tour_file_path
+            self.closed_tour_path = file_paths[0]
+            self.open_tour_path = file_paths[1]
 
         try:
             fo = open(self.open_tour_path, 'w')
@@ -45,8 +50,8 @@ class Tour:
             print(e)
 
     def reset_board(self):
-        x = randint(0, 7)
-        y = randint(0, 7)
+        x = randint(0, self.dimension-1)
+        y = randint(0, self.dimension-1)
         self.graph = np.negative(np.ones([self.dimension, self.dimension], dtype=int))
         self.tour_found = False
         self.knight_initial_pos = (x, y)
@@ -94,7 +99,7 @@ class Tour:
 
         return True
 
-    def check_if_closed_tour(self, ):
+    def check_if_closed_tour(self):
         if (abs(self.knight_initial_pos[0] - self.knight_pos[0]) == 2
             and abs(self.knight_initial_pos[1] - self.knight_pos[1]) == 1) or \
                 (abs(self.knight_initial_pos[0] - self.knight_pos[0]) == 1 and
@@ -164,7 +169,7 @@ class Tour:
         4. If no valid move is found, remove the square from the log
         """
         # Checks if the square has valid moves, if so, move to that new square
-        while self.knight_step < 64:
+        while self.knight_step < self.dimension*self.dimension:
             r = randint(0, 7)
             dx, dy = self.knight_moves[r][0], self.knight_moves[r][1]
 
@@ -186,7 +191,7 @@ class Tour:
     def find_tour_warnsdorff(self):
         # To give some randomness when choosing a square. Only useful for next squares with the same number of next
         # valid squares
-        while self.knight_step < 64:
+        while self.knight_step < self.dimension*self.dimension:
             least_empty = 9
             least_empty_index = -1
             random_num = randint(0, 1000) % 8
@@ -213,7 +218,7 @@ class Tour:
         return True
 
 
-tours = Tour(8, "warnsdorff", 1000)
+tours = Tour(7, [warnsdorff_closed_tour_7_7_file_path, warnsdorff_open_tour_7_7_file_path], "warnsdorff", 1000)
 tours.generate_tours()
 
 
