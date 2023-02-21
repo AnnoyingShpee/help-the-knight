@@ -30,11 +30,11 @@ class Tour:
         self.closed_tour_path = ""
         self.open_tour_path = ""
         if tour_type == 'random':
-            self.closed_tour_path = f"../Tours/random_closed_structured_tours_{row_dimension}_{col_dimension}.txt"
-            self.open_tour_path = f"../Tours/random_open_structured_tours_{row_dimension}_{col_dimension}.txt"
+            self.closed_tour_path = f"Tours/random_closed_structured_tours_{row_dimension}_{col_dimension}.txt"
+            self.open_tour_path = f"Tours/random_open_structured_tours_{row_dimension}_{col_dimension}.txt"
         elif tour_type == "warnsdorff":
-            self.closed_tour_path = f"../Tours/warnsdorff_closed_structured_tours_{row_dimension}_{col_dimension}.txt"
-            self.open_tour_path = f"../Tours/warnsdorff_open_structured_tours_{row_dimension}_{col_dimension}.txt"
+            self.closed_tour_path = f"Tours/warnsdorff_closed_structured_tours_{row_dimension}_{col_dimension}.txt"
+            self.open_tour_path = f"Tours/warnsdorff_open_structured_tours_{row_dimension}_{col_dimension}.txt"
 
         try:
             fo = open(self.open_tour_path, 'w')
