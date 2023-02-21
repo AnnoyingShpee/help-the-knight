@@ -351,9 +351,10 @@ class ChessState:
         :param text_shown: The string to be displayed underneath the board
         :return:
         """
-        global under_board_text
+        global under_board_text, under_board_details, under_board_rect
         under_board_text = TEXT_FONT.render(text_shown, True, under_board_details.text_color)
-
+        pg.draw.rect(SCREEN, under_board_details.color, under_board_rect)
+        SCREEN.blit(under_board_text, board_text_rect)
 
     def draw_lines(self):
         i = 2
@@ -484,9 +485,9 @@ class ChessState:
         SCREEN.blit(fps_text, fps_text_rect)
         # Display text underneath board
         if self.warnsdorff:
-            under_board_text = TEXT_FONT.render(f"Warnsdorff's Method at {self.fps} FPS", True, under_board_details.text_color)
+            self.update_text(f"Warnsdorff's Method at {self.fps} FPS")
         else:
-            under_board_text = TEXT_FONT.render(f"Backtrack Method at {self.fps} FPS", True, under_board_details.text_color)
+            self.update_text(f"Backtrack Method at {self.fps} FPS")
         pg.draw.rect(SCREEN, under_board_details.color, under_board_rect)
         SCREEN.blit(under_board_text, board_text_rect)
 

@@ -1,25 +1,23 @@
 from random import randint
 import numpy as np
 
-
-warnsdorff_open_tour_6_6_file_path = "warnsdorff_open_structured_tours_6_6.txt"
-warnsdorff_closed_tour_6_6_file_path = "warnsdorff_closed_structured_tours_6_6.txt"
-warnsdorff_open_tour_7_7_file_path = "warnsdorff_open_structured_tours_7_7.txt"
-warnsdorff_closed_tour_7_7_file_path = "warnsdorff_closed_structured_tours_7_7.txt"
-warnsdorff_open_tour_8_8_file_path = "warnsdorff_open_structured_tours_8_8.txt"
-warnsdorff_closed_tour_8_8_file_path = "warnsdorff_closed_structured_tours_8_8.txt"
-random_open_tour_file_path = "random_open_structured_tours.txt"
-random_closed_tour_file_path = "random_closed_structured_tours.txt"
-
-
+# warnsdorff_open_tour_6_6_file_path = "warnsdorff_open_structured_tours_6_6.txt"
+# warnsdorff_closed_tour_6_6_file_path = "warnsdorff_closed_structured_tours_6_6.txt"
+# warnsdorff_open_tour_7_7_file_path = "warnsdorff_open_structured_tours_7_7.txt"
+# warnsdorff_closed_tour_7_7_file_path = "warnsdorff_closed_structured_tours_7_7.txt"
+# warnsdorff_open_tour_8_8_file_path = "warnsdorff_open_structured_tours_8_8.txt"
+# warnsdorff_closed_tour_8_8_file_path = "warnsdorff_closed_structured_tours_8_8.txt"
+# random_open_tour_file_path = "random_open_structured_tours.txt"
+# random_closed_tour_file_path = "random_closed_structured_tours.txt"
 
 class Tour:
-    def __init__(self, dimension, file_paths, tour_type="random", total_successful_tours=100):
-        x = randint(0, dimension-1)
-        y = randint(0, dimension-1)
-        self.dimension = dimension
-        self.total_squares = dimension**2
-        self.graph = np.negative(np.ones([dimension, dimension], dtype=int))
+    def __init__(self, row_dimension, col_dimension, tour_type="random", total_successful_tours=100):
+        x = randint(0, row_dimension-1)
+        y = randint(0, col_dimension-1)
+        self.row_dimension = row_dimension
+        self.col_dimension = col_dimension
+        self.total_squares = row_dimension * col_dimension
+        self.graph = np.negative(np.ones([row_dimension, col_dimension], dtype=int))
         self.knight_moves = ((2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1))
         self.knight_initial_pos = (x, y)
         self.knight_pos = (x, y)
@@ -32,11 +30,11 @@ class Tour:
         self.closed_tour_path = ""
         self.open_tour_path = ""
         if tour_type == 'random':
-            self.closed_tour_path = random_closed_tour_file_path
-            self.open_tour_path = random_open_tour_file_path
+            self.closed_tour_path = f"random_closed_structured_tours_{row_dimension}_{col_dimension}.txt"
+            self.open_tour_path = f"random_open_structured_tours_{row_dimension}_{col_dimension}.txt"
         elif tour_type == "warnsdorff":
-            self.closed_tour_path = file_paths[0]
-            self.open_tour_path = file_paths[1]
+            self.closed_tour_path = f"warnsdorff_closed_structured_tours_{row_dimension}_{col_dimension}.txt"
+            self.open_tour_path = f"warnsdorff_open_structured_tours_{row_dimension}_{col_dimension}.txt"
 
         try:
             fo = open(self.open_tour_path, 'w')
@@ -50,9 +48,9 @@ class Tour:
             print(e)
 
     def reset_board(self):
-        x = randint(0, self.dimension-1)
-        y = randint(0, self.dimension-1)
-        self.graph = np.negative(np.ones([self.dimension, self.dimension], dtype=int))
+        x = randint(0, self.row_dimension-1)
+        y = randint(0, self.col_dimension-1)
+        self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
         self.tour_found = False
         self.knight_initial_pos = (x, y)
         self.knight_pos = (x, y)
@@ -63,8 +61,8 @@ class Tour:
 
         try:
             file_append = open(file_path, 'a')
-            for i in range(self.dimension):
-                for j in range(self.dimension):
+            for i in range(self.row_dimension):
+                for j in range(self.col_dimension):
                     item = self.graph[i][j]
                     print(item, end=' ')
                     file_append.write(str(item))
@@ -78,14 +76,23 @@ class Tour:
             print(ex)
 
     def check_if_structured_tour(self):
-        last_square = self.dimension - 1
-        second_last = last_square - 1
-        third_last = second_last - 1
+        row_last_square = self.row_dimension - 1
+        row_second_last = row_last_square - 1
+        row_third_last = row_second_last - 1
+        col_last_square = self.col_dimension - 1
+        col_second_last = col_last_square - 1
+        col_third_last = col_second_last - 1
+        # List of squares to be checked [(Row squares), (Col squares)]
         to_be_checked = [
-            [(0, 1), (0, 2), (2, 0), (1, 0)],  # Top left corner
-            [(0, third_last), (0, second_last), (1, last_square), (2, last_square)],  # Top right corner
-            [(last_square, 1), (last_square, 2), (third_last, 0), (second_last, 0)],  # Bottom left corner
-            [(last_square, third_last), (last_square, second_last), (second_last, last_square), (third_last, last_square)],  # Bottom right corner
+            # Top left corner
+            [(0, 1), (0, 2), (2, 0), (1, 0)],
+            # Top right corner
+            [(0, col_third_last), (0, col_second_last), (1, col_last_square), (2, col_last_square)],
+            # Bottom left corner
+            [(row_last_square, 1), (row_last_square, 2), (row_third_last, 0), (row_second_last, 0)],
+            # Bottom right corner
+            [(row_last_square, col_third_last), (row_last_square, col_second_last),
+             (row_second_last, col_last_square), (row_third_last, col_last_square)],
         ]
         for corner in to_be_checked:
             for i in range(2):
@@ -140,7 +147,7 @@ class Tour:
             :param x: row number of square
             :param y: column number of square
         """
-        if 0 <= x < self.dimension and 0 <= y < self.dimension and self.graph[x][y] == -1:
+        if 0 <= x < self.row_dimension and 0 <= y < self.col_dimension and self.graph[x][y] == -1:
             return True
         return False
 
@@ -169,7 +176,7 @@ class Tour:
         4. If no valid move is found, remove the square from the log
         """
         # Checks if the square has valid moves, if so, move to that new square
-        while self.knight_step < self.dimension*self.dimension:
+        while self.knight_step < self.row_dimension*self.col_dimension:
             r = randint(0, 7)
             dx, dy = self.knight_moves[r][0], self.knight_moves[r][1]
 
@@ -191,7 +198,7 @@ class Tour:
     def find_tour_warnsdorff(self):
         # To give some randomness when choosing a square. Only useful for next squares with the same number of next
         # valid squares
-        while self.knight_step < self.dimension*self.dimension:
+        while self.knight_step < self.row_dimension*self.col_dimension:
             least_empty = 9
             least_empty_index = -1
             random_num = randint(0, 1000) % 8
@@ -218,7 +225,7 @@ class Tour:
         return True
 
 
-tours = Tour(7, [warnsdorff_closed_tour_7_7_file_path, warnsdorff_open_tour_7_7_file_path], "warnsdorff", 1000)
+tours = Tour(11, 12, "warnsdorff", 1000)
 tours.generate_tours()
 
 
