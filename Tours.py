@@ -1,5 +1,6 @@
 from random import randint
 import numpy as np
+import threading
 
 # warnsdorff_open_tour_6_6_file_path = "warnsdorff_open_structured_tours_6_6.txt"
 # warnsdorff_closed_tour_6_6_file_path = "warnsdorff_closed_structured_tours_6_6.txt"
@@ -151,18 +152,6 @@ class Tour:
             return True
         return False
 
-    # def find_tour(self):
-    #     """
-    #     Function chooses the algorithm selected to find the tour
-    #     :return:
-    #     """
-    #     # First checks whether tour has already been found
-    #     if not self.tour_found:
-    #         if self.knight_step < 64:
-    #             self.find_tour_random_walk()
-    #         else:
-    #             self.tour_found = True
-
     def find_tour_random_walk(self):
         """
         This function uses a non-recursive backtracking algorithm to solve the knight's tour. This is a brute force
@@ -223,6 +212,9 @@ class Tour:
 
         self.tour_found = True
         return True
+
+    def find_tour_divide_and_conquer(self):
+        return
 
 
 tours = Tour(11, 12, "warnsdorff", 1000)

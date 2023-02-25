@@ -3,7 +3,7 @@ import sys
 import pygame as pg
 import numpy as np
 import random
-import timeit
+from datetime import datetime
 import Components
 
 pg.init()
@@ -23,14 +23,6 @@ BUTTON_FONT = pg.font.SysFont('Arial', 30)  # Font for buttons
 BOARD_FONT = pg.font.SysFont('Arial', 20)  # Font for numbering the steps
 TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text
 # DEFAULT_CURSOR = pg.mouse.get_cursor()
-FPS = 60
-clock = pg.time.Clock()
-
-# start_button = pg.Rect(600, 50, 230, 40)
-# reset_button = pg.Rect(600, 170, 230, 40)
-# backtrack_button = pg.Rect(600, 290, 230, 40)
-# warnsdorff_button = pg.Rect(600, 410, 230, 40)
-# quit_button = pg.Rect(600, 530, 230, 40)
 
 # Buttons
 button_text_color = (255, 255, 255)
@@ -52,9 +44,7 @@ warnsdorff_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 3,
 # Buttons to change FPS
 fps_down_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
                                      button_color, button_text_color, hover_button_color)
-# fps_up_details = Components.Square((x_axis // 10) * 6.5, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
-#                                    button_color, button_text_color, hover_button_color)
-fps_up_details = Components.Square(warnsdorff_details.x_pos+warnsdorff_details.width - (x_axis // 100) * 5,
+fps_up_details = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
                                    (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
                                    button_color, button_text_color, hover_button_color)
 
@@ -68,6 +58,7 @@ fps_up_button = fps_up_details.rect
 
 # Button text color
 start_text = BUTTON_FONT.render("Start", True, start_details.text_color)
+pause_text = BUTTON_FONT.render("Pause", True, start_details.text_color)
 reset_text = BUTTON_FONT.render("Reset", True, reset_details.text_color)
 quit_text = BUTTON_FONT.render("Quit", True, quit_details.text_color)
 backtrack_text = BUTTON_FONT.render("Backtrack Method", True, backtrack_details.text_color)
@@ -77,50 +68,58 @@ fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
 
 # Center the text in their buttons
 start_text_rect = start_text.get_rect(
-    center=(start_details.x_pos + (start_details.width//2),
-            start_details.y_pos + (start_details.height//2))
+    center=(start_details.x_pos + (start_details.width // 2),
+            start_details.y_pos + (start_details.height // 2))
 )
 reset_text_rect = reset_text.get_rect(
-    center=(reset_details.x_pos + (reset_details.width//2),
-            reset_details.y_pos + (reset_details.height//2))
+    center=(reset_details.x_pos + (reset_details.width // 2),
+            reset_details.y_pos + (reset_details.height // 2))
 )
 quit_text_rect = quit_text.get_rect(
-    center=(quit_details.x_pos + (quit_details.width//2),
-            quit_details.y_pos + (quit_details.height//2))
+    center=(quit_details.x_pos + (quit_details.width // 2),
+            quit_details.y_pos + (quit_details.height // 2))
 )
 backtrack_text_rect = backtrack_text.get_rect(
-    center=(backtrack_details.x_pos + (backtrack_details.width//2),
-            backtrack_details.y_pos + (backtrack_details.height//2))
+    center=(backtrack_details.x_pos + (backtrack_details.width // 2),
+            backtrack_details.y_pos + (backtrack_details.height // 2))
 )
 warnsdorff_text_rect = warnsdorff_text.get_rect(
-    center=(warnsdorff_details.x_pos + (warnsdorff_details.width//2),
-            warnsdorff_details.y_pos + (warnsdorff_details.height//2))
+    center=(warnsdorff_details.x_pos + (warnsdorff_details.width // 2),
+            warnsdorff_details.y_pos + (warnsdorff_details.height // 2))
 )
 fps_down_text_rect = fps_down_text.get_rect(
-    center=(fps_down_details.x_pos + (fps_down_details.width//2),
-            fps_down_details.y_pos + (fps_down_details.height//2))
+    center=(fps_down_details.x_pos + (fps_down_details.width // 2),
+            fps_down_details.y_pos + (fps_down_details.height // 2))
 )
 fps_up_text_rect = fps_up_text.get_rect(
-    center=(fps_up_details.x_pos + (fps_up_details.width//2),
-            fps_up_details.y_pos + (fps_up_details.height//2))
+    center=(fps_up_details.x_pos + (fps_up_details.width // 2),
+            fps_up_details.y_pos + (fps_up_details.height // 2))
 )
 
 # Game text under the chessboard
 text_color = (0, 0, 0)
-under_board_details = Components.Square(50, 50+BOARD_SIZE[1], BOARD_SIZE[0], BOARD_SIZE[1]//8, pg, BACKGROUND_COLOUR, text_color)
-under_board_rect = under_board_details.rect
-under_board_text = TEXT_FONT.render("Backtrack Method at 30 FPS", True, under_board_details.text_color)
-board_text_rect = under_board_text.get_rect(
-    center=(under_board_details.x_pos+(under_board_details.width//2),
-            under_board_details.y_pos+(under_board_details.height//2))
-)
+under_board_line_details = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
+                                             BACKGROUND_COLOUR, text_color)
+under_board_rect = under_board_line_details.rect
+# under_board_line_1_text = TEXT_FONT.render("Backtrack Algorithm at 30 FPS", True, under_board_line_details.text_color)
+# under_board_line_1_text_rect = under_board_line_1_text.get_rect(
+#     center=(under_board_line_details.x_pos + (under_board_line_details.width // 2),
+#             under_board_line_details.y_pos + (under_board_line_details.height // 5))
+# )
+# under_board_line_2_text = TEXT_FONT.render("Backtrack Algorithm at 30 FPS", True, under_board_line_details.text_color)
+# under_board_line_2_text_rect = under_board_line_2_text.get_rect(
+#     center=(under_board_line_details.x_pos + (under_board_line_details.width // 2),
+#             under_board_line_details.y_pos + (under_board_line_details.height // 2))
+# )
+
+
 # Area to display FPS text
 fps_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 10) * 2, y_axis // 20, pg,
                                 button_color, text_color)
 fps_text = BUTTON_FONT.render("FPS", True, fps_details.text_color)
 fps_text_rect = fps_text.get_rect(
-    center=(fps_details.x_pos+(fps_details.width//2),
-            fps_details.y_pos+(fps_details.height//2))
+    center=(fps_details.x_pos + (fps_details.width // 2),
+            fps_details.y_pos + (fps_details.height // 2))
 )
 # fps_text_rect = fps_text.get_rect(center=(fps_details.x_pos + fps_details.x_pos + ))
 
@@ -138,6 +137,8 @@ icon = pg.image.load("knight_piece.png")
 pg.display.set_icon(icon)
 # Create knight piece image
 knight_piece = pg.image.load("knight_piece.png")
+
+
 # Replaces cursor with a knight image
 # knight_cursor = pg.image.load("knight_piece.png")
 
@@ -147,11 +148,50 @@ knight_piece = pg.image.load("knight_piece.png")
 #         self.traversed = -1
 #         self.refresh = False
 
+def update_below_board_text(text, extra_text=None):
+    """
+    Used to update the text box below the board.
+    :param text: The string to be displayed underneath the board
+    :param extra_text: Extra info to be displayed below text
+    :return:
+    """
+    global under_board_line_details, under_board_rect
+    # words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
+    # space = TEXT_FONT.size(' ')[0]  # The width of a space.
+    # max_width, max_height = SCREEN.get_size()
+    # x, y = under_board_details.x_pos, under_board_details.y_pos
+    # for line in words:
+    #     for word in line:
+    #         word_surface = TEXT_FONT.render(word, 0, under_board_details.text_color)
+    #         word_width, word_height = word_surface.get_size()
+    #         if x + word_width >= max_width:
+    #             x = under_board_details.x_pos  # Reset the x.
+    #             y += word_height  # Start on new row.
+    #         SCREEN.blit(word_surface, (x, y))
+    #         x += word_width + space
+    #     x = under_board_details.x_pos  # Reset the x.
+    #     y += word_height  # Start on new row.
+
+    under_board_line_1_text = TEXT_FONT.render(text, True, under_board_line_details.text_color)
+    under_board_line_1_text_rect = under_board_line_1_text.get_rect(
+        center=(under_board_line_details.x_pos + (under_board_line_details.width // 2),
+                under_board_line_details.y_pos + (under_board_line_details.height // 5))
+    )
+    pg.draw.rect(SCREEN, under_board_line_details.color, under_board_rect)
+    SCREEN.blit(under_board_line_1_text, under_board_line_1_text_rect)
+    if extra_text is not None:
+        under_board_line_2_text = TEXT_FONT.render(extra_text, True, under_board_line_details.text_color)
+        under_board_line_2_text_rect = under_board_line_2_text.get_rect(
+            center=(under_board_line_details.x_pos + (under_board_line_details.width // 2),
+                    under_board_line_details.y_pos + (under_board_line_details.height // 2))
+        )
+        SCREEN.blit(under_board_line_2_text, under_board_line_2_text_rect)
+
+
 class Board:
     def __init__(self, dimension):
         self.dimension = dimension
         self.graph = np.negative(np.ones([dimension, dimension], dtype=int))
-
 
     def draw_board(self):
         # Draw chessboard. Top left square is always light color
@@ -184,13 +224,12 @@ class Board:
         furthest_node = self.graph.max()
         if (self.graph[row][col] != -1 and self.graph[row][col] != furthest_node) \
                 or self.graph[row][col] == self.dimension ** 2:
-            stamp = ((col * SQ_SIZE) + OFFSET[0] + SQ_SIZE//2, (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE//2)
+            stamp = ((col * SQ_SIZE) + OFFSET[0] + SQ_SIZE // 2, (row * SQ_SIZE) + OFFSET[1] + SQ_SIZE // 2)
             # print((row, col), "stamp = ", stamp)
             pg.draw.circle(SCREEN, (255, 0, 0), stamp, 30)
             number = self.graph[row][col]
             SCREEN.blit(BOARD_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
-                        (stamp[0] - SQ_SIZE*0.14, stamp[1] - SQ_SIZE*0.13))
-
+                        (stamp[0] - SQ_SIZE * 0.14, stamp[1] - SQ_SIZE * 0.13))
 
 
 class Knight:
@@ -207,6 +246,7 @@ class Knight:
         self.knight_step = 1
         self.move_log = []  # Contains the squares traversed and next
         self.possible_moves = []
+        self.steps_done = 0
 
     def draw_knight(self):
         SCREEN.blit(knight_piece,
@@ -225,11 +265,15 @@ class ChessState:
         self.state = "start"
         self.tour_found = False  # Whether knight tour is found
         self.running = True  # Whether game is running
-        self.warnsdorff = False
+        self.tour_type = "Backtrack"
         self.move_done = False
         self.fps = 30
         self.last_frame_tick = 0
         self.board.draw_board()
+        self.time_start = datetime.now()
+        self.duration = 0
+        # Display text underneath board
+        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
 
     def reset_board(self):
         self.board.graph = np.negative(np.ones([self.board.dimension, self.board.dimension], dtype=int))
@@ -240,20 +284,28 @@ class ChessState:
         self.knight.knight_pos = None
         self.knight.knight_step = 1
         self.knight.move_log = []
+        self.knight.steps_done = 0
+        self.time_start = 0.0
+        self.duration = 0.0
         SCREEN.fill(BACKGROUND_COLOUR)
         self.board.draw_board()
+        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
 
     def redo_tour(self):
         self.state = "touring"
         self.board.graph = np.negative(np.ones([self.board.dimension, self.board.dimension], dtype=int))
+        self.board.graph[self.knight.knight_initial_pos[0]][self.knight.knight_initial_pos[1]] = 1
         self.knight.knight_step = 1
-        self.knight.move_log = []
+        self.knight.move_log = [(self.knight.knight_initial_pos[0], self.knight.knight_initial_pos[1], 0)]
         self.knight.knight_pos = self.knight.knight_initial_pos
+        self.time_start = datetime.now()
+        self.duration = 0.0
+        self.knight.steps_done = 0
         SCREEN.fill(BACKGROUND_COLOUR)
         self.board.draw_board()
 
     def redraw_board(self):
-        if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000/self.fps:
+        if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000 / self.fps:
             furthest_node = self.board.graph.max()
             self.board.draw_board()
             self.draw_lines()
@@ -273,7 +325,6 @@ class ChessState:
             pg.display.update()
             self.last_frame_tick = pg.time.get_ticks()
             self.move_done = False
-
 
     def increase_fps(self):
         global fps_up_text, fps_down_text
@@ -312,7 +363,7 @@ class ChessState:
 
     # Checks if user selected the same square twice. If so, remove the knight
     def place_first_knight(self, selected_sq):
-        if self.state == "touring":
+        if self.state == "touring" or self.state == "pause":
             return
         row = selected_sq[0]
         col = selected_sq[1]
@@ -344,18 +395,6 @@ class ChessState:
             self.knight.move_log.append((row, col, 0))
             self.knight.draw_knight()
 
-    def update_text(self, text_shown):
-        """
-        Used to update the text box below the board.
-        :param text_component: The component for the text
-        :param text_shown: The string to be displayed underneath the board
-        :return:
-        """
-        global under_board_text, under_board_details, under_board_rect
-        under_board_text = TEXT_FONT.render(text_shown, True, under_board_details.text_color)
-        pg.draw.rect(SCREEN, under_board_details.color, under_board_rect)
-        SCREEN.blit(under_board_text, board_text_rect)
-
     def draw_lines(self):
         i = 2
         # print("Moves =", self.knight.move_log)
@@ -380,16 +419,21 @@ class ChessState:
                 mouse_pos = pg.mouse.get_pos()
                 # On board area
                 if OFFSET[0] < mouse_pos[0] < OFFSET[0] + BOARD_SIZE[0] and \
-                   OFFSET[1] < mouse_pos[1] < OFFSET[1] + BOARD_SIZE[1]:
+                        OFFSET[1] < mouse_pos[1] < OFFSET[1] + BOARD_SIZE[1]:
                     row = (mouse_pos[1] - OFFSET[1]) // SQ_SIZE
                     col = (mouse_pos[0] - OFFSET[0]) // SQ_SIZE
                     sq_selected = (row, col)
                     self.place_first_knight(sq_selected)
                 # On Start Button. To start the tour
                 elif start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
-                    and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height \
-                        and self.knight.knight_placed:
-                    self.state = "touring"
+                        and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height \
+                        and self.knight.knight_placed and not self.tour_found:
+                    if self.state == "touring":
+                        self.state = "pause"
+                        self.duration += (datetime.now() - self.time_start).total_seconds()
+                    else:
+                        self.state = "touring"
+                        self.time_start = datetime.now()
                 # On Reset Button. Resets the board
                 elif reset_details.x_pos <= mouse_pos[0] <= reset_details.x_pos + reset_details.width \
                         and reset_details.y_pos <= mouse_pos[1] <= reset_details.y_pos + reset_details.height:
@@ -400,36 +444,46 @@ class ChessState:
                     self.running = False
                 # On Backtrack Button. Change the tour finding method to backtracking
                 elif backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
-                    and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height \
-                        and self.state != "touring":
-                    self.warnsdorff = False
-                    # pg.draw.rect(SCREEN, BACKGROUND_COLOUR, )
+                        and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height \
+                        and not (self.state == "touring" or self.state == "pause"):
+                    self.tour_type = "Backtrack"
+                    # Display text underneath board
+                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
+                    # pg.draw.rect(SCREEN, under_board_details.color, under_board_rect)
+                    # SCREEN.blit(under_board_text, board_text_rect)
                 # On Warnsdorff Button. Change the tour finding method to Warnsdorff
                 elif warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
-                    and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height \
-                        and self.state != "touring":
-                    self.warnsdorff = True
+                        and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height \
+                        and not (self.state == "touring" or self.state == "pause"):
+                    self.tour_type = "Warnsdorff"
+                    # Display text underneath board
+                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
+                    # pg.draw.rect(SCREEN, under_board_details.color, under_board_rect)
+                    # SCREEN.blit(under_board_text, board_text_rect)
                 elif fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
                         and fps_down_details.y_pos <= mouse_pos[1] <= fps_down_details.y_pos + fps_down_details.height:
                     self.decrease_fps()
+                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
                 elif fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
                         and fps_down_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
                     self.increase_fps()
-
+                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
         self.display_components(mouse_pos)
         pg.display.update()
 
     def display_components(self, mouse_pos):
-        global under_board_text
         # Draw the buttons and text
-        # Display Start button
+        # Display Start/Pause button
         if start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
                 and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height:
             pg.draw.rect(SCREEN, hover_button_color, start_button)
         else:
             pg.draw.rect(SCREEN, button_color, start_button)
         # SCREEN.blit(start_text, (start_details.x_pos + (5*start_details.width//10), start_details.y_pos + 5))
-        SCREEN.blit(start_text, start_text_rect)
+        if self.state == "touring":
+            SCREEN.blit(pause_text, start_text_rect)
+        else:
+            SCREEN.blit(start_text, start_text_rect)
         # Display Reset button
         if reset_details.x_pos <= mouse_pos[0] <= reset_details.x_pos + reset_details.width \
                 and reset_details.y_pos <= mouse_pos[1] <= reset_details.y_pos + reset_details.height:
@@ -447,7 +501,7 @@ class ChessState:
         # SCREEN.blit(quit_text, (quit_details.x_pos + (4 * quit_details.width // 10), quit_details.y_pos + 5))
         SCREEN.blit(quit_text, quit_text_rect)
         # Sets visibility of knight's tour buttons
-        if self.warnsdorff:
+        if self.tour_type == "Warnsdorff":
             # Display Backtrack button
             if backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
                     and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height:
@@ -457,7 +511,7 @@ class ChessState:
             SCREEN.blit(backtrack_text, backtrack_text_rect)
             # Remove Warnsdorff button
             pg.draw.rect(SCREEN, BACKGROUND_COLOUR, warnsdorff_button)
-        else:
+        elif self.tour_type == "Backtrack":
             # Display Warnsdorff button
             if warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
                     and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height:
@@ -483,13 +537,6 @@ class ChessState:
         SCREEN.blit(fps_up_text, fps_up_text_rect)
         # Display FPS text
         SCREEN.blit(fps_text, fps_text_rect)
-        # Display text underneath board
-        if self.warnsdorff:
-            self.update_text(f"Warnsdorff's Method at {self.fps} FPS")
-        else:
-            self.update_text(f"Backtrack Method at {self.fps} FPS")
-        pg.draw.rect(SCREEN, under_board_details.color, under_board_rect)
-        SCREEN.blit(under_board_text, board_text_rect)
 
     def is_valid_move(self, x, y):
         """
@@ -518,70 +565,37 @@ class ChessState:
         else:
             return False
 
-    # def print_solution(self):
-    #     '''
-    #         A utility function to print Chessboard matrix
-    #     '''
-    #     for i in range(self.dimensions):
-    #         for j in range(self.dimensions):
-    #             print(self.board[i][j], end=' ')
-    #         print()
-    #     print()
-
-    # def find_tour(self):
-    #     """
-    #     Function chooses the algorithm selected to find the tour
-    #     :return:
-    #     """
-    #     # First checks whether tour has already been found
-    #     if not self.tour_found:
-    #         # Checks type of algorithm used to find tour
-    #         if self.warnsdorff:
-    #             if self.knight.knight_step < 64:
-    #                 self.find_tour_warnsdorff()
-    #             else:
-    #                 self.tour_found = True
-    #         else:
-    #             if len(self.knight.move_log) == 0:
-    #                 self.state = "fail"
-    #             if self.knight.knight_step < 64:
-    #                 self.find_tour_backtrack_iterative()
-    #             else:
-    #                 self.tour_found = True
-    #     self.redraw_board()
-
     def find_tour(self):
         """
-        Function chooses the algorithm selected to find the tour
+        Function chooses the algorithm selected to find the tour.
         :return:
         """
         # First checks whether tour has already been found
         if not self.tour_found:
             if not self.move_done:
-                # Checks type of algorithm used to find tour
-                if self.warnsdorff:
-                    if self.knight.knight_step < 64:
+                if self.knight.knight_step < self.board.dimension * self.board.dimension:
+                    # Checks type of algorithm used to find tour
+                    if self.tour_type == "Warnsdorff":
                         self.find_tour_warnsdorff()
-                    else:
-                        self.tour_found = True
-                else:
-                    if len(self.knight.move_log) == 0:
-                        self.state = "fail"
-                    if self.knight.knight_step < 64:
+                    elif self.tour_type == "Backtrack":
                         self.find_tour_backtrack_iterative()
+                else:
+                    self.tour_found = True
+                    self.duration += (datetime.now() - self.time_start).total_seconds()
+                    if self.check_if_closed_tour():
+                        update_below_board_text(f"Closed Knight's Tour found using {self.tour_type}",
+                                                f"({self.knight.steps_done} moves in {round(self.duration, 2)} seconds)")
                     else:
-                        self.tour_found = True
-        else:
-            if self.check_if_closed_tour():
-                self.update_text("Closed Knight's Tour found.")
-            else:
-                self.update_text("Open Knight's Tour found.")
-
-
+                        update_below_board_text(f"Opened Knight's Tour found using {self.tour_type}",
+                                                f"({self.knight.steps_done} moves in {round(self.duration, 2)} seconds)")
         self.redraw_board()
 
-
     def find_tour_warnsdorff(self):
+        """
+        This function uses Warnsdorff's Heuristic to solve the knight's tour.
+
+        :return:
+        """
         most_empty = 9
         most_empty_index = -1
 
@@ -611,6 +625,7 @@ class ChessState:
         self.knight.knight_pos = (new_x, new_y)
         self.knight.move_log.append((new_x, new_y))
         self.move_done = True
+        self.knight.steps_done += 1
 
     def find_tour_backtrack_iterative(self):
         """
@@ -651,6 +666,7 @@ class ChessState:
             self.knight.move_log.pop()
             self.knight.knight_pos = (self.knight.move_log[-1][0], self.knight.move_log[-1][1])
         self.move_done = True
+        self.knight.steps_done += 1
 
     def update_frame(self):
         """
@@ -659,8 +675,11 @@ class ChessState:
         """
         if self.state == "touring":
             self.find_tour()
-        if self.state == "fail":
+        if self.state == "fail" and self.tour_type == "Warnsdorff":
             self.redo_tour()
+            update_below_board_text("Warnsdorff algorithm failed to find a tour. Retrying.")
+        if self.state == "pause":
+            pass
         if not self.running:
             # stop = timeit.default_timer()
             # print('Time: ', stop - start, "seconds")
@@ -669,6 +688,16 @@ class ChessState:
             sys.exit()
         self.check_event()
         pg.event.pump()
+
+    # def print_solution(self):
+    #     '''
+    #         A utility function to print Chessboard matrix
+    #     '''
+    #     for i in range(self.dimensions):
+    #         for j in range(self.dimensions):
+    #             print(self.board[i][j], end=' ')
+    #         print()
+    #     print()
 
 
 def main():
@@ -684,7 +713,6 @@ if __name__ == "__main__":
     # start = timeit.default_timer()
     # chess_state = ChessState(8)
     # chess_state.find_tour()
-    start = timeit.default_timer()
     main()
     # stop = timeit.default_timer()
     # print('Time: ', stop - start)
