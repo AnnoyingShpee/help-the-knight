@@ -220,6 +220,7 @@ class Knight:
         self.possible_moves = []
         self.steps_done = 0
         self.knight_img = pg.image.load("knight_piece.png")
+        self.move_font_size = pg.font.SysFont("Arial", 20)
 
 
 class Board:
@@ -264,6 +265,11 @@ class Board:
         self.board_size = ((y_axis // 10) * row, (y_axis // 10) * col)
         self.sq_x_length = self.board_size[1] // self.col_dimension
         self.sq_y_length = self.board_size[0] // self.row_dimension
+        if self.sq_x_length < self.sq_y_length:
+            self.knight.move_font_size = pg.font.SysFont("Arial", self.sq_x_length // 4)
+        else:
+            self.knight.move_font_size = pg.font.SysFont("Arial", self.sq_y_length // 4)
+        self.knight.knight_img = pg.transform.scale(self.knight.knight_img, (self.sq_x_length*0.8, self.sq_y_length*0.8))
         self.draw_board()
 
     def decrease_row(self):
@@ -313,9 +319,12 @@ class Board:
             stamp = ((col * self.sq_x_length) + OFFSET[0] + self.sq_x_length // 2,
                      (row * self.sq_y_length) + OFFSET[1] + self.sq_y_length // 2)
             # print((row, col), "stamp = ", stamp)
-            pg.draw.circle(SCREEN, (255, 0, 0), stamp, 30)
+            if self.sq_x_length < self.sq_y_length:
+                pg.draw.circle(SCREEN, (255, 0, 0), stamp, self.sq_x_length // 4)
+            else:
+                pg.draw.circle(SCREEN, (255, 0, 0), stamp, self.sq_y_length // 4)
             number = self.graph[row][col]
-            SCREEN.blit(MOVES_FONT.render(f"{number: 03d}", True, (255, 255, 255)),
+            SCREEN.blit(self.knight.move_font_size.render(f"{number: 03d}", True, (0, 0, 0)),
                         (stamp[0] - self.sq_x_length * 0.14, stamp[1] - self.sq_y_length * 0.13))
 
 
@@ -350,6 +359,12 @@ class ChessState:
         self.board.knight.knight_step = 1
         self.board.knight.move_log = []
         self.board.knight.steps_done = 0
+        self.board.board_size = ((y_axis // 10) * row_dimension, (y_axis // 10) * col_dimension)  # Size of board
+        self.row_dimension = row_dimension
+        self.col_dimension = col_dimension
+        self.graph = np.negative(np.ones([row_dimension, col_dimension], dtype=int))
+        self.sq_x_length = BOARD_SIZE[0] // col_dimension
+        self.sq_y_length = BOARD_SIZE[0] // row_dimension
         self.time_start = 0.0
         self.duration = 0.0
         SCREEN.fill(BACKGROUND_COLOUR)
@@ -368,6 +383,7 @@ class ChessState:
         self.board.knight.steps_done = 0
         SCREEN.fill(BACKGROUND_COLOUR)
         self.board.draw_board()
+        update_below_board_text("Warnsdorff algorithm failed to find a tour.", f"Retry No. {self.tour_failures}")
 
     def redraw_board(self):
         if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000 / self.fps:
@@ -382,7 +398,7 @@ class ChessState:
                 self.board.draw_number(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
             else:
                 # print("Draw Knight")
-                SCREEN.blit(knight_piece,
+                SCREEN.blit(self.board.knight.knight_img,
                             pg.Rect((self.board.knight.knight_pos[1] * self.board.sq_x_length) +
                                     OFFSET[0] + self.board.sq_x_length // 8,
                                     (self.board.knight.knight_pos[0] * self.board.sq_y_length) +
@@ -515,14 +531,15 @@ class ChessState:
                 # On Backtrack Button. Change the tour finding method to backtracking
                 elif backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
                         and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height \
-                        and not (self.state == "touring" or self.state == "pause"):
+                        and (self.state == "start" or self.state == "ready"):
                     self.tour_type = "Backtrack"
                     # Display text underneath board
                     update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
                 # On Warnsdorff Button. Change the tour finding method to Warnsdorff
                 elif warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
                         and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height \
-                        and not (self.state == "touring" or self.state == "pause"):
+                        and (self.state == "start" or self.state == "ready"):
+                        # and not (self.state == "touring" or self.state == "pause" or self.state == "fail"):
                     self.tour_type = "Warnsdorff"
                     # Display text underneath board
                     update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
@@ -736,6 +753,9 @@ class ChessState:
 
         if most_empty_index == -1:
             self.state = "fail"
+            self.tour_failures += 1
+            if self.tour_failures >= 5:
+                update_below_board_text("Warnsdorff algorithm failed to find a tour after 5 tries.", "Stopping the tour")
             return False
 
         new_x = self.board.knight.knight_pos[0] + self.board.knight.knight_moves[most_empty_index][0]
@@ -791,7 +811,6 @@ class ChessState:
         self.move_done = True
         self.board.knight.steps_done += 1
 
-
     def update_frame(self):
         """
         Process flow that determines the next behaviour of the game state before updating display
@@ -800,8 +819,8 @@ class ChessState:
         if self.state == "touring":
             self.find_tour()
         if self.state == "fail" and self.tour_type == "Warnsdorff":
-            self.redo_tour()
-            update_below_board_text("Warnsdorff algorithm failed to find a tour. Retrying.")
+            if self.tour_failures <= 5:
+                self.redo_tour()
         if self.state == "fail" and self.tour_type == "Backtrack":
             update_below_board_text("Backtrack algorithm failed to find a tour.", "No reason to brute force again.")
         if self.state == "pause":
