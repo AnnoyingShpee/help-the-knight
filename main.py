@@ -24,6 +24,9 @@ MOVES_FONT = pg.font.SysFont('Arial', 20)  # Font for numbering the steps
 TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text
 # DEFAULT_CURSOR = pg.mouse.get_cursor()
 
+warnsdorff_time_path = "Simulations/Warnsdorff_ui_times.csv"
+backtrack_time_path = "Simulations/Backtrack_ui_times.csv"
+
 # Buttons
 button_text_color = (255, 255, 255)
 button_color = (100, 100, 100)  # Default button color
@@ -280,6 +283,8 @@ class Board:
         self.check_dimensions_then_draw()
 
     def increase_row(self):
+        if self.row_dimension >= 13:
+            return
         self.row_dimension += 1
         self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
         self.check_dimensions_then_draw()
@@ -292,6 +297,8 @@ class Board:
         self.check_dimensions_then_draw()
 
     def increase_col(self):
+        if self.col_dimension >= 13:
+            return
         self.col_dimension += 1
         self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
         self.check_dimensions_then_draw()
@@ -320,12 +327,12 @@ class Board:
                      (row * self.sq_y_length) + OFFSET[1] + self.sq_y_length // 2)
             # print((row, col), "stamp = ", stamp)
             if self.sq_x_length < self.sq_y_length:
-                pg.draw.circle(SCREEN, (255, 0, 0), stamp, self.sq_x_length // 4)
+                pg.draw.circle(SCREEN, (51, 255, 51), stamp, self.sq_x_length // 4)
             else:
-                pg.draw.circle(SCREEN, (255, 0, 0), stamp, self.sq_y_length // 4)
+                pg.draw.circle(SCREEN, (51, 255, 51), stamp, self.sq_y_length // 4)
             number = self.graph[row][col]
             SCREEN.blit(self.knight.move_font_size.render(f"{number: 03d}", True, (0, 0, 0)),
-                        (stamp[0] - self.sq_x_length * 0.14, stamp[1] - self.sq_y_length * 0.13))
+                        (stamp[0] - self.sq_x_length * 0.15, stamp[1] - self.sq_y_length * 0.13))
 
 
 class ChessState:
@@ -346,10 +353,12 @@ class ChessState:
         self.time_start = datetime.now()
         self.duration = 0
         # Display text underneath board
-        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
+        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
     def reset_board(self):
-        self.board.graph = np.negative(np.ones([self.board.row_dimension, self.board.col_dimension], dtype=int))
+        self.board.graph = np.negative(np.ones([8, 8], dtype=int))
+        self.board.row_dimension = 8
+        self.board.col_dimension = 8
         self.state = "start"
         self.tour_failures = 0
         self.tour_found = False
@@ -359,17 +368,16 @@ class ChessState:
         self.board.knight.knight_step = 1
         self.board.knight.move_log = []
         self.board.knight.steps_done = 0
-        self.board.board_size = ((y_axis // 10) * row_dimension, (y_axis // 10) * col_dimension)  # Size of board
-        self.row_dimension = row_dimension
-        self.col_dimension = col_dimension
-        self.graph = np.negative(np.ones([row_dimension, col_dimension], dtype=int))
-        self.sq_x_length = BOARD_SIZE[0] // col_dimension
-        self.sq_y_length = BOARD_SIZE[0] // row_dimension
+        self.board.knight.knight_img = pg.image.load("knight_piece.png")
+        self.board.knight.move_font_size = pg.font.SysFont("Arial", 20)
+        self.board.board_size = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
+        self.board.sq_x_length = self.board.board_size[0] // 8
+        self.board.sq_y_length = self.board.board_size[0] // 8
         self.time_start = 0.0
         self.duration = 0.0
         SCREEN.fill(BACKGROUND_COLOUR)
         self.board.draw_board()
-        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
+        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
     def redo_tour(self):
         self.state = "touring"
@@ -378,9 +386,8 @@ class ChessState:
         self.board.knight.knight_step = 1
         self.board.knight.move_log = [(self.board.knight.knight_initial_pos[0], self.board.knight.knight_initial_pos[1], 0)]
         self.board.knight.knight_pos = self.board.knight.knight_initial_pos
+        self.duration += (datetime.now() - self.time_start).total_seconds()
         self.time_start = datetime.now()
-        self.duration = 0.0
-        self.board.knight.steps_done = 0
         SCREEN.fill(BACKGROUND_COLOUR)
         self.board.draw_board()
         update_below_board_text("Warnsdorff algorithm failed to find a tour.", f"Retry No. {self.tour_failures}")
@@ -488,7 +495,7 @@ class ChessState:
             end_point = self.board.knight.move_log[i - 1]
             line_end_point = ((end_point[1] * self.board.sq_x_length) + OFFSET[0] + self.board.sq_x_length // 2,
                               (end_point[0] * self.board.sq_y_length) + OFFSET[1] + self.board.sq_y_length // 2)
-            pg.draw.line(SCREEN, (255, 0, 0), line_start_point, line_end_point, 5)
+            pg.draw.line(SCREEN, (0, 255, 0), line_start_point, line_end_point, 5)
             i += 1
 
     # Handles mouse input
@@ -539,10 +546,9 @@ class ChessState:
                 elif warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
                         and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height \
                         and (self.state == "start" or self.state == "ready"):
-                        # and not (self.state == "touring" or self.state == "pause" or self.state == "fail"):
                     self.tour_type = "Warnsdorff"
                     # Display text underneath board
-                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
+                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On decrease row button.
                 elif row_down_details.x_pos <= mouse_pos[0] <= row_down_details.x_pos + row_down_details.width \
                         and row_down_details.y_pos <= mouse_pos[1] <= row_down_details.y_pos + row_down_details.height \
@@ -567,12 +573,12 @@ class ChessState:
                 elif fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
                         and fps_down_details.y_pos <= mouse_pos[1] <= fps_down_details.y_pos + fps_down_details.height:
                     self.decrease_fps()
-                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
+                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On increase FPS button.
                 elif fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
                         and fps_down_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
                     self.increase_fps()
-                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
+                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
         self.display_components(mouse_pos)
         pg.display.update()
 
@@ -595,7 +601,6 @@ class ChessState:
             pg.draw.rect(SCREEN, hover_button_color, reset_details.rect)
         else:
             pg.draw.rect(SCREEN, button_color, reset_details.rect)
-        # SCREEN.blit(reset_text, (reset_details.x_pos + (3.5*reset_details.width//10), reset_details.y_pos + 5))
         SCREEN.blit(reset_text, reset_text_rect)
         # Display Quit button
         if quit_details.x_pos <= mouse_pos[0] <= quit_details.x_pos + quit_details.width \
@@ -603,7 +608,6 @@ class ChessState:
             pg.draw.rect(SCREEN, hover_button_color, quit_details.rect)
         else:
             pg.draw.rect(SCREEN, button_color, quit_details.rect)
-        # SCREEN.blit(quit_text, (quit_details.x_pos + (4 * quit_details.width // 10), quit_details.y_pos + 5))
         SCREEN.blit(quit_text, quit_text_rect)
         # Sets visibility of knight's tour buttons
         if self.tour_type == "Warnsdorff":
@@ -725,12 +729,12 @@ class ChessState:
                     else:
                         update_below_board_text(f"Opened Knight's Tour found using {self.tour_type}",
                                                 f"({self.board.knight.steps_done} moves in {round(self.duration, 2)} seconds)")
+
         self.redraw_board()
 
     def find_tour_warnsdorff(self):
         """
         This function uses Warnsdorff's Heuristic to solve the knight's tour.
-
         :return:
         """
         most_empty = 9
@@ -833,16 +837,6 @@ class ChessState:
             sys.exit()
         self.check_event()
         pg.event.pump()
-
-    # def print_solution(self):
-    #     '''
-    #         A utility function to print Chessboard matrix
-    #     '''
-    #     for i in range(self.dimensions):
-    #         for j in range(self.dimensions):
-    #             print(self.board[i][j], end=' ')
-    #         print()
-    #     print()
 
 
 def main():
