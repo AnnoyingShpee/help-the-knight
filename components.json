@@ -1,0 +1,16 @@
+{
+  "components": [
+    {
+      "ID": "Start"
+    },
+    {
+      "ID": "Pause"
+    },
+    {
+      "ID": "Quit"
+    },
+    {
+      "ID": "FPS Up"
+    }
+  ]
+}

@@ -8,155 +8,156 @@ import Components
 
 pg.init()
 
+# Colours
+BACKGROUND_COLOUR = (180, 241, 255)
+BUTTON_COLOUR = (100, 100, 100)  # Default button color
+HOVER_BUTTON_COLOUR = (170, 170, 170)  # Color of button when cursor hovers over
+BUTTON_TEXT_COLOUR = (255, 255, 255)
+TEXT_COLOUR = (0, 0, 0)
+
 # Global variables for display
 SCREEN = pg.display.set_mode(size=(0, 0))  # Set game window
-BACKGROUND_COLOUR = (180, 241, 255)
 SCREEN.fill(BACKGROUND_COLOUR)  # Set background color
 x_axis, y_axis = SCREEN.get_size()
-# print(x_axis, y_axis)
 BOARD_SIZE = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
-# print(BOARD_SIZE)
 OFFSET = (50, 50)  # Amount of offset of the board from the border
 # SCREEN_SIZE = (900, 600)  # Size of game window
 # SCREEN = pg.display.set_mode(SCREEN_SIZE)  # Set game window
 BUTTON_FONT = pg.font.SysFont('Arial', 30)  # Font for buttons
 MOVES_FONT = pg.font.SysFont('Arial', 20)  # Font for numbering the steps
-TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text
+TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text below the board
 # DEFAULT_CURSOR = pg.mouse.get_cursor()
 
-warnsdorff_time_path = "Simulations/Warnsdorff_ui_times.csv"
-backtrack_time_path = "Simulations/Backtrack_ui_times.csv"
-
-# Buttons
-button_text_color = (255, 255, 255)
-button_color = (100, 100, 100)  # Default button color
-hover_button_color = (170, 170, 170)  # Color of button when cursor hovers over
 # Play, Reset, and Quit buttons in one group
 # Button(x_pos, y_pos, width, height, button_colour, hover_colour, button_text_colour)
-start_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 2, (x_axis // 100) * 15, y_axis // 20, pg,
-                                  button_color, button_text_color, hover_button_color)
-reset_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 5, (x_axis // 100) * 15, y_axis // 20, pg,
-                                  button_color, button_text_color, hover_button_color)
-quit_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 8, (x_axis // 100) * 15, y_axis // 20, pg,
-                                 button_color, button_text_color, hover_button_color)
+start_details = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 2, (x_axis // 100) * 10, y_axis // 20, pg,
+                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Start", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+pause_details = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 2, (x_axis // 100) * 10, y_axis // 20, pg,
+                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Pause", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+help_details = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 2, (x_axis // 100) * 10, y_axis // 20, pg,
+                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Help", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+reset_details = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 5, (x_axis // 100) * 10, y_axis // 20, pg,
+                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Reset", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+quit_details = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 8, (x_axis // 100) * 10, y_axis // 20, pg,
+                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Quit", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 
 # Tour Type, FPS, and Dimension buttons in another group
 # Buttons to select Tour Type
 backtrack_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2, y_axis // 20, pg,
-                                      button_color, button_text_color, hover_button_color)
+                                      BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Backtrack Method", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 warnsdorff_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 3, (x_axis // 10) * 2, y_axis // 20, pg,
-                                       button_color, button_text_color, hover_button_color)
+                                       BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Warnsdoff's Method", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Buttons to decrease/increase number of rows
 row_down_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 100) * 5, y_axis // 20, pg,
-                                     button_color, button_text_color, hover_button_color)
+                                     BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "-1", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 row_up_details = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
                                    (y_axis // 10) * 5, (x_axis // 100) * 5, y_axis // 20, pg,
-                                   button_color, button_text_color, hover_button_color)
+                                   BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "+1", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Buttons to decrease/increase number of columns
 col_down_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
-                                     button_color, button_text_color, hover_button_color)
+                                     BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "-1", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 col_up_details = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
                                    (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
-                                   button_color, button_text_color, hover_button_color)
+                                   BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "+1", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Buttons to decrease/increase FPS
 fps_down_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
-                                     button_color, button_text_color, hover_button_color)
+                                     BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "-5", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 fps_up_details = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
                                    (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
-                                   button_color, button_text_color, hover_button_color)
+                                   BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "+10", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 
 # Button text color
-start_text = BUTTON_FONT.render("Start", True, start_details.text_color)
-pause_text = BUTTON_FONT.render("Pause", True, start_details.text_color)
-reset_text = BUTTON_FONT.render("Reset", True, reset_details.text_color)
-quit_text = BUTTON_FONT.render("Quit", True, quit_details.text_color)
-backtrack_text = BUTTON_FONT.render("Backtrack Method", True, backtrack_details.text_color)
-warnsdorff_text = BUTTON_FONT.render("Warnsdoff's Method", True, warnsdorff_details.text_color)
-row_down_text = BUTTON_FONT.render("-1", True, row_down_details.text_color)
-row_up_text = BUTTON_FONT.render("+1", True, row_up_details.text_color)
-col_down_text = BUTTON_FONT.render("-1", True, col_down_details.text_color)
-col_up_text = BUTTON_FONT.render("+1", True, col_up_details.text_color)
-fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
-fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
+# start_text = BUTTON_FONT.render("Start", True, start_details.text_color)
+# pause_text = BUTTON_FONT.render("Pause", True, start_details.text_color)
+# help_text = BUTTON_FONT.render("Help", True, help_details.text_color)
+# reset_text = BUTTON_FONT.render("Reset", True, reset_details.text_color)
+# quit_text = BUTTON_FONT.render("Quit", True, quit_details.text_color)
+# backtrack_text = BUTTON_FONT.render("Backtrack Method", True, backtrack_details.text_color)
+# warnsdorff_text = BUTTON_FONT.render("Warnsdoff's Method", True, warnsdorff_details.text_color)
+# row_down_text = BUTTON_FONT.render("-1", True, row_down_details.text_color)
+# row_up_text = BUTTON_FONT.render("+1", True, row_up_details.text_color)
+# col_down_text = BUTTON_FONT.render("-1", True, col_down_details.text_color)
+# col_up_text = BUTTON_FONT.render("+1", True, col_up_details.text_color)
+# fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
+# fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
 
 # Center the text in their buttons
-start_text_rect = start_text.get_rect(
-    center=(start_details.x_pos + (start_details.width // 2),
-            start_details.y_pos + (start_details.height // 2))
-)
-reset_text_rect = reset_text.get_rect(
-    center=(reset_details.x_pos + (reset_details.width // 2),
-            reset_details.y_pos + (reset_details.height // 2))
-)
-quit_text_rect = quit_text.get_rect(
-    center=(quit_details.x_pos + (quit_details.width // 2),
-            quit_details.y_pos + (quit_details.height // 2))
-)
-backtrack_text_rect = backtrack_text.get_rect(
-    center=(backtrack_details.x_pos + (backtrack_details.width // 2),
-            backtrack_details.y_pos + (backtrack_details.height // 2))
-)
-warnsdorff_text_rect = warnsdorff_text.get_rect(
-    center=(warnsdorff_details.x_pos + (warnsdorff_details.width // 2),
-            warnsdorff_details.y_pos + (warnsdorff_details.height // 2))
-)
-row_down_text_rect = row_down_text.get_rect(
-    center=(row_down_details.x_pos + (row_down_details.width // 2),
-            row_down_details.y_pos + (row_down_details.height //2))
-)
-row_up_text_rect = row_up_text.get_rect(
-    center=(row_up_details.x_pos + (row_up_details.width // 2),
-            row_up_details.y_pos + (row_up_details.height //2))
-)
-col_down_text_rect = col_down_text.get_rect(
-    center=(col_down_details.x_pos + (col_down_details.width // 2),
-            col_down_details.y_pos + (col_down_details.height //2))
-)
-col_up_text_rect = col_up_text.get_rect(
-    center=(col_up_details.x_pos + (col_up_details.width // 2),
-            col_up_details.y_pos + (col_up_details.height //2))
-)
-fps_down_text_rect = fps_down_text.get_rect(
-    center=(fps_down_details.x_pos + (fps_down_details.width // 2),
-            fps_down_details.y_pos + (fps_down_details.height // 2))
-)
-fps_up_text_rect = fps_up_text.get_rect(
-    center=(fps_up_details.x_pos + (fps_up_details.width // 2),
-            fps_up_details.y_pos + (fps_up_details.height // 2))
-)
+# start_text_rect = start_text.get_rect(
+#     center=(start_details.x_pos + (start_details.width // 2),
+#             start_details.y_pos + (start_details.height // 2))
+# )
+# reset_text_rect = reset_text.get_rect(
+#     center=(reset_details.x_pos + (reset_details.width // 2),
+#             reset_details.y_pos + (reset_details.height // 2))
+# )
+# quit_text_rect = quit_text.get_rect(
+#     center=(quit_details.x_pos + (quit_details.width // 2),
+#             quit_details.y_pos + (quit_details.height // 2))
+# )
+# backtrack_text_rect = backtrack_text.get_rect(
+#     center=(backtrack_details.x_pos + (backtrack_details.width // 2),
+#             backtrack_details.y_pos + (backtrack_details.height // 2))
+# )
+# warnsdorff_text_rect = warnsdorff_text.get_rect(
+#     center=(warnsdorff_details.x_pos + (warnsdorff_details.width // 2),
+#             warnsdorff_details.y_pos + (warnsdorff_details.height // 2))
+# )
+# row_down_text_rect = row_down_text.get_rect(
+#     center=(row_down_details.x_pos + (row_down_details.width // 2),
+#             row_down_details.y_pos + (row_down_details.height // 2))
+# )
+# row_up_text_rect = row_up_text.get_rect(
+#     center=(row_up_details.x_pos + (row_up_details.width // 2),
+#             row_up_details.y_pos + (row_up_details.height // 2))
+# )
+# col_down_text_rect = col_down_text.get_rect(
+#     center=(col_down_details.x_pos + (col_down_details.width // 2),
+#             col_down_details.y_pos + (col_down_details.height // 2))
+# )
+# col_up_text_rect = col_up_text.get_rect(
+#     center=(col_up_details.x_pos + (col_up_details.width // 2),
+#             col_up_details.y_pos + (col_up_details.height // 2))
+# )
+# fps_down_text_rect = fps_down_text.get_rect(
+#     center=(fps_down_details.x_pos + (fps_down_details.width // 2),
+#             fps_down_details.y_pos + (fps_down_details.height // 2))
+# )
+# fps_up_text_rect = fps_up_text.get_rect(
+#     center=(fps_up_details.x_pos + (fps_up_details.width // 2),
+#             fps_up_details.y_pos + (fps_up_details.height // 2))
+# )
 
 # Game text under the chessboard
-text_color = (0, 0, 0)
 under_board_line_details = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
-                                             BACKGROUND_COLOUR, text_color)
-under_board_rect = under_board_line_details.rect
+                                             BACKGROUND_COLOUR, None, "", TEXT_COLOUR, TEXT_FONT)
+# under_board_rect = under_board_line_details.rect
 
 # Area to display row number text
 row_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 10) * 2, y_axis // 20, pg,
-                                button_color, text_color)
-row_text = BUTTON_FONT.render("Rows", True, row_details.text_color)
-row_text_rect = row_text.get_rect(
-    center=(row_details.x_pos + (row_details.width // 2),
-            row_details.y_pos + (row_details.height // 2))
-)
+                                BUTTON_COLOUR, None, "Rows", TEXT_COLOUR, BUTTON_FONT)
+# row_text = BUTTON_FONT.render("Rows", True, row_details.text_color)
+# row_text_rect = row_text.get_rect(
+#     center=(row_details.x_pos + (row_details.width // 2),
+#             row_details.y_pos + (row_details.height // 2))
+# )
 
 # Area to display column number text
 col_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 10) * 2, y_axis // 20, pg,
-                                button_color, text_color)
-col_text = BUTTON_FONT.render("Columns", True, col_details.text_color)
-col_text_rect = col_text.get_rect(
-    center=(col_details.x_pos + (col_details.width // 2),
-            col_details.y_pos + (col_details.height // 2))
-)
+                                BUTTON_COLOUR, None, "Columns", TEXT_COLOUR, BUTTON_FONT)
+# col_text = BUTTON_FONT.render("Columns", True, col_details.text_color)
+# col_text_rect = col_text.get_rect(
+#     center=(col_details.x_pos + (col_details.width // 2),
+#             col_details.y_pos + (col_details.height // 2))
+# )
 
 # Area to display FPS text
 fps_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 10) * 2, y_axis // 20, pg,
-                                button_color, text_color)
-fps_text = BUTTON_FONT.render("FPS", True, fps_details.text_color)
-fps_text_rect = fps_text.get_rect(
-    center=(fps_details.x_pos + (fps_details.width // 2),
-            fps_details.y_pos + (fps_details.height // 2))
-)
+                                BUTTON_COLOUR, None, "FPS", TEXT_COLOUR, BUTTON_FONT)
+# fps_text = BUTTON_FONT.render("FPS", True, fps_details.text_color)
+# fps_text_rect = fps_text.get_rect(
+#     center=(fps_details.x_pos + (fps_details.width // 2),
+#             fps_details.y_pos + (fps_details.height // 2))
+# )
 
 # # Chess board data
 # DIMENSIONS = 8  # Chessboard Size
@@ -174,15 +175,6 @@ pg.display.set_icon(icon)
 knight_piece = pg.image.load("knight_piece.png")
 
 
-# Replaces cursor with a knight image
-# knight_cursor = pg.image.load("knight_piece.png")
-
-# class Cell:
-#     def __init__(self):
-#         self.color = None
-#         self.traversed = -1
-#         self.refresh = False
-
 def update_below_board_text(text, extra_text=None):
     """
     Used to update the text box below the board.
@@ -190,16 +182,16 @@ def update_below_board_text(text, extra_text=None):
     :param extra_text: Extra info to be displayed below text
     :return:
     """
-    global under_board_line_details, under_board_rect
-    under_board_line_1_text = TEXT_FONT.render(text, True, under_board_line_details.text_color)
+    global under_board_line_details
+    under_board_line_1_text = TEXT_FONT.render(text, True, under_board_line_details.text_colour)
     under_board_line_1_text_rect = under_board_line_1_text.get_rect(
         center=(under_board_line_details.x_pos + (under_board_line_details.width // 2),
                 under_board_line_details.y_pos + (under_board_line_details.height // 5))
     )
-    pg.draw.rect(SCREEN, under_board_line_details.color, under_board_rect)
+    pg.draw.rect(SCREEN, under_board_line_details.colour, under_board_line_details.rect)
     SCREEN.blit(under_board_line_1_text, under_board_line_1_text_rect)
     if extra_text is not None:
-        under_board_line_2_text = TEXT_FONT.render(extra_text, True, under_board_line_details.text_color)
+        under_board_line_2_text = TEXT_FONT.render(extra_text, True, under_board_line_details.text_colour)
         under_board_line_2_text_rect = under_board_line_2_text.get_rect(
             center=(under_board_line_details.x_pos + (under_board_line_details.width // 2),
                     under_board_line_details.y_pos + (under_board_line_details.height // 2))
@@ -340,7 +332,9 @@ class ChessState:
         # Initialise board array. Board is n x n matrix
         self.board = board
         # State of chessboard (start, ready, touring, fail, pause)
-        self.state = "start"
+        self.game_state = "start"
+        # What components need to be displayed (buttons, help)
+        self.display_state = "buttons"
         # Used for counting how many times Warnsdorff fails to find a tour
         self.tour_failures = 0
         self.tour_found = False  # Whether knight tour is found
@@ -359,7 +353,7 @@ class ChessState:
         self.board.graph = np.negative(np.ones([8, 8], dtype=int))
         self.board.row_dimension = 8
         self.board.col_dimension = 8
-        self.state = "start"
+        self.game_state = "start"
         self.tour_failures = 0
         self.tour_found = False
         self.board.knight.knight_placed = False
@@ -380,7 +374,7 @@ class ChessState:
         update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
     def redo_tour(self):
-        self.state = "touring"
+        self.game_state = "touring"
         self.board.graph = np.negative(np.ones([self.board.row_dimension, self.board.col_dimension], dtype=int))
         self.board.graph[self.board.knight.knight_initial_pos[0]][self.board.knight.knight_initial_pos[1]] = 1
         self.board.knight.knight_step = 1
@@ -417,7 +411,6 @@ class ChessState:
             self.move_done = False
 
     def increase_fps(self):
-        global fps_up_text, fps_down_text
         if self.fps < 10:
             self.fps += 1
         elif self.fps < 30:
@@ -427,7 +420,6 @@ class ChessState:
         self.check_fps()
 
     def decrease_fps(self):
-        global fps_down_text, fps_up_text
         if self.fps > 30:
             self.fps -= 10
         elif self.fps > 10:
@@ -437,23 +429,26 @@ class ChessState:
         self.check_fps()
 
     def check_fps(self):
-        global fps_down_text, fps_up_text
+        global fps_down_details, fps_up_details
         if self.fps == 30:
-            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
-        elif 10 < self.fps < 30:
-            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+5", True, fps_up_details.text_color)
+            fps_down_details.text = BUTTON_FONT.render("-5", True, fps_down_details.text_colour)
+            fps_up_details.text = BUTTON_FONT.render("+10", True, fps_up_details.text_colour)
+        elif self.fps == 10:
+            fps_down_details.text = BUTTON_FONT.render("-1", True, fps_down_details.text_colour)
+            fps_up_details.text = BUTTON_FONT.render("+5", True, fps_down_details.text_colour)
         elif 1 < self.fps < 10:
-            fps_down_text = BUTTON_FONT.render("-1", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+1", True, fps_up_details.text_color)
+            fps_down_details.text = BUTTON_FONT.render("-1", True, fps_down_details.text_colour)
+            fps_up_details.text = BUTTON_FONT.render("+1", True, fps_up_details.text_colour)
+        elif 10 < self.fps < 30:
+            fps_down_details.text = BUTTON_FONT.render("-5", True, fps_down_details.text_colour)
+            fps_up_details.text = BUTTON_FONT.render("+5", True, fps_up_details.text_colour)
         elif 30 < self.fps < 60:
-            fps_down_text = BUTTON_FONT.render("-10", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
+            fps_down_details.text = BUTTON_FONT.render("-10", True, fps_down_details.text_colour)
+            fps_up_details.text = BUTTON_FONT.render("+10", True, fps_up_details.text_colour)
 
     # Checks if user selected the same square twice. If so, remove the knight
     def place_first_knight(self, selected_sq):
-        if not (self.state == "start" or self.state == "ready"):
+        if not (self.game_state == "start" or self.game_state == "ready"):
             return
         row = selected_sq[0]
         col = selected_sq[1]
@@ -465,14 +460,14 @@ class ChessState:
             self.board.knight.knight_placed = False
             self.board.knight.knight_pos = None
             self.board.knight.knight_initial_pos = None
-            self.state = "start"
+            self.game_state = "start"
             self.board.knight.move_log.pop()
         elif not self.board.knight.knight_placed:
             self.board.knight.knight_placed = True
             self.board.knight.knight_pos = (row, col)
             self.board.knight.knight_initial_pos = (row, col)
             self.board.graph[row][col] = 1
-            self.state = "ready"
+            self.game_state = "ready"
             self.board.draw_knight(self.board.sq_x_length, self.board.sq_y_length)
             self.board.knight.move_log.append((row, col, 0))
         elif self.board.knight.knight_placed:
@@ -518,14 +513,14 @@ class ChessState:
                 elif start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
                         and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height \
                         and self.board.knight.knight_placed and not self.tour_found:
-                    if self.state == "ready":
-                        self.state = "touring"
+                    if self.game_state == "ready":
+                        self.game_state = "touring"
                         self.time_start = datetime.now()
-                    elif self.state == "touring":
-                        self.state = "pause"
+                    elif self.game_state == "touring":
+                        self.game_state = "pause"
                         self.duration += (datetime.now() - self.time_start).total_seconds()
-                    elif self.state == "pause":
-                        self.state = "touring"
+                    elif self.game_state == "pause":
+                        self.game_state = "touring"
                         self.time_start = datetime.now()
                 # On Reset Button. Resets the board
                 elif reset_details.x_pos <= mouse_pos[0] <= reset_details.x_pos + reset_details.width \
@@ -538,36 +533,36 @@ class ChessState:
                 # On Backtrack Button. Change the tour finding method to backtracking
                 elif backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
                         and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height \
-                        and (self.state == "start" or self.state == "ready"):
+                        and (self.game_state == "start" or self.game_state == "ready"):
                     self.tour_type = "Backtrack"
                     # Display text underneath board
-                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
+                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On Warnsdorff Button. Change the tour finding method to Warnsdorff
                 elif warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
                         and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height \
-                        and (self.state == "start" or self.state == "ready"):
+                        and (self.game_state == "start" or self.game_state == "ready"):
                     self.tour_type = "Warnsdorff"
                     # Display text underneath board
                     update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On decrease row button.
                 elif row_down_details.x_pos <= mouse_pos[0] <= row_down_details.x_pos + row_down_details.width \
                         and row_down_details.y_pos <= mouse_pos[1] <= row_down_details.y_pos + row_down_details.height \
-                        and self.state == "start":
+                        and self.game_state == "start":
                     self.board.decrease_row()
                 # On increase row button.
                 elif row_up_details.x_pos <= mouse_pos[0] <= row_up_details.x_pos + row_up_details.width \
                         and row_up_details.y_pos <= mouse_pos[1] <= row_up_details.y_pos + row_up_details.height \
-                        and self.state == "start":
+                        and self.game_state == "start":
                     self.board.increase_row()
                 # On decrease column button.
                 elif col_down_details.x_pos <= mouse_pos[0] <= col_down_details.x_pos + col_down_details.width \
                         and col_down_details.y_pos <= mouse_pos[1] <= col_down_details.y_pos + col_down_details.height \
-                        and self.state == "start":
+                        and self.game_state == "start":
                     self.board.decrease_col()
                 # On increase column button.
                 elif col_up_details.x_pos <= mouse_pos[0] <= col_up_details.x_pos + col_up_details.width \
                         and col_up_details.y_pos <= mouse_pos[1] <= col_up_details.y_pos + col_up_details.height \
-                        and self.state == "start":
+                        and self.game_state == "start":
                     self.board.increase_col()
                 # On decrease FPS button.
                 elif fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
@@ -579,105 +574,119 @@ class ChessState:
                         and fps_down_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
                     self.increase_fps()
                     update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
-        self.display_components(mouse_pos)
+        self.display_buttons(mouse_pos)
         pg.display.update()
 
-    def display_components(self, mouse_pos):
+    def display_buttons(self, mouse_pos):
+        """
+        Draws the buttons and text
+        :param mouse_pos: Position of mouse. [x, y]
+        :return:
+        """
         # Draw the buttons and text
         # Display Start/Pause button
         if start_details.x_pos <= mouse_pos[0] <= start_details.x_pos + start_details.width \
                 and start_details.y_pos <= mouse_pos[1] <= start_details.y_pos + start_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, start_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, start_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, start_details.rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, start_details.rect)
         # SCREEN.blit(start_text, (start_details.x_pos + (5*start_details.width//10), start_details.y_pos + 5))
-        if self.state == "touring":
-            SCREEN.blit(pause_text, start_text_rect)
+        if self.game_state == "touring":
+            SCREEN.blit(pause_details.text, pause_details.text_rect)
         else:
-            SCREEN.blit(start_text, start_text_rect)
+            SCREEN.blit(start_details.text, start_details.text_rect)
         # Display Reset button
         if reset_details.x_pos <= mouse_pos[0] <= reset_details.x_pos + reset_details.width \
                 and reset_details.y_pos <= mouse_pos[1] <= reset_details.y_pos + reset_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, reset_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, reset_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, reset_details.rect)
-        SCREEN.blit(reset_text, reset_text_rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, reset_details.rect)
+        SCREEN.blit(reset_details.text, reset_details.text_rect)
         # Display Quit button
         if quit_details.x_pos <= mouse_pos[0] <= quit_details.x_pos + quit_details.width \
                 and quit_details.y_pos <= mouse_pos[1] <= quit_details.y_pos + quit_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, quit_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, quit_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, quit_details.rect)
-        SCREEN.blit(quit_text, quit_text_rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, quit_details.rect)
+        SCREEN.blit(quit_details.text, quit_details.text_rect)
         # Sets visibility of knight's tour buttons
         if self.tour_type == "Warnsdorff":
             # Display Backtrack button
             if backtrack_details.x_pos <= mouse_pos[0] <= backtrack_details.x_pos + backtrack_details.width \
                     and backtrack_details.y_pos <= mouse_pos[1] <= backtrack_details.y_pos + backtrack_details.height:
-                pg.draw.rect(SCREEN, hover_button_color, backtrack_details.rect)
+                pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, backtrack_details.rect)
             else:
-                pg.draw.rect(SCREEN, button_color, backtrack_details.rect)
-            SCREEN.blit(backtrack_text, backtrack_text_rect)
+                pg.draw.rect(SCREEN, BUTTON_COLOUR, backtrack_details.rect)
+            SCREEN.blit(backtrack_details.text, backtrack_details.text_rect)
             # Remove Warnsdorff button
             pg.draw.rect(SCREEN, BACKGROUND_COLOUR, warnsdorff_details.rect)
         elif self.tour_type == "Backtrack":
             # Display Warnsdorff button
             if warnsdorff_details.x_pos <= mouse_pos[0] <= warnsdorff_details.x_pos + warnsdorff_details.width \
                     and warnsdorff_details.y_pos <= mouse_pos[1] <= warnsdorff_details.y_pos + warnsdorff_details.height:
-                pg.draw.rect(SCREEN, hover_button_color, warnsdorff_details.rect)
+                pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, warnsdorff_details.rect)
             else:
-                pg.draw.rect(SCREEN, button_color, warnsdorff_details.rect)
-            SCREEN.blit(warnsdorff_text, warnsdorff_text_rect)
+                pg.draw.rect(SCREEN, BUTTON_COLOUR, warnsdorff_details.rect)
+            SCREEN.blit(warnsdorff_details.text, warnsdorff_details.text_rect)
             # Remove Backtrack button
             pg.draw.rect(SCREEN, BACKGROUND_COLOUR, backtrack_details.rect)
         # Display row decrease button
         if row_down_details.x_pos <= mouse_pos[0] <= row_down_details.x_pos + row_down_details.width \
                 and row_down_details.y_pos <= mouse_pos[1] <= row_down_details.y_pos + row_down_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, row_down_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, row_down_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, row_down_details.rect)
-        SCREEN.blit(row_down_text, row_down_text_rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, row_down_details.rect)
+        SCREEN.blit(row_down_details.text, row_down_details.text_rect)
         # Display row increase button
         if row_up_details.x_pos <= mouse_pos[0] <= row_up_details.x_pos + row_up_details.width \
                 and row_up_details.y_pos <= mouse_pos[1] <= row_up_details.y_pos + row_up_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, row_up_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, row_up_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, row_up_details.rect)
-        SCREEN.blit(row_up_text, row_up_text_rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, row_up_details.rect)
+        SCREEN.blit(row_up_details.text, row_up_details.text_rect)
         # Display row text
-        SCREEN.blit(row_text, row_text_rect)
+        SCREEN.blit(row_details.text, row_details.text_rect)
         # Display column decrease button
         if col_down_details.x_pos <= mouse_pos[0] <= col_down_details.x_pos + col_down_details.width \
                 and col_down_details.y_pos <= mouse_pos[1] <= col_down_details.y_pos + col_down_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, col_down_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, col_down_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, col_down_details.rect)
-        SCREEN.blit(col_down_text, col_down_text_rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, col_down_details.rect)
+        SCREEN.blit(col_down_details.text, col_down_details.text_rect)
         # Display column increase button
         if col_up_details.x_pos <= mouse_pos[0] <= col_up_details.x_pos + col_up_details.width \
                 and col_up_details.y_pos <= mouse_pos[1] <= col_up_details.y_pos + col_up_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, col_up_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, col_up_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, col_up_details.rect)
-        SCREEN.blit(col_up_text, col_up_text_rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, col_up_details.rect)
+        SCREEN.blit(col_up_details.text, col_up_details.text_rect)
         # Display column text
-        SCREEN.blit(col_text, col_text_rect)
+        SCREEN.blit(col_details.text, col_details.text_rect)
         # Display fps decrease button
         if fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
                 and fps_down_details.y_pos <= mouse_pos[1] <= fps_down_details.y_pos + fps_down_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, fps_down_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, fps_down_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, fps_down_details.rect)
-        SCREEN.blit(fps_down_text, fps_down_text_rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, fps_down_details.rect)
+        SCREEN.blit(fps_down_details.text, fps_down_details.text_rect)
         # Display fps increase button
         if fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
                 and fps_up_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, fps_up_details.rect)
+            pg.draw.rect(SCREEN, HOVER_BUTTON_COLOUR, fps_up_details.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, fps_up_details.rect)
-        SCREEN.blit(fps_up_text, fps_up_text_rect)
+            pg.draw.rect(SCREEN, BUTTON_COLOUR, fps_up_details.rect)
+        SCREEN.blit(fps_up_details.text, fps_up_details.text_rect)
         # Display FPS text
-        SCREEN.blit(fps_text, fps_text_rect)
+        SCREEN.blit(fps_details.text, fps_details.text_rect)
+
+    # def display_help(self):
+
+
+    # def display_type(self):
+    #     if self.game_state == "buttons":
+    #         self.check_event()
+    #     else:
+    #         self.display_help()
 
     def is_valid_move(self, x, y):
         """
@@ -756,7 +765,7 @@ class ChessState:
                 self.board.knight.possible_moves.append(possible_move)
 
         if most_empty_index == -1:
-            self.state = "fail"
+            self.game_state = "fail"
             self.tour_failures += 1
             if self.tour_failures >= 5:
                 update_below_board_text("Warnsdorff algorithm failed to find a tour after 5 tries.", "Stopping the tour")
@@ -809,7 +818,7 @@ class ChessState:
             self.board.knight.knight_step -= 1
             self.board.knight.move_log.pop()
             if len(self.board.knight.move_log) == 0:
-                self.state = "fail"
+                self.game_state = "fail"
                 return
             self.board.knight.knight_pos = (self.board.knight.move_log[-1][0], self.board.knight.move_log[-1][1])
         self.move_done = True
@@ -820,14 +829,14 @@ class ChessState:
         Process flow that determines the next behaviour of the game state before updating display
         :return:
         """
-        if self.state == "touring":
+        if self.game_state == "touring":
             self.find_tour()
-        if self.state == "fail" and self.tour_type == "Warnsdorff":
+        if self.game_state == "fail" and self.tour_type == "Warnsdorff":
             if self.tour_failures <= 5:
                 self.redo_tour()
-        if self.state == "fail" and self.tour_type == "Backtrack":
+        if self.game_state == "fail" and self.tour_type == "Backtrack":
             update_below_board_text("Backtrack algorithm failed to find a tour.", "No reason to brute force again.")
-        if self.state == "pause":
+        if self.game_state == "pause":
             pass
         if not self.running:
             # stop = timeit.default_timer()
