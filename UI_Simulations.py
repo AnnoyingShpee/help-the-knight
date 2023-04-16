@@ -60,11 +60,11 @@ col_up_details = Components.Square(warnsdorff_details.x_pos + warnsdorff_details
                                    (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
                                    button_color, button_text_color, hover_button_color)
 # Buttons to decrease/increase FPS
-fps_down_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
-                                     button_color, button_text_color, hover_button_color)
-fps_up_details = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
-                                   (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
-                                   button_color, button_text_color, hover_button_color)
+fps_down_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
+                                    button_color, button_text_color, hover_button_color)
+fps_up_button = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
+                                  (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
+                                  button_color, button_text_color, hover_button_color)
 
 # Button text color
 start_text = BUTTON_FONT.render("Start", True, start_details.text_color)
@@ -77,8 +77,8 @@ row_down_text = BUTTON_FONT.render("-1", True, row_down_details.text_color)
 row_up_text = BUTTON_FONT.render("+1", True, row_up_details.text_color)
 col_down_text = BUTTON_FONT.render("-1", True, col_down_details.text_color)
 col_up_text = BUTTON_FONT.render("+1", True, col_up_details.text_color)
-fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
-fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
+fps_down_text = BUTTON_FONT.render("-5", True, fps_down_button.text_color)
+fps_up_text = BUTTON_FONT.render("+10", True, fps_up_button.text_color)
 
 # Center the text in their buttons
 start_text_rect = start_text.get_rect(
@@ -118,19 +118,19 @@ col_up_text_rect = col_up_text.get_rect(
             col_up_details.y_pos + (col_up_details.height //2))
 )
 fps_down_text_rect = fps_down_text.get_rect(
-    center=(fps_down_details.x_pos + (fps_down_details.width // 2),
-            fps_down_details.y_pos + (fps_down_details.height // 2))
+    center=(fps_down_button.x_pos + (fps_down_button.width // 2),
+            fps_down_button.y_pos + (fps_down_button.height // 2))
 )
 fps_up_text_rect = fps_up_text.get_rect(
-    center=(fps_up_details.x_pos + (fps_up_details.width // 2),
-            fps_up_details.y_pos + (fps_up_details.height // 2))
+    center=(fps_up_button.x_pos + (fps_up_button.width // 2),
+            fps_up_button.y_pos + (fps_up_button.height // 2))
 )
 
 # Game text under the chessboard
 text_color = (0, 0, 0)
-under_board_line_details = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
-                                             BACKGROUND_COLOUR, text_color)
-under_board_rect = under_board_line_details.rect
+under_board_line_text = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
+                                          BACKGROUND_COLOUR, text_color)
+under_board_rect = under_board_line_text.rect
 
 # Area to display row number text
 row_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 10) * 2, y_axis // 20, pg,
@@ -191,7 +191,7 @@ def update_below_board_text(text, extra_text=None):
     :param extra_text: Extra info to be displayed below text
     :return:
     """
-    global under_board_line_details, under_board_rect
+    global under_board_line_text, under_board_rect
     under_board_line_1_text = TEXT_FONT.render(text, True, under_board_line_details.text_color)
     under_board_line_1_text_rect = under_board_line_1_text.get_rect(
         center=(under_board_line_details.x_pos + (under_board_line_details.width // 2),
@@ -435,17 +435,17 @@ class ChessState:
     def check_fps(self):
         global fps_down_text, fps_up_text
         if self.fps == 30:
-            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
+            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_button.text_color)
+            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_button.text_color)
         elif 10 < self.fps < 30:
-            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+5", True, fps_up_details.text_color)
+            fps_down_text = BUTTON_FONT.render("-5", True, fps_down_button.text_color)
+            fps_up_text = BUTTON_FONT.render("+5", True, fps_up_button.text_color)
         elif 1 < self.fps < 10:
-            fps_down_text = BUTTON_FONT.render("-1", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+1", True, fps_up_details.text_color)
+            fps_down_text = BUTTON_FONT.render("-1", True, fps_down_button.text_color)
+            fps_up_text = BUTTON_FONT.render("+1", True, fps_up_button.text_color)
         elif 30 < self.fps < 60:
-            fps_down_text = BUTTON_FONT.render("-10", True, fps_down_details.text_color)
-            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_details.text_color)
+            fps_down_text = BUTTON_FONT.render("-10", True, fps_down_button.text_color)
+            fps_up_text = BUTTON_FONT.render("+10", True, fps_up_button.text_color)
 
     # Checks if user selected the same square twice. If so, remove the knight
     def place_first_knight(self, selected_sq):
@@ -572,13 +572,13 @@ class ChessState:
                         and self.state == "start":
                     self.board.increase_col()
                 # On decrease FPS button.
-                elif fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
-                        and fps_down_details.y_pos <= mouse_pos[1] <= fps_down_details.y_pos + fps_down_details.height:
+                elif fps_down_button.x_pos <= mouse_pos[0] <= fps_down_button.x_pos + fps_down_button.width \
+                        and fps_down_button.y_pos <= mouse_pos[1] <= fps_down_button.y_pos + fps_down_button.height:
                     self.decrease_fps()
                     update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
                 # On increase FPS button.
-                elif fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
-                        and fps_down_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
+                elif fps_up_button.x_pos <= mouse_pos[0] <= fps_up_button.x_pos + fps_up_button.width \
+                        and fps_down_button.y_pos <= mouse_pos[1] <= fps_up_button.y_pos + fps_up_button.height:
                     self.increase_fps()
                     update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} FPS")
         self.display_components(mouse_pos)
@@ -667,18 +667,18 @@ class ChessState:
         # Display column text
         SCREEN.blit(col_text, col_text_rect)
         # Display fps decrease button
-        if fps_down_details.x_pos <= mouse_pos[0] <= fps_down_details.x_pos + fps_down_details.width \
-                and fps_down_details.y_pos <= mouse_pos[1] <= fps_down_details.y_pos + fps_down_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, fps_down_details.rect)
+        if fps_down_button.x_pos <= mouse_pos[0] <= fps_down_button.x_pos + fps_down_button.width \
+                and fps_down_button.y_pos <= mouse_pos[1] <= fps_down_button.y_pos + fps_down_button.height:
+            pg.draw.rect(SCREEN, hover_button_color, fps_down_button.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, fps_down_details.rect)
+            pg.draw.rect(SCREEN, button_color, fps_down_button.rect)
         SCREEN.blit(fps_down_text, fps_down_text_rect)
         # Display fps increase button
-        if fps_up_details.x_pos <= mouse_pos[0] <= fps_up_details.x_pos + fps_up_details.width \
-                and fps_up_details.y_pos <= mouse_pos[1] <= fps_up_details.y_pos + fps_up_details.height:
-            pg.draw.rect(SCREEN, hover_button_color, fps_up_details.rect)
+        if fps_up_button.x_pos <= mouse_pos[0] <= fps_up_button.x_pos + fps_up_button.width \
+                and fps_up_button.y_pos <= mouse_pos[1] <= fps_up_button.y_pos + fps_up_button.height:
+            pg.draw.rect(SCREEN, hover_button_color, fps_up_button.rect)
         else:
-            pg.draw.rect(SCREEN, button_color, fps_up_details.rect)
+            pg.draw.rect(SCREEN, button_color, fps_up_button.rect)
         SCREEN.blit(fps_up_text, fps_up_text_rect)
         # Display FPS text
         SCREEN.blit(fps_text, fps_text_rect)

@@ -1,0 +1,19 @@
+Components
+Algorithms. Choose type of algorithm to find a Knight's Tour.
+Rows. Changes the number of rows in the chessboard. Minimum rows = 3. Maximum rows = 13.
+Columns. Changes the number of columns in the chessboard respectively. Minimum columns = 3. Maximum columns = 13.
+FPS. Changes the Frames Per Second of when finding the Knight's Tour. Can be changed while algorithm is running.
+Start. Start the Knight's Tour.
+Reset. Reset the state of the application.
+Quit. Quit the application.
+
+How To Use
+1.  Click on "-1" or "+1" of Rows/Columns to decrease or increase the number of rows/columns in the chessboard respectively.
+2.  Click on a square in the chessboard to place a Knight piece in that square of the board.
+3.  Click on Algorithms to choose the type of algorithm to be used to find the Knight's Tour.
+4.  Click on Start to start finding the Knight's Tour. Start button will change to Pause. Click on Pause to pause the
+    Tour finding. Pause button will change to Start. Click on Start to continue the tour.
+5.  Application will generate a tour until found or fails after 5 tries.
+6.  Click on Reset to clean the board. This can be done before or after a tour has been found. This will reset the
+    board, rows, columns, and algorithm.
+7.  Click on Quit to exit the application.
