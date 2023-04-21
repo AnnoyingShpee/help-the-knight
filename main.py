@@ -41,9 +41,13 @@ quit_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 8, (x_axis 
 
 # Tour Type, FPS, and Dimension buttons in another area
 algorithms_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2,
-                                      ((y_axis // 10) * 3) + y_axis // 20 - (y_axis // 10),
+                                      (((y_axis // 10) * 3) + y_axis // 20 - (y_axis // 10)) // 2,
                                       pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Algorithms",
                                       BUTTON_TEXT_COLOUR, BUTTON_FONT)
+algorithms_type_button = Components.Square(algorithms_button.x_pos, algorithms_button.y_pos + algorithms_button.height,
+                                           algorithms_button.width, algorithms_button.height,
+                                           pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "(Backtrack)",
+                                           BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Buttons to select Tour Type
 backtrack_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2, y_axis // 20, pg,
                                      BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
@@ -70,6 +74,7 @@ fps_up_button = Components.Square(warnsdorff_button.x_pos + warnsdorff_button.wi
                                   (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
                                   BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "+10", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 
+#
 # Area to display row number text
 row_text = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 10) * 2, y_axis // 20, pg,
                              BACKGROUND_COLOUR, None, "Rows: 8", TEXT_COLOUR, TEXT_FONT)
@@ -557,7 +562,7 @@ class ChessState:
                     self.running = False
                 # On Algorithms button.
                 elif algorithms_button.x_pos <= mouse_pos[0] <= algorithms_button.x_pos + algorithms_button.width \
-                        and algorithms_button.y_pos <= mouse_pos[1] <= algorithms_button.y_pos + algorithms_button.height \
+                        and algorithms_button.y_pos <= mouse_pos[1] <= algorithms_type_button.y_pos + algorithms_type_button.height \
                         and (self.game_state == "start" or self.game_state == "ready") and not self.algorithm_selection:
                     self.algorithm_selection = True
                 # On Backtrack Button. Change the tour finding method to backtracking
@@ -566,14 +571,16 @@ class ChessState:
                         and (self.game_state == "start" or self.game_state == "ready") and self.algorithm_selection:
                     self.tour_type = "Backtrack"
                     self.algorithm_selection = False
+                    algorithms_type_button.change_text(f"[{self.tour_type}]")
                     # Display text underneath board
                     update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On Warnsdorff Button. Change the tour finding method to Warnsdorff
                 elif warnsdorff_button.x_pos <= mouse_pos[0] <= warnsdorff_button.x_pos + warnsdorff_button.width \
                         and warnsdorff_button.y_pos <= mouse_pos[1] <= warnsdorff_button.y_pos + warnsdorff_button.height \
-                        and (self.game_state == "start" or self.game_state == "ready"):
+                        and (self.game_state == "start" or self.game_state == "ready") and self.algorithm_selection:
                     self.tour_type = "Warnsdorff"
                     self.algorithm_selection = False
+                    algorithms_type_button.change_text(f"[{self.tour_type}]")
                     # Display text underneath board
                     update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On decrease row button.
@@ -652,6 +659,7 @@ class ChessState:
         # Display Algorithms button or the Algorithm selection buttons
         # Reset the area of Algorithms to redraw
         pg.draw.rect(SCREEN, BACKGROUND_COLOUR, algorithms_button.rect)
+        pg.draw.rect(SCREEN, BACKGROUND_COLOUR, algorithms_type_button.rect)
         if self.algorithm_selection:
             # Display Backtrack button
             if backtrack_button.x_pos <= mouse_pos[0] <= backtrack_button.x_pos + backtrack_button.width and \
@@ -668,13 +676,17 @@ class ChessState:
                 pg.draw.rect(SCREEN, warnsdorff_button.colour, warnsdorff_button.rect)
             SCREEN.blit(warnsdorff_button.text_render, warnsdorff_button.text_rect)
         else:
+            # Display Algorithm button
             if (self.game_state == "start" or self.game_state == "ready") and \
                     algorithms_button.x_pos <= mouse_pos[0] <= algorithms_button.x_pos + algorithms_button.width and \
-                    algorithms_button.y_pos <= mouse_pos[1] <= algorithms_button.y_pos + algorithms_button.height:
+                    algorithms_button.y_pos <= mouse_pos[1] <= algorithms_type_button.y_pos + algorithms_type_button.height:
                 pg.draw.rect(SCREEN, algorithms_button.hover_colour, algorithms_button.rect)
+                pg.draw.rect(SCREEN, algorithms_type_button.hover_colour, algorithms_type_button.rect)
             else:
                 pg.draw.rect(SCREEN, algorithms_button.colour, algorithms_button.rect)
+                pg.draw.rect(SCREEN, algorithms_type_button.colour, algorithms_type_button.rect)
             SCREEN.blit(algorithms_button.text_render, algorithms_button.text_rect)
+            SCREEN.blit(algorithms_type_button.text_render, algorithms_type_button.text_rect)
         # # Sets visibility of knight's tour buttons
         # if self.tour_type == "Warnsdorff":
         #     # Display Backtrack button
