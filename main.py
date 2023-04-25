@@ -14,6 +14,9 @@ BUTTON_COLOUR = (100, 100, 100)  # Default button color
 HOVER_BUTTON_COLOUR = (170, 170, 170)  # Color of button when cursor hovers over
 BUTTON_TEXT_COLOUR = (255, 255, 255)
 TEXT_COLOUR = (0, 0, 0)
+# Colours for move stamps and lines
+STAMP_COLOURS = [(255, 51, 51), (51, 255, 51), (51, 51, 255), (144, 142, 0)]  # Red, Green, Blue, Colour Blind
+MOVE_COLOURS = [(0, 0, 0), (0, 0, 0), (255, 255, 255), (255, 255, 255)]
 
 # Global variables for display
 SCREEN = pg.display.set_mode(size=(0, 0))  # Set game window
@@ -28,16 +31,20 @@ TEXT_FONT = pg.font.SysFont('Arial', 25)  # Font for text below the board
 BOLD_TEXT_FONT = pg.font.SysFont('Arial', 30, bold=True)
 
 # Play, Reset, and Quit buttons in one area
-start_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 2, (x_axis // 100) * 10, y_axis // 20, pg,
+start_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 1, (x_axis // 100) * 10, y_axis // 20, pg,
                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Start", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-pause_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 2, (x_axis // 100) * 10, y_axis // 20, pg,
-                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Pause", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-help_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 4, (x_axis // 100) * 10, y_axis // 20, pg,
+help_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 3, (x_axis // 100) * 10, y_axis // 20, pg,
                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Help", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-reset_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 6, (x_axis // 100) * 10, y_axis // 20, pg,
+colour_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 5, (x_axis // 100) * 10, y_axis // 20, pg,
+                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Blue", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+reset_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 7, (x_axis // 100) * 10, y_axis // 20, pg,
                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Reset", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-quit_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 8, (x_axis // 100) * 10, y_axis // 20, pg,
+quit_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 9, (x_axis // 100) * 10, y_axis // 20, pg,
                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Quit", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+
+# Display Colour
+colour_text = Components.Square((x_axis // 10) * 9, colour_button.y_pos - (y_axis // 20), (x_axis // 100) * 10, y_axis // 20, pg,
+                                BACKGROUND_COLOUR, None, "Colour", TEXT_COLOUR, TEXT_FONT)
 
 # Tour Type, FPS, and Dimension buttons in another area
 algorithms_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2,
@@ -46,7 +53,7 @@ algorithms_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_a
                                       BUTTON_TEXT_COLOUR, BUTTON_FONT)
 algorithms_type_button = Components.Square(algorithms_button.x_pos, algorithms_button.y_pos + algorithms_button.height,
                                            algorithms_button.width, algorithms_button.height,
-                                           pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "(Backtrack)",
+                                           pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "[Backtrack]",
                                            BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Buttons to select Tour Type
 backtrack_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2, y_axis // 20, pg,
@@ -74,7 +81,6 @@ fps_up_button = Components.Square(warnsdorff_button.x_pos + warnsdorff_button.wi
                                   (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
                                   BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "+10", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 
-#
 # Area to display row number text
 row_text = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 10) * 2, y_axis // 20, pg,
                              BACKGROUND_COLOUR, None, "Rows: 8", TEXT_COLOUR, TEXT_FONT)
@@ -94,7 +100,7 @@ under_board_line_text = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0],
 # Area to display "Help"
 component_title_text = "Board & Components"
 component_desc_text = "-   Start. Start the Knight's Tour. \n" + \
-                      "-   Reset. Reset the state of the application. \n" + \
+                      "-   Colour. Change colour of knight's tour. \n" + \
                       "-   Reset. Reset the state of the application. \n" + \
                       "-   Quit. Exit the application. The ESC key can be pressed to exit the application as well. \n" + \
                       "-   Algorithms. Choose type of algorithm to find a Knight's Tour. \n" + \
@@ -108,24 +114,26 @@ usage_title_text = "How To Use"
 usage_desc_text = "1.   Click on \"-1\" or \"+1\" of Rows/Columns to decrease or increase the number of rows/columns in the chessboard respectively. \n" + \
                   "2.   Click on a square in the chessboard to place a Knight piece in that square of the board. \n" + \
                   "3.   Click on Algorithms to choose the type of algorithm to be used to find the Knight's Tour. \n" + \
-                  "4.   Click on Start to start finding the Knight's Tour. Start button will change to Pause. Click on Pause to pause the Tour \n" + \
-                  "    finding. Pause button will change to Start. Click on Start to continue the tour. \n" + \
+                  "4.   Click on Start to start finding the Knight's Tour. Start will change to Pause. Click on Pause to pause the Tour \n" + \
+                  "    finding. Pause will change to Start. Click on Start to continue the tour. \n" + \
                   "5.   Application will generate a tour until found or fails after 5 tries. \n" + \
-                  "6.   Click on Reset to clean the board. This can be done before or after a tour has been found. This will reset the board, \n" + \
+                  "6.   Click on button below Colour to change the colour of tour display. Colour ranges from Red to Blue to Green to Colour \n" + \
+                  "    Blind. \n" + \
+                  "7.   Click on Reset to clean the board. This can be done before or after a tour has been found. This will reset the board, \n" + \
                   "    rows, columns, and algorithm. \n" + \
-                  "7.   Click on Quit or press ESC to exit the application."
+                  "8.   Click on Quit or press ESC to exit the application."
 
 component_title_area = Components.Square((x_axis // 100) * 5, (y_axis // 100) * 5, (x_axis // 100) * 92,
                                          (y_axis // 100) * 10, pg, (0, 0, 0), None, component_title_text,
                                          (255, 255, 255), BOLD_TEXT_FONT)
 component_desc_area = Components.Square((x_axis // 100) * 5, component_title_area.y_pos+component_title_area.height,
-                                        (x_axis // 100) * 92, (y_axis // 100) * 40, pg, (0, 0, 0), None, component_desc_text,
+                                        (x_axis // 100) * 92, (y_axis // 100) * 37, pg, (0, 0, 0), None, component_desc_text,
                                         (255, 255, 255), TEXT_FONT)
 usage_title_area = Components.Square((x_axis // 100) * 5, component_desc_area.y_pos+component_desc_area.height,
                                      (x_axis // 100) * 92, (y_axis // 100) * 10, pg, (0, 0, 0), None, usage_title_text,
                                      (255, 255, 255), BOLD_TEXT_FONT)
 usage_desc_area = Components.Square((x_axis // 100) * 5, usage_title_area.y_pos+usage_title_area.height,
-                                    (x_axis // 100) * 92, (y_axis // 100) * 35, pg, (0, 0, 0), None, usage_desc_text,
+                                    (x_axis // 100) * 92, (y_axis // 100) * 40, pg, (0, 0, 0), None, usage_desc_text,
                                     (255, 255, 255), TEXT_FONT)
 help_exit_button = Components.Square(component_title_area.x_pos+component_title_area.width-(component_title_area.width // 20),
                                      (y_axis // 100) * 5, component_title_area.width // 20,
@@ -215,6 +223,7 @@ class Board:
         self.sq_y_length = BOARD_SIZE[1] // row_dimension
         self.moves_font = pg.font.SysFont("Arial", self.sq_x_length // 4)
         self.knight.step_font = pg.font.SysFont("Arial", self.sq_x_length // 4)
+        self.stamp_colour = ("red", STAMP_COLOURS[0], MOVE_COLOURS[0])
 
     def draw_board(self):
         # Draw chessboard. Top left square is always light color
@@ -325,11 +334,24 @@ class Board:
                      (row * self.sq_y_length) + OFFSET[1] + self.sq_y_length // 2)
             number = self.graph[row][col]
             if self.sq_x_length < self.sq_y_length:
-                pg.draw.circle(SCREEN, (51, 255, 51), stamp, self.sq_x_length // 4)
+                pg.draw.circle(SCREEN, self.stamp_colour[1], stamp, self.sq_x_length // 4)
             else:
-                pg.draw.circle(SCREEN, (51, 255, 51), stamp, self.sq_y_length // 4)
-            SCREEN.blit(self.knight.step_font.render(f"{number: 03d}", True, (0, 0, 0)),
+                pg.draw.circle(SCREEN, self.stamp_colour[1], stamp, self.sq_y_length // 4)
+            SCREEN.blit(self.knight.step_font.render(f"{number: 03d}", True, self.stamp_colour[2]),
                         (stamp[0] - self.sq_x_length * 0.16, stamp[1] - self.sq_y_length * 0.15))
+
+    def draw_lines(self):
+        i = 2
+        # print("Moves =", self.knight.move_log)
+        while i <= len(self.knight.move_log):
+            start_point = self.knight.move_log[i - 2]
+            line_start_point = ((start_point[1] * self.sq_x_length) + OFFSET[0] + self.sq_x_length // 2,
+                                (start_point[0] * self.sq_y_length) + OFFSET[1] + self.sq_y_length // 2)
+            end_point = self.knight.move_log[i - 1]
+            line_end_point = ((end_point[1] * self.sq_x_length) + OFFSET[0] + self.sq_x_length // 2,
+                              (end_point[0] * self.sq_y_length) + OFFSET[1] + self.sq_y_length // 2)
+            pg.draw.line(SCREEN, self.stamp_colour[1], line_start_point, line_end_point, 5)
+            i += 1
 
     def draw_move_number(self, row, col):
         stamp = ((col * self.sq_x_length) + OFFSET[0] + ((self.sq_x_length // 10) * 8.5),
@@ -387,6 +409,7 @@ class ChessState:
         self.board.draw_board()
         row_text.change_text("Rows: 8")
         col_text.change_text("Columns: 8")
+        start_button.change_text("Start")
         update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
     def redo_tour(self):
@@ -407,7 +430,7 @@ class ChessState:
         if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000 / self.fps:
             furthest_node = self.board.graph.max()
             self.board.draw_board()
-            self.draw_lines()
+            self.board.draw_lines()
             self.board.draw_numbers()
 
             # print(furthest_node)
@@ -502,18 +525,7 @@ class ChessState:
             self.board.knight.move_log.append((row, col, 0))
             self.board.draw_knight(self.board.sq_x_length, self.board.sq_y_length)
 
-    def draw_lines(self):
-        i = 2
-        # print("Moves =", self.knight.move_log)
-        while i <= len(self.board.knight.move_log):
-            start_point = self.board.knight.move_log[i - 2]
-            line_start_point = ((start_point[1] * self.board.sq_x_length) + OFFSET[0] + self.board.sq_x_length // 2,
-                                (start_point[0] * self.board.sq_y_length) + OFFSET[1] + self.board.sq_y_length // 2)
-            end_point = self.board.knight.move_log[i - 1]
-            line_end_point = ((end_point[1] * self.board.sq_x_length) + OFFSET[0] + self.board.sq_x_length // 2,
-                              (end_point[0] * self.board.sq_y_length) + OFFSET[1] + self.board.sq_y_length // 2)
-            pg.draw.line(SCREEN, (0, 255, 0), line_start_point, line_end_point, 5)
-            i += 1
+
 
     def check_game_event(self, mouse_pos):
         """
@@ -538,20 +550,34 @@ class ChessState:
                 elif start_button.x_pos <= mouse_pos[0] <= start_button.x_pos + start_button.width \
                         and start_button.y_pos <= mouse_pos[1] <= start_button.y_pos + start_button.height \
                         and self.board.knight.knight_placed and not self.tour_found:
-                    if self.game_state == "ready":
+                    if self.game_state == "ready" or self.game_state == "pause":
                         self.game_state = "touring"
+                        start_button.change_text("Pause")
                         self.time_start = datetime.now()
                     elif self.game_state == "touring":
                         self.game_state = "pause"
+                        start_button.change_text("Start")
                         self.duration += (datetime.now() - self.time_start).total_seconds()
-                    elif self.game_state == "pause":
-                        self.game_state = "touring"
-                        self.time_start = datetime.now()
                 # On Help Button. Displays the text on how to use the application.
                 elif self.game_state != "touring" and self.game_state != "pause" and \
                         help_button.x_pos <= mouse_pos[0] <= help_button.x_pos + help_button.width and \
                         help_button.y_pos <= mouse_pos[1] <= help_button.y_pos + help_button.height:
                     self.game_state = "help"
+                # On Colour Blind Button.
+                elif colour_button.x_pos <= mouse_pos[0] <= colour_button.x_pos + colour_button.width and \
+                        colour_button.y_pos <= mouse_pos[1] <= colour_button.y_pos + colour_button.height:
+                    if self.board.stamp_colour[0] == "red":
+                        self.board.stamp_colour = ("blue", STAMP_COLOURS[1], MOVE_COLOURS[1])
+                        colour_button.change_text("Green")
+                    elif self.board.stamp_colour[0] == "blue":
+                        self.board.stamp_colour = ("green", STAMP_COLOURS[2], MOVE_COLOURS[2])
+                        colour_button.change_text("Colour Blind")
+                    elif self.board.stamp_colour[0] == "green":
+                        self.board.stamp_colour = ("colour blind", STAMP_COLOURS[3], MOVE_COLOURS[3])
+                        colour_button.change_text("Red")
+                    elif self.board.stamp_colour[0] == "colour blind":
+                        self.board.stamp_colour = ("red", STAMP_COLOURS[0], MOVE_COLOURS[0])
+                        colour_button.change_text("Green")
                 # On Reset Button. Resets the board
                 elif reset_button.x_pos <= mouse_pos[0] <= reset_button.x_pos + reset_button.width \
                         and reset_button.y_pos <= mouse_pos[1] <= reset_button.y_pos + reset_button.height:
@@ -627,10 +653,7 @@ class ChessState:
         else:
             pg.draw.rect(SCREEN, start_button.colour, start_button.rect)
         # Display Start/Pause button text
-        if self.game_state == "touring":
-            SCREEN.blit(pause_button.text_render, pause_button.text_rect)
-        else:
-            SCREEN.blit(start_button.text_render, start_button.text_rect)
+        SCREEN.blit(start_button.text_render, start_button.text_rect)
         # Display Help button
         if (self.game_state == "start" or self.game_state == "ready") and \
                 help_button.x_pos <= mouse_pos[0] <= help_button.x_pos + help_button.width and \
@@ -640,6 +663,17 @@ class ChessState:
             pg.draw.rect(SCREEN, help_button.colour, help_button.rect)
         # Display Help button text
         SCREEN.blit(help_button.text_render, help_button.text_rect)
+        # Display Colour text
+        pg.draw.rect(SCREEN, colour_text.colour, colour_text.rect)
+        SCREEN.blit(colour_text.text_render, colour_text.text_rect)
+        # Display Colour button
+        if colour_button.x_pos <= mouse_pos[0] <= colour_button.x_pos + colour_button.width and \
+                colour_button.y_pos <= mouse_pos[1] <= colour_button.y_pos + colour_button.height:
+            pg.draw.rect(SCREEN, colour_button.hover_colour, colour_button.rect)
+        else:
+            pg.draw.rect(SCREEN, colour_button.colour, colour_button.rect)
+        # Display Colour button text
+        SCREEN.blit(colour_button.text_render, colour_button.text_rect)
         # Display Reset button
         if reset_button.x_pos <= mouse_pos[0] <= reset_button.x_pos + reset_button.width \
                 and reset_button.y_pos <= mouse_pos[1] <= reset_button.y_pos + reset_button.height:
@@ -687,29 +721,6 @@ class ChessState:
                 pg.draw.rect(SCREEN, algorithms_type_button.colour, algorithms_type_button.rect)
             SCREEN.blit(algorithms_button.text_render, algorithms_button.text_rect)
             SCREEN.blit(algorithms_type_button.text_render, algorithms_type_button.text_rect)
-        # # Sets visibility of knight's tour buttons
-        # if self.tour_type == "Warnsdorff":
-        #     # Display Backtrack button
-        #     if self.game_state != "touring" and \
-        #             backtrack_button.x_pos <= mouse_pos[0] <= backtrack_button.x_pos + backtrack_button.width and \
-        #             backtrack_button.y_pos <= mouse_pos[1] <= backtrack_button.y_pos + backtrack_button.height:
-        #         pg.draw.rect(SCREEN, backtrack_button.hover_colour, backtrack_button.rect)
-        #     else:
-        #         pg.draw.rect(SCREEN, backtrack_button.colour, backtrack_button.rect)
-        #     SCREEN.blit(backtrack_button.text_render, backtrack_button.text_rect)
-        #     # Remove Warnsdorff button
-        #     pg.draw.rect(SCREEN, BACKGROUND_COLOUR, warnsdorff_button.rect)
-        # elif self.tour_type == "Backtrack":
-        #     # Display Warnsdorff button
-        #     if self.game_state != "touring" and \
-        #             warnsdorff_button.x_pos <= mouse_pos[0] <= warnsdorff_button.x_pos + warnsdorff_button.width and \
-        #             warnsdorff_button.y_pos <= mouse_pos[1] <= warnsdorff_button.y_pos + warnsdorff_button.height:
-        #         pg.draw.rect(SCREEN, warnsdorff_button.hover_colour, warnsdorff_button.rect)
-        #     else:
-        #         pg.draw.rect(SCREEN, warnsdorff_button.colour, warnsdorff_button.rect)
-        #     SCREEN.blit(warnsdorff_button.text_render, warnsdorff_button.text_rect)
-        #     # Remove Backtrack button
-        #     pg.draw.rect(SCREEN, BACKGROUND_COLOUR, backtrack_button.rect)
         # Display row text
         pg.draw.rect(SCREEN, row_text.colour, row_text.rect)
         SCREEN.blit(row_text.text_render, row_text.text_rect)
