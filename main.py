@@ -3,6 +3,9 @@ import sys
 import pygame as pg
 import numpy as np
 import random
+import json
+import ctypes
+from ctypes import windll
 from datetime import datetime
 import Components
 
@@ -15,35 +18,43 @@ HOVER_BUTTON_COLOUR = (170, 170, 170)  # Color of button when cursor hovers over
 BUTTON_TEXT_COLOUR = (255, 255, 255)
 TEXT_COLOUR = (0, 0, 0)
 # Colours for move stamps and lines
-STAMP_COLOURS = [(255, 51, 51), (51, 255, 51), (51, 51, 255), (144, 142, 0)]  # Red, Green, Blue, Colour Blind
+STAMP_COLOURS = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (144, 142, 0)]  # Red, Green, Blue, Colour Blind
 MOVE_COLOURS = [(0, 0, 0), (0, 0, 0), (255, 255, 255), (255, 255, 255)]
 
 # Global variables for display
-SCREEN = pg.display.set_mode(size=(0, 0))  # Set game window
+ctypes.windll.user32.SetProcessDPIAware()
+true_res = (windll.user32.GetSystemMetrics(0),windll.user32.GetSystemMetrics(1))
+SCREEN = pg.display.set_mode((0, 0), pg.FULLSCREEN)  # Set game window
 SCREEN.fill(BACKGROUND_COLOUR)  # Set background color
 x_axis, y_axis = SCREEN.get_size()
+
 BOARD_SIZE = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
-OFFSET = (50, 50)  # Amount of offset of the board from the border
+OFFSET = (y_axis // 15, y_axis // 15)  # Amount of offset of the board from the border
 # SCREEN_SIZE = (900, 600)  # Size of game window
 # SCREEN = pg.display.set_mode(SCREEN_SIZE)  # Set game window
-BUTTON_FONT = pg.font.SysFont('Arial', 30)  # Font for button text
-TEXT_FONT = pg.font.SysFont('Arial', 25)  # Font for text below the board
+TITLE_FONT = pg.font.SysFont('Arial', 50, bold=True)  # Font for title
+BUTTON_FONT = pg.font.SysFont('Arial', 35)  # Font for button text
+TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text below the board
 BOLD_TEXT_FONT = pg.font.SysFont('Arial', 30, bold=True)
 
+# Title
+title_text = Components.Square((x_axis // 100) * 2, 0, (x_axis // 100) * 20, OFFSET[1], pg,
+                               BACKGROUND_COLOUR, None, "Knight's Tour Finder", TEXT_COLOUR, TITLE_FONT)
+
 # Play, Reset, and Quit buttons in one area
-start_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 1, (x_axis // 100) * 10, y_axis // 20, pg,
+start_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 10, (x_axis // 100) * 10, y_axis // 20, pg,
                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Start", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-help_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 3, (x_axis // 100) * 10, y_axis // 20, pg,
+help_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 30, (x_axis // 100) * 10, y_axis // 20, pg,
                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Help", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-colour_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 5, (x_axis // 100) * 10, y_axis // 20, pg,
-                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Blue", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-reset_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 7, (x_axis // 100) * 10, y_axis // 20, pg,
+colour_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 50, (x_axis // 100) * 10, y_axis // 20, pg,
+                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Green", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+reset_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 70, (x_axis // 100) * 10, y_axis // 20, pg,
                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Reset", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-quit_button = Components.Square((x_axis // 10) * 9, (y_axis // 10) * 9, (x_axis // 100) * 10, y_axis // 20, pg,
+quit_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 90, (x_axis // 100) * 10, y_axis // 20, pg,
                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Quit", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 
 # Display Colour
-colour_text = Components.Square((x_axis // 10) * 9, colour_button.y_pos - (y_axis // 20), (x_axis // 100) * 10, y_axis // 20, pg,
+colour_text = Components.Square((x_axis // 100) * 90, colour_button.y_pos - (y_axis // 20), (x_axis // 100) * 10, y_axis // 20, pg,
                                 BACKGROUND_COLOUR, None, "Colour", TEXT_COLOUR, TEXT_FONT)
 
 # Tour Type, FPS, and Dimension buttons in another area
@@ -94,21 +105,22 @@ fps_text = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis /
                              BACKGROUND_COLOUR, None, "FPS: 30", TEXT_COLOUR, TEXT_FONT)
 
 # Game text under the chessboard
-under_board_line_text = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
-                                          BACKGROUND_COLOUR, None, "", TEXT_COLOUR, TEXT_FONT)
+under_board_text = Components.Square(OFFSET[0], OFFSET[1] + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
+                                     BACKGROUND_COLOUR, None, "", TEXT_COLOUR, TEXT_FONT)
 
 # Area to display "Help"
 component_title_text = "Board & Components"
 component_desc_text = "-   Start. Start the Knight's Tour. \n" + \
-                      "-   Colour. Change colour of knight's tour. \n" + \
+                      "-   Colour. Change colour of knight's tour. (Red, Green, Blue, Colour Blind)\n" + \
                       "-   Reset. Reset the state of the application. \n" + \
                       "-   Quit. Exit the application. The ESC key can be pressed to exit the application as well. \n" + \
-                      "-   Algorithms. Choose type of algorithm to find a Knight's Tour. \n" + \
+                      "-   Algorithms. Choose type of algorithm to find a Knight's Tour. (Backtrack, Warnsdorff)\n" + \
                       "-   Rows. Changes the number of rows in the chessboard. (Minimum rows = 3. Maximum rows = 13.) \n" + \
                       "-   Columns. Changes the number of columns in the chessboard respectively. (Minimum columns = 3. Maximum columns = 13.) \n" + \
                       "-   FPS. Changes the Frames Per Second of when finding the Knight's Tour. Can be changed while algorithm is running. \n" + \
-                      "-   Numbers in coloured circles and coloured lines indicate knight's movement. \n" + \
-                      "-   Numbers in squares indicate number of times knight traversed that square. "
+                      "   (Min FPS = 1. Max FPS = 60) \n" + \
+                      "-   Numbers in coloured circles indicate knight's movement. \n" + \
+                      "-   Numbers in corner of squares indicate number of times knight traversed that square. "
 
 usage_title_text = "How To Use"
 usage_desc_text = "1.   Click on \"-1\" or \"+1\" of Rows/Columns to decrease or increase the number of rows/columns in the chessboard respectively. \n" + \
@@ -121,24 +133,30 @@ usage_desc_text = "1.   Click on \"-1\" or \"+1\" of Rows/Columns to decrease or
                   "    Blind. \n" + \
                   "7.   Click on Reset to clean the board. This can be done before or after a tour has been found. This will reset the board, \n" + \
                   "    rows, columns, and algorithm. \n" + \
-                  "8.   Click on Quit or press ESC to exit the application."
+                  "8.   Click on Quit or press ESC to exit the application. \n" + \
+                  "9.   Take a screenshot of the instructions in case you forget. "
 
 component_title_area = Components.Square((x_axis // 100) * 5, (y_axis // 100) * 5, (x_axis // 100) * 92,
                                          (y_axis // 100) * 10, pg, (0, 0, 0), None, component_title_text,
                                          (255, 255, 255), BOLD_TEXT_FONT)
 component_desc_area = Components.Square((x_axis // 100) * 5, component_title_area.y_pos+component_title_area.height,
-                                        (x_axis // 100) * 92, (y_axis // 100) * 37, pg, (0, 0, 0), None, component_desc_text,
+                                        (x_axis // 100) * 92, (y_axis // 100) * 35, pg, (0, 0, 0), None, component_desc_text,
                                         (255, 255, 255), TEXT_FONT)
 usage_title_area = Components.Square((x_axis // 100) * 5, component_desc_area.y_pos+component_desc_area.height,
                                      (x_axis // 100) * 92, (y_axis // 100) * 10, pg, (0, 0, 0), None, usage_title_text,
                                      (255, 255, 255), BOLD_TEXT_FONT)
 usage_desc_area = Components.Square((x_axis // 100) * 5, usage_title_area.y_pos+usage_title_area.height,
-                                    (x_axis // 100) * 92, (y_axis // 100) * 40, pg, (0, 0, 0), None, usage_desc_text,
+                                    (x_axis // 100) * 92, (y_axis // 100) * 45, pg, (0, 0, 0), None, usage_desc_text,
                                     (255, 255, 255), TEXT_FONT)
 help_exit_button = Components.Square(component_title_area.x_pos+component_title_area.width-(component_title_area.width // 20),
                                      (y_axis // 100) * 5, component_title_area.width // 20,
                                      (component_title_area.height // 10) * 4, pg,
                                      (0, 0, 0), HOVER_BUTTON_COLOUR, "X", (255, 255, 255), TEXT_FONT)
+
+
+def display_title():
+    pg.draw.rect(SCREEN, title_text.colour, title_text.rect)
+    SCREEN.blit(title_text.text_render, title_text.text_rect)
 
 
 def display_help_text(surface, text, pos, font, colour):
@@ -160,12 +178,6 @@ def display_help_text(surface, text, pos, font, colour):
         x = pos[0] + x_offset  # Reset the x.
         y += word_height  # Start on new row.
 
-# # Set window Title
-# pg.display.set_caption("Knight Tour")
-# # Set window Icon
-# icon = pg.image.load("knight_piece.png")
-# pg.display.set_icon(icon)
-
 
 def update_below_board_text(text, extra_text=None):
     """
@@ -174,19 +186,19 @@ def update_below_board_text(text, extra_text=None):
     :param extra_text: Extra info to be displayed below text
     :return:
     """
-    global under_board_line_text
-    under_board_line_1_text = TEXT_FONT.render(text, True, under_board_line_text.text_colour)
+    global under_board_text
+    under_board_line_1_text = TEXT_FONT.render(text, True, under_board_text.text_colour)
     under_board_line_1_text_rect = under_board_line_1_text.get_rect(
-        center=(under_board_line_text.x_pos + (under_board_line_text.width // 2),
-                under_board_line_text.y_pos + (under_board_line_text.height // 5))
+        center=(under_board_text.x_pos + (under_board_text.width // 2),
+                under_board_text.y_pos + (under_board_text.height // 5))
     )
-    pg.draw.rect(SCREEN, under_board_line_text.colour, under_board_line_text.rect)
+    pg.draw.rect(SCREEN, under_board_text.colour, under_board_text.rect)
     SCREEN.blit(under_board_line_1_text, under_board_line_1_text_rect)
     if extra_text is not None:
-        under_board_line_2_text = TEXT_FONT.render(extra_text, True, under_board_line_text.text_colour)
+        under_board_line_2_text = TEXT_FONT.render(extra_text, True, under_board_text.text_colour)
         under_board_line_2_text_rect = under_board_line_2_text.get_rect(
-            center=(under_board_line_text.x_pos + (under_board_line_text.width // 2),
-                    under_board_line_text.y_pos + (under_board_line_text.height // 2))
+            center=(under_board_text.x_pos + (under_board_text.width // 2),
+                    under_board_text.y_pos + (under_board_text.height // 2))
         )
         SCREEN.blit(under_board_line_2_text, under_board_line_2_text_rect)
 
@@ -213,7 +225,7 @@ class Knight:
 class Board:
     def __init__(self, knight: Knight, row_dimension=8, col_dimension=8):
         self.knight = knight
-        self.board_size = ((y_axis // 10) * row_dimension, (y_axis // 10) * col_dimension)  # Size of board
+        self.board_size = BOARD_SIZE  # Size of board
         self.sq_colours = [pg.Color("white"), pg.Color("grey")]
         self.row_dimension = row_dimension
         self.col_dimension = col_dimension
@@ -240,7 +252,7 @@ class Board:
 
     def draw_knight(self, width, height):
         self.knight.knight_img = pg.transform.scale(self.knight.knight_img,
-                                                    (0.8 * self.sq_x_length, 0.8 * self.sq_y_length))
+                                                    ((self.sq_x_length // 10) * 8, (self.sq_y_length // 10) * 8))
         SCREEN.blit(self.knight.knight_img,
                     pg.Rect((self.knight.knight_pos[1] * width) + OFFSET[0] + width // 8,
                             (self.knight.knight_pos[0] * height) + OFFSET[1] + height // 8,
@@ -266,7 +278,7 @@ class Board:
             self.moves_font = pg.font.SysFont("Arial", self.sq_y_length // 4)
         self.knight.knight_img = pg.image.load("knight_piece.png")
         self.knight.knight_img = pg.transform.scale(self.knight.knight_img,
-                                                    (self.sq_x_length * 0.8, self.sq_y_length * 0.8))
+                                                    ((self.sq_x_length // 10) * 8, (self.sq_y_length // 10) * 8))
         self.draw_board()
 
     def decrease_row(self):
@@ -338,11 +350,10 @@ class Board:
             else:
                 pg.draw.circle(SCREEN, self.stamp_colour[1], stamp, self.sq_y_length // 4)
             SCREEN.blit(self.knight.step_font.render(f"{number: 03d}", True, self.stamp_colour[2]),
-                        (stamp[0] - self.sq_x_length * 0.16, stamp[1] - self.sq_y_length * 0.15))
+                        (stamp[0] - (self.sq_x_length // 100) * 16, stamp[1] - (self.sq_y_length // 100) * 15))
 
     def draw_lines(self):
         i = 2
-        # print("Moves =", self.knight.move_log)
         while i <= len(self.knight.move_log):
             start_point = self.knight.move_log[i - 2]
             line_start_point = ((start_point[1] * self.sq_x_length) + OFFSET[0] + self.sq_x_length // 2,
@@ -354,8 +365,8 @@ class Board:
             i += 1
 
     def draw_move_number(self, row, col):
-        stamp = ((col * self.sq_x_length) + OFFSET[0] + ((self.sq_x_length // 10) * 8.5),
-                 (row * self.sq_y_length) + OFFSET[1] + ((self.sq_y_length // 10) * 0.5))
+        stamp = ((col * self.sq_x_length) + OFFSET[0],
+                 (row * self.sq_y_length) + OFFSET[1])
         number = self.board_moves[row][col]
         SCREEN.blit(self.moves_font.render(f"{number}", True, (0, 0, 0)),
                     (stamp[0], stamp[1]))
@@ -429,16 +440,14 @@ class ChessState:
     def redraw_board(self):
         if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000 / self.fps:
             furthest_node = self.board.graph.max()
+            # Draw current display of tour
             self.board.draw_board()
             self.board.draw_lines()
             self.board.draw_numbers()
 
-            # print(furthest_node)
             if furthest_node == self.board.row_dimension * self.board.col_dimension:
-                # print("Draw Number")
                 self.board.draw_knight_step(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
             else:
-                # print("Draw Knight")
                 SCREEN.blit(self.board.knight.knight_img,
                             pg.Rect((self.board.knight.knight_pos[1] * self.board.sq_x_length) +
                                     OFFSET[0] + self.board.sq_x_length // 8,
@@ -493,9 +502,8 @@ class ChessState:
             return
         row = selected_sq[0]
         col = selected_sq[1]
-        # Checks if user selected the same square twice. If so, remove the knight
+        # If user selected square where knight is already on, remove the knight
         if selected_sq == self.board.knight.knight_pos:
-            # print("Same Square")
             self.board.draw_square(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
             self.board.graph[row][col] = -1
             self.board.board_moves[row][col] = 0
@@ -504,6 +512,7 @@ class ChessState:
             self.board.knight.knight_initial_pos = None
             self.game_state = "start"
             self.board.knight.move_log.pop()
+        # If no knight is placed, place the knight
         elif not self.board.knight.knight_placed:
             self.board.knight.knight_placed = True
             self.board.knight.knight_pos = (row, col)
@@ -513,6 +522,7 @@ class ChessState:
             self.game_state = "ready"
             self.board.draw_knight(self.board.sq_x_length, self.board.sq_y_length)
             self.board.knight.move_log.append((row, col, 0))
+        # If knight is place and user clicks on a different square, place knight in the new square
         elif self.board.knight.knight_placed:
             self.board.knight.move_log.pop()
             self.board.graph[self.board.knight.knight_pos[0]][self.board.knight.knight_pos[1]] = -1
@@ -524,8 +534,6 @@ class ChessState:
             self.board.board_moves[row][col] = 1
             self.board.knight.move_log.append((row, col, 0))
             self.board.draw_knight(self.board.sq_x_length, self.board.sq_y_length)
-
-
 
     def check_game_event(self, mouse_pos):
         """
@@ -563,21 +571,25 @@ class ChessState:
                         help_button.x_pos <= mouse_pos[0] <= help_button.x_pos + help_button.width and \
                         help_button.y_pos <= mouse_pos[1] <= help_button.y_pos + help_button.height:
                     self.game_state = "help"
-                # On Colour Blind Button.
+                # On Colour Button.
                 elif colour_button.x_pos <= mouse_pos[0] <= colour_button.x_pos + colour_button.width and \
                         colour_button.y_pos <= mouse_pos[1] <= colour_button.y_pos + colour_button.height:
                     if self.board.stamp_colour[0] == "red":
-                        self.board.stamp_colour = ("blue", STAMP_COLOURS[1], MOVE_COLOURS[1])
-                        colour_button.change_text("Green")
-                    elif self.board.stamp_colour[0] == "blue":
-                        self.board.stamp_colour = ("green", STAMP_COLOURS[2], MOVE_COLOURS[2])
-                        colour_button.change_text("Colour Blind")
+                        self.board.stamp_colour = ("green", STAMP_COLOURS[1], MOVE_COLOURS[1])
+                        colour_button.change_text("Blue")
                     elif self.board.stamp_colour[0] == "green":
+                        self.board.stamp_colour = ("blue", STAMP_COLOURS[2], MOVE_COLOURS[2])
+                        colour_button.change_text("Colour Blind")
+                    elif self.board.stamp_colour[0] == "blue":
                         self.board.stamp_colour = ("colour blind", STAMP_COLOURS[3], MOVE_COLOURS[3])
                         colour_button.change_text("Red")
                     elif self.board.stamp_colour[0] == "colour blind":
                         self.board.stamp_colour = ("red", STAMP_COLOURS[0], MOVE_COLOURS[0])
                         colour_button.change_text("Green")
+                    if self.tour_found:
+                        self.board.draw_board()
+                        self.board.draw_lines()
+                        self.board.draw_numbers()
                 # On Reset Button. Resets the board
                 elif reset_button.x_pos <= mouse_pos[0] <= reset_button.x_pos + reset_button.width \
                         and reset_button.y_pos <= mouse_pos[1] <= reset_button.y_pos + reset_button.height:
@@ -928,8 +940,6 @@ class ChessState:
             new_y = last_used_square[1] + self.board.knight.knight_moves[i][1]
             if self.is_valid_move(new_x, new_y):
                 # Update the last square of move_log so that the next knight move to check will be the next one
-                # self.board.draw_square(self.knight.knight_pos[0], self.knight.knight_pos[1])
-                # self.draw_line()
                 self.board.knight.move_log[-1] = (self.board.knight.knight_pos[0],
                                                   self.board.knight.knight_pos[1], i + 1)
                 self.board.knight.knight_step += 1
@@ -957,25 +967,25 @@ class ChessState:
         Process flow that determines the next behaviour of the game state before updating display
         :return:
         """
+        display_title()
+        if self.game_state == "help":
+            self.display_help()
+        else:
+            self.display_game_buttons()
         if self.game_state == "touring":
             self.find_tour()
         if self.game_state == "fail" and self.tour_type == "Warnsdorff":
             if self.tour_failures <= 5:
                 self.redo_tour()
+            else:
+                update_below_board_text("Warnsdorff Algorithm failed to find a tour after 5 tries.", "Stopping the tour.")
         if self.game_state == "fail" and self.tour_type == "Backtrack":
             update_below_board_text("Backtrack algorithm failed to find a tour.", "No reason to brute force again.")
         if self.game_state == "pause":
             pass
         if not self.running:
-            # stop = timeit.default_timer()
-            # print('Time: ', stop - start, "seconds")
-            # print(movement, "Iterations")
             pg.quit()
             sys.exit()
-        if self.game_state == "help":
-            self.display_help()
-        else:
-            self.display_game_buttons()
         pg.event.pump()
 
 

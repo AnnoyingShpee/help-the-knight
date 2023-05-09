@@ -128,9 +128,9 @@ fps_up_text_rect = fps_up_text.get_rect(
 
 # Game text under the chessboard
 text_color = (0, 0, 0)
-under_board_line_text = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
-                                          BACKGROUND_COLOUR, text_color)
-under_board_rect = under_board_line_text.rect
+under_board_text = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
+                                     BACKGROUND_COLOUR, text_color)
+under_board_rect = under_board_text.rect
 
 # Area to display row number text
 row_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 10) * 2, y_axis // 20, pg,
@@ -191,7 +191,7 @@ def update_below_board_text(text, extra_text=None):
     :param extra_text: Extra info to be displayed below text
     :return:
     """
-    global under_board_line_text, under_board_rect
+    global under_board_text, under_board_rect
     under_board_line_1_text = TEXT_FONT.render(text, True, under_board_line_details.text_color)
     under_board_line_1_text_rect = under_board_line_1_text.get_rect(
         center=(under_board_line_details.x_pos + (under_board_line_details.width // 2),
