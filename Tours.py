@@ -276,5 +276,3 @@ tours.generate_tours()
 
 
 
-
-

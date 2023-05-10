@@ -1,0 +1,12 @@
+1.   Click on "-1" or "+1" of Rows/Columns to decrease or increase the number of rows/columns in the chessboard respectively.
+2.   Click on a square in the chessboard to place a Knight piece in that square of the board.
+3.   Click on Algorithms to choose the type of algorithm to be used to find the Knight's Tour.
+4.   Click on Start to start finding the Knight's Tour. Start will change to Pause. Click on Pause to pause the Tour
+    finding. Pause will change to Start. Click on Start to continue the tour.
+5.   Application will generate a tour until found or fails after 5 tries.
+6.   Click on button below Colour to change the colour of tour display. Colour ranges from Red to Blue to Green to Colour
+    Blind.
+7.   Click on Reset to clean the board. This can be done before or after a tour has been found. This will reset the board,
+    rows, columns, and algorithm.
+8.   Click on Quit or press ESC to exit the application.
+9.   Take a screenshot of the instructions in case you forget.
