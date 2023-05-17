@@ -498,10 +498,10 @@ class ChessState:
     def check_event(self):
         mouse_pos = pg.mouse.get_pos()
         for event in pg.event.get():
-            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+            if event.tour_type == pg.QUIT or (event.tour_type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 self.running = False
             # Checks if mouse click is on a component
-            elif event.type == pg.MOUSEBUTTONDOWN:
+            elif event.tour_type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = pg.mouse.get_pos()
                 # On board area
                 if OFFSET[0] < mouse_pos[0] < OFFSET[0] + self.board.board_size[0] and \

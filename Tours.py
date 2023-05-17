@@ -4,45 +4,24 @@ import numpy as np
 
 
 class Tour:
-    def __init__(self, row_dimension, col_dimension, tour_type="random"):
-        x = randint(0, row_dimension-1)
-        y = randint(0, col_dimension-1)
+    def __init__(self, row_dimension, col_dimension, tour_type="Backtrack"):
+        # x = randint(0, row_dimension-1)
+        # y = randint(0, col_dimension-1)
+        x, y = 1, 7
         self.row_dimension = row_dimension
         self.col_dimension = col_dimension
         self.total_squares = row_dimension * col_dimension
         self.graph = np.negative(np.ones([row_dimension, col_dimension], dtype=int))
+        self.moves = np.zeros([row_dimension, col_dimension])
         self.knight_moves = ((2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1))
         self.knight_initial_pos = (x, y)
         self.knight_pos = (x, y)
         self.tour_found = False
         self.knight_step = 1
         self.graph[x][y] = self.knight_step
-        self.type = tour_type
+        self.moves[x][y] = 1
+        self.tour_type = tour_type
         self.move_log = [(x, y, 0)]
-        self.closed_structured_tour_path = f"Tours/{self.type}_closed_structured_tours_{row_dimension}_{col_dimension}.txt"
-        self.open_structured_tour_path = f"Tours/{self.type}_opened_structured_tours_{row_dimension}_{col_dimension}.txt"
-        self.closed_unstructured_tour_path = f"Tours/{self.type}_closed_unstructured_tours_{row_dimension}_{col_dimension}.txt"
-        self.open_unstructured_tour_path = f"Tours/{self.type}_opened_unstructured_tours_{row_dimension}_{col_dimension}.txt"
-
-        try:
-            fo = open(self.open_structured_tour_path, 'w')
-            fo.write("--\n")
-            fo.close()
-
-            fc = open(self.closed_structured_tour_path, 'w')
-            fc.write("--\n")
-            fc.close()
-
-            fo = open(self.open_unstructured_tour_path, 'w')
-            fo.write("--\n")
-            fo.close()
-
-            fc = open(self.closed_unstructured_tour_path, 'w')
-            fc.write("--\n")
-            fc.close()
-
-        except Exception as e:
-            print(e)
 
     def reset_board(self):
         x = randint(0, self.row_dimension-1)
@@ -53,30 +32,23 @@ class Tour:
         self.knight_pos = (x, y)
         self.knight_step = 1
         self.graph[x][y] = self.knight_step
+        self.moves[x][y] = 1
 
-    def print_tour(self, tour_file_path):
+    def print_tour(self):
+        print("--Steps--")
         for i in range(self.row_dimension):
             for j in range(self.col_dimension):
                 item = self.graph[i][j]
                 print(item, end=' ')
             print()
-        print("--")
+        print("--Moves--")
+        for i in range(self.row_dimension):
+            for j in range(self.col_dimension):
+                item = self.moves[i][j]
+                print(item, end=' ')
+            print()
+        print('----')
         self.tour_found = False
-        # try:
-        #     file_append = open(tour_file_path, 'a')
-        #     for i in range(self.row_dimension):
-        #         for j in range(self.col_dimension):
-        #             item = self.graph[i][j]
-        #             print(item, end=' ')
-        #             file_append.write(str(item))
-        #             file_append.write(' ')
-        #         print()
-        #         file_append.write("\n")
-        #     print("--")
-        #     file_append.write("--\n")
-        #     self.tour_found = False
-        # except Exception as ex:
-        #     print(ex)
 
     def check_if_structured_tour(self):
         row_last_square = self.row_dimension - 1
@@ -118,28 +90,27 @@ class Tour:
         else:
             return False
 
-    # Count the number of steps in one random tour
     def generate_tours(self):
-        if self.type == "Random":
+        if self.tour_type == "Random":
             print("Random walk tour being made")
             self.find_tour_random_walk()
-        elif self.type == "Backtrack":
+        elif self.tour_type == "Backtrack":
             print("Backtrack tour being made")
             self.find_tour_backtrack_iterative()
-        elif self.type == "Warnsdorff":
+        elif self.tour_type == "Warnsdorff":
             print("Warnsdorff tour being made")
             self.find_tour_warnsdorff()
         if self.tour_found:
             if self.check_if_structured_tour():
                 if self.check_if_closed_tour():
-                    self.print_tour(self.closed_structured_tour_path)
+                    self.print_tour()
                 else:
-                    self.print_tour(self.open_structured_tour_path)
+                    self.print_tour()
             else:
                 if self.check_if_closed_tour():
-                    self.print_tour(self.closed_unstructured_tour_path)
+                    self.print_tour()
                 else:
-                    self.print_tour(self.open_unstructured_tour_path)
+                    self.print_tour()
         self.reset_board()
 
     def count_empty_squares(self, next_x, next_y):
@@ -186,6 +157,7 @@ class Tour:
                     self.move_log[-1] = (self.knight_pos[0], self.knight_pos[1], i + 1)
                     self.knight_step += 1
                     self.graph[new_x][new_y] = self.knight_step
+                    self.moves[new_x][new_y] += 1
                     self.knight_pos = (new_x, new_y)
                     new_pos = (new_x, new_y, 0)
                     self.move_log.append(new_pos)
@@ -266,7 +238,6 @@ class Tour:
 
     def find_tour_divide_and_conquer(self):
         return
-
 
 tours = Tour(8, 8, "Backtrack")
 tours.generate_tours()

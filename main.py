@@ -352,9 +352,28 @@ class Board:
         stamp = ((col * self.sq_x_length) + OFFSET[0],
                  (row * self.sq_y_length) + OFFSET[1])
         number = self.board_moves[row][col]
+        number_length = len(str(number))
         number_render = self.moves_font.render(f"{number}", True, (0, 0, 0))
-        number_rect = number_render.get_rect(center=(col*self.sq_x_length + OFFSET[0] + self.sq_x_length // 10,
-                                                     row*self.sq_y_length + OFFSET[1] + self.sq_y_length // 10))
+        if number_length <= 3:
+            number_rect = number_render.get_rect(
+                center=(col * self.sq_x_length + OFFSET[0] + 2 * (self.sq_x_length // 10),
+                        row * self.sq_y_length + OFFSET[1] + 2 * (self.sq_y_length // 10))
+            )
+        else:
+            number_rect = number_render.get_rect(
+                center=(col * self.sq_x_length + OFFSET[0] + (2+number_length-3) * (self.sq_x_length // 10),
+                        row * self.sq_y_length + OFFSET[1] + 2 * (self.sq_y_length // 10))
+            )
+        # if number_length > 1:
+        #     number_rect = number_render.get_rect(
+        #         center=(col*self.sq_x_length + OFFSET[0] + (number_length % 3) * (self.sq_x_length // 10),
+        #                 row*self.sq_y_length + OFFSET[1] + (number_length % 3) * (self.sq_y_length // 10))
+        #     )
+        # else:
+        #     number_rect = number_render.get_rect(
+        #         center=(col * self.sq_x_length + OFFSET[0] + (self.sq_x_length // 10),
+        #                 row * self.sq_y_length + OFFSET[1] + (self.sq_y_length // 10))
+        #     )
         SCREEN.blit(number_render, number_rect)
 
 
@@ -408,7 +427,11 @@ class ChessState:
         row_text.change_text("Rows: 8")
         col_text.change_text("Columns: 8")
         start_button.change_text("Start")
-        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+        # Display text underneath board
+        if self.fps > 60:
+            update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+        else:
+            update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
     def redo_tour(self):
         self.game_state = "touring"
@@ -425,7 +448,7 @@ class ChessState:
         update_below_board_text("Warnsdorff algorithm failed to find a tour.", f"Retrying No. {self.tour_failures}")
 
     def redraw_board(self):
-        if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000 / self.fps:
+        if self.fps > 60:
             furthest_node = self.board.graph.max()
             # Draw current display of tour
             self.board.draw_board()
@@ -445,6 +468,27 @@ class ChessState:
             pg.display.update()
             self.last_frame_tick = pg.time.get_ticks()
             self.move_done = False
+        else:
+            if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000 / self.fps:
+                furthest_node = self.board.graph.max()
+                # Draw current display of tour
+                self.board.draw_board()
+                self.board.draw_lines()
+                self.board.draw_numbers()
+
+                if furthest_node == self.board.row_dimension * self.board.col_dimension:
+                    self.board.draw_knight_step(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
+                else:
+                    SCREEN.blit(self.board.knight.knight_img,
+                                pg.Rect((self.board.knight.knight_pos[1] * self.board.sq_x_length) +
+                                        OFFSET[0] + self.board.sq_x_length // 8,
+                                        (self.board.knight.knight_pos[0] * self.board.sq_y_length) +
+                                        OFFSET[1] + self.board.sq_y_length // 8,
+                                        self.board.sq_x_length, self.board.sq_y_length)
+                                )
+                pg.display.update()
+                self.last_frame_tick = pg.time.get_ticks()
+                self.move_done = False
 
     def increase_fps(self):
         if self.fps < 10:
@@ -452,6 +496,8 @@ class ChessState:
         elif self.fps < 30:
             self.fps += 5
         elif self.fps < 60:
+            self.fps += 10
+        elif self.fps < 70:
             self.fps += 10
         self.check_fps()
 
@@ -481,7 +527,10 @@ class ChessState:
         elif 30 < self.fps < 60:
             fps_down_button.change_text("-10")
             fps_up_button.change_text("+10")
-        fps_text.change_text(f"FPS: {self.fps}")
+        if self.fps > 60:
+            fps_text.change_text(f"FPS: MAX")
+        else:
+            fps_text.change_text(f"FPS: {self.fps}")
 
     # Checks if user selected the same square twice. If so, remove the knight
     def place_first_knight(self, selected_sq):
@@ -598,7 +647,10 @@ class ChessState:
                     self.algorithm_selection = False
                     algorithms_type_button.change_text(f"[{self.tour_type}]")
                     # Display text underneath board
-                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+                    if self.fps > 60:
+                        update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+                    else:
+                        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On Warnsdorff Button. Change the tour finding method to Warnsdorff
                 elif warnsdorff_button.x_pos <= mouse_pos[0] <= warnsdorff_button.x_pos + warnsdorff_button.width \
                         and warnsdorff_button.y_pos <= mouse_pos[1] <= warnsdorff_button.y_pos + warnsdorff_button.height \
@@ -607,7 +659,10 @@ class ChessState:
                     self.algorithm_selection = False
                     algorithms_type_button.change_text(f"[{self.tour_type}]")
                     # Display text underneath board
-                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+                    if self.fps > 60:
+                        update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+                    else:
+                        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On decrease row button.
                 elif row_down_button.x_pos <= mouse_pos[0] <= row_down_button.x_pos + row_down_button.width \
                         and row_down_button.y_pos <= mouse_pos[1] <= row_down_button.y_pos + row_down_button.height \
@@ -632,12 +687,20 @@ class ChessState:
                 elif fps_down_button.x_pos <= mouse_pos[0] <= fps_down_button.x_pos + fps_down_button.width \
                         and fps_down_button.y_pos <= mouse_pos[1] <= fps_down_button.y_pos + fps_down_button.height:
                     self.decrease_fps()
-                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+                    # Display text underneath board
+                    if self.fps > 60:
+                        update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+                    else:
+                        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
                 # On increase FPS button.
                 elif fps_up_button.x_pos <= mouse_pos[0] <= fps_up_button.x_pos + fps_up_button.width \
                         and fps_down_button.y_pos <= mouse_pos[1] <= fps_up_button.y_pos + fps_up_button.height:
                     self.increase_fps()
-                    update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+                    # Display text underneath board
+                    if self.fps > 60:
+                        update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+                    else:
+                        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
     def display_game_buttons(self):
         """
