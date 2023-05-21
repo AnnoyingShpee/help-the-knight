@@ -58,8 +58,12 @@ class Simulations:
         self.open_unstructured_tours_path = None
 
         if self.save_tours:
-            self.tours_path = f"Tours/{self.tour_type}/tours_{row_dimension}x{col_dimension}.text"
-            self.moves_path = f"Tours/{self.tour_type}/moves_{row_dimension}x{col_dimension}.text"
+            if self.sim_type == "specific":
+                self.tours_path = f"Tours/{self.tour_type}/{self.sim_type}/tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+                self.moves_path = f"Tours/{self.tour_type}/{self.sim_type}/moves_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+            else:
+                self.tours_path = f"Tours/{self.tour_type}/{self.sim_type}/tours_{row_dimension}x{col_dimension}.txt"
+                self.moves_path = f"Tours/{self.tour_type}/{self.sim_type}/moves_{row_dimension}x{col_dimension}.txt"
             try:
                 fo = open(self.tours_path, 'w')
                 fo.write("--\n")
@@ -72,7 +76,10 @@ class Simulations:
                 print(e)
 
         if self.save_time:
-            self.time_path = f"Tours/{self.tour_type}/times_{row_dimension}x{col_dimension}.csv"
+            if self.sim_type == "specific":
+                self.time_path = f"Tours/{self.tour_type}/{self.sim_type}/times_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.csv"
+            else:
+                self.time_path = f"Tours/{self.tour_type}/{self.sim_type}/times_{row_dimension}x{col_dimension}.csv"
             try:
                 fo = open(self.time_path, 'w')
                 fo.write("position_x,position_y,time,steps\n")
@@ -81,10 +88,16 @@ class Simulations:
                 print(e)
 
         if self.save_open_close and self.save_structured:
-            self.open_structured_tours_path = f"Tours/{self.tour_type}/opened_structured_tours_{row_dimension}x{col_dimension}.txt"
-            self.closed_structured_tours_path = f"Tours/{self.tour_type}/closed_structured_tours_{row_dimension}x{col_dimension}.txt"
-            self.open_unstructured_tours_path = f"Tours/{self.tour_type}/opened_unstructured_tours_{row_dimension}x{col_dimension}.txt"
-            self.closed_unstructured_tours_path = f"Tours/{self.tour_type}/closed_unstructured_tours_{row_dimension}x{col_dimension}.txt"
+            if self.sim_type == "specific":
+                self.open_structured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/opened_structured_tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+                self.closed_structured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/closed_structured_tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+                self.open_unstructured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/opened_unstructured_tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+                self.closed_unstructured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/closed_unstructured_tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+            else:
+                self.open_structured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/opened_structured_tours_{row_dimension}x{col_dimension}.txt"
+                self.closed_structured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/closed_structured_tours_{row_dimension}x{col_dimension}.txt"
+                self.open_unstructured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/opened_unstructured_tours_{row_dimension}x{col_dimension}.txt"
+                self.closed_unstructured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/closed_unstructured_tours_{row_dimension}x{col_dimension}.txt"
             try:
                 fo = open(self.open_structured_tours_path, 'w')
                 fo.write("--\n")
@@ -104,8 +117,12 @@ class Simulations:
             except Exception as e:
                 print(e)
         elif self.save_open_close:
-            self.opened_tours_path = f"Tours/{self.tour_type}/opened_tours_{row_dimension}x{col_dimension}.txt"
-            self.closed_tours_path = f"Tours/{self.tour_type}/closed_tours_{row_dimension}x{col_dimension}.txt"
+            if self.sim_type == "specific":
+                self.opened_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/opened_tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+                self.closed_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/closed_tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+            else:
+                self.opened_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/opened_tours_{row_dimension}x{col_dimension}.txt"
+                self.closed_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/closed_tours_{row_dimension}x{col_dimension}.txt"
             try:
                 fo = open(self.opened_tours_path, 'w')
                 fo.write("--\n")
@@ -117,8 +134,12 @@ class Simulations:
             except Exception as e:
                 print(e)
         elif self.save_structured:
-            self.structured_tours_path = f"Tours/{self.tour_type}/structured_tours_{row_dimension}x{col_dimension}.txt"
-            self.unstructured_tours_path = f"Tours/{self.tour_type}/unstructured_tours_{row_dimension}x{col_dimension}.txt"
+            if self.sim_type == "specific":
+                self.structured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/structured_tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+                self.unstructured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/unstructured_tours_{row_dimension}x{col_dimension}_pos_{pos_x}_{pos_y}.txt"
+            else:
+                self.structured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/structured_tours_{row_dimension}x{col_dimension}.txt"
+                self.unstructured_tours_path = f"Tours/{self.tour_type}/{self.sim_type}/unstructured_tours_{row_dimension}x{col_dimension}.txt"
             try:
                 fo = open(self.structured_tours_path, 'w')
                 fo.write("--\n")
@@ -588,7 +609,7 @@ if sim_input == "specific":
     while not 0 <= y_input <= col_input - 1:
         print("Simulation selected is", sim_input, ", selecting a square is required.")
         try:
-            y_input = int(input(f"Choose row number of square between 0 and {col_input - 1}: "))
+            y_input = int(input(f"Choose col number of square between 0 and {col_input - 1}: "))
             if not 0 <= y_input <= col_input - 1:
                 print(f"Input must be an integer between 0 and {col_input - 1}")
         except:

@@ -1,6 +1,10 @@
 {
+  "tour_type": "",
   "tour": [],
   "move_log": [],
+  "knight_initial_pos": [],
   "knight_pos": [],
-
+  "duration": 0,
+  "knight_steps": 0,
+  "total_steps": 0
 }

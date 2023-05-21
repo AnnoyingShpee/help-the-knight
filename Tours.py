@@ -4,15 +4,18 @@ import numpy as np
 
 
 class Tour:
-    def __init__(self, row_dimension, col_dimension, tour_type="Backtrack"):
-        # x = randint(0, row_dimension-1)
-        # y = randint(0, col_dimension-1)
-        x, y = 1, 7
+    def __init__(self, row_dimension, col_dimension, x_pos=None, y_pos=None, tour_type="Backtrack"):
+        x = x_pos
+        y = y_pos
+        if x is None:
+            x = randint(0, row_dimension-1)
+        if y is None:
+            y = randint(0, col_dimension-1)
         self.row_dimension = row_dimension
         self.col_dimension = col_dimension
         self.total_squares = row_dimension * col_dimension
         self.graph = np.negative(np.ones([row_dimension, col_dimension], dtype=int))
-        self.moves = np.zeros([row_dimension, col_dimension])
+        self.moves = np.zeros([row_dimension, col_dimension], dtype=int)
         self.knight_moves = ((2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1))
         self.knight_initial_pos = (x, y)
         self.knight_pos = (x, y)
@@ -22,6 +25,8 @@ class Tour:
         self.moves[x][y] = 1
         self.tour_type = tour_type
         self.move_log = [(x, y, 0)]
+        self.time_start = 0
+        self.duration = 0
 
     def reset_board(self):
         x = randint(0, self.row_dimension-1)
@@ -47,7 +52,9 @@ class Tour:
                 item = self.moves[i][j]
                 print(item, end=' ')
             print()
+        print("Time taken =", self.duration)
         print('----')
+
         self.tour_found = False
 
     def check_if_structured_tour(self):
@@ -91,26 +98,22 @@ class Tour:
             return False
 
     def generate_tours(self):
+        self.time_start = datetime.now()
         if self.tour_type == "Random":
             print("Random walk tour being made")
             self.find_tour_random_walk()
-        elif self.tour_type == "Backtrack":
+        elif self.tour_type == "Backtrack Iterative":
             print("Backtrack tour being made")
             self.find_tour_backtrack_iterative()
+        elif self.tour_type == "Backtrack Recursive":
+            print("Recursive Backtrack tour being made")
+            self.find_tour_backtrack_recursive()
         elif self.tour_type == "Warnsdorff":
             print("Warnsdorff tour being made")
             self.find_tour_warnsdorff()
         if self.tour_found:
-            if self.check_if_structured_tour():
-                if self.check_if_closed_tour():
-                    self.print_tour()
-                else:
-                    self.print_tour()
-            else:
-                if self.check_if_closed_tour():
-                    self.print_tour()
-                else:
-                    self.print_tour()
+            self.duration += (datetime.now() - self.time_start).total_seconds()
+            self.print_tour()
         self.reset_board()
 
     def count_empty_squares(self, next_x, next_y):
@@ -130,6 +133,36 @@ class Tour:
         if 0 <= x < self.row_dimension and 0 <= y < self.col_dimension and self.graph[x][y] == -1:
             return True
         return False
+
+    def do_backtrack_step(self):
+        if self.knight_step == (self.row_dimension * self.col_dimension):
+            return True
+
+        # Try all next moves from the current coordinate x, y
+        for i in range(8):
+            new_x = self.knight_pos[0] + self.knight_moves[i][0]
+            new_y = self.knight_pos[1] + self.knight_moves[i][1]
+
+            if self.is_valid_move(new_x, new_y):
+                self.knight_step += 1
+                self.graph[new_x][new_y] = self.knight_step
+                self.moves[new_x][new_y] += 1
+                self.move_log.append((new_x, new_y, 0))
+                self.knight_pos = (new_x, new_y)
+                if self.do_backtrack_step():
+                    return True
+        self.graph[self.knight_pos[0]][self.knight_pos[1]] = -1
+        self.move_log.pop()
+        self.knight_pos = (self.move_log[-1][0], self.move_log[-1][1])
+        self.knight_step -= 1
+        return False
+
+    def find_tour_backtrack_recursive(self):
+        if not self.do_backtrack_step():
+            self.print_tour()
+            print("Solution does not exist")
+        else:
+            self.tour_found = True
 
     def find_tour_backtrack_iterative(self):
         """
@@ -175,6 +208,35 @@ class Tour:
         self.tour_found = True
         return True
 
+    def find_tour_warnsdorff(self):
+        # To give some randomness when choosing a square. Only useful for next squares with the same number of next
+        # valid squares
+        while self.knight_step < self.row_dimension*self.col_dimension:
+            least_empty = 9
+            least_empty_index = -1
+            random_num = randint(0, 1000) % 8
+            for i in range(8):
+                index = (random_num + i) % 8
+                new_x = self.knight_pos[0] + self.knight_moves[index][0]
+                new_y = self.knight_pos[1] + self.knight_moves[index][1]
+                empty_sq_count = self.count_empty_squares(new_x, new_y)
+                if self.is_valid_move(new_x, new_y) and empty_sq_count < least_empty:
+                    least_empty_index = index
+                    least_empty = empty_sq_count
+            if least_empty_index == -1:
+                self.tour_found = False
+                print("Fail")
+                return False
+
+            new_x = self.knight_pos[0] + self.knight_moves[least_empty_index][0]
+            new_y = self.knight_pos[1] + self.knight_moves[least_empty_index][1]
+            self.knight_step += 1
+            self.graph[new_x][new_y] = self.knight_step
+            self.knight_pos = (new_x, new_y)
+
+        self.tour_found = True
+        return True
+
     def find_tour_random_walk(self):
         """
         This function uses a non-recursive backtracking algorithm to solve the knight's tour. This is a brute force
@@ -207,43 +269,12 @@ class Tour:
         self.tour_found = True
         return True
 
-    def find_tour_warnsdorff(self):
-        # To give some randomness when choosing a square. Only useful for next squares with the same number of next
-        # valid squares
-        while self.knight_step < self.row_dimension*self.col_dimension:
-            least_empty = 9
-            least_empty_index = -1
-            random_num = randint(0, 1000) % 8
-            for i in range(8):
-                index = (random_num + i) % 8
-                new_x = self.knight_pos[0] + self.knight_moves[index][0]
-                new_y = self.knight_pos[1] + self.knight_moves[index][1]
-                empty_sq_count = self.count_empty_squares(new_x, new_y)
-                if self.is_valid_move(new_x, new_y) and empty_sq_count < least_empty:
-                    least_empty_index = index
-                    least_empty = empty_sq_count
-            if least_empty_index == -1:
-                self.tour_found = False
-                print("Fail")
-                return False
-
-            new_x = self.knight_pos[0] + self.knight_moves[least_empty_index][0]
-            new_y = self.knight_pos[1] + self.knight_moves[least_empty_index][1]
-            self.knight_step += 1
-            self.graph[new_x][new_y] = self.knight_step
-            self.knight_pos = (new_x, new_y)
-
-        self.tour_found = True
-        return True
-
     def find_tour_divide_and_conquer(self):
         return
 
-tours = Tour(8, 8, "Backtrack")
+
+tours = Tour(8, 8, 7, 0, "Backtrack Iterative")
 tours.generate_tours()
-
-
-
 
 
 

@@ -27,11 +27,8 @@ true_res = (windll.user32.GetSystemMetrics(0),windll.user32.GetSystemMetrics(1))
 SCREEN = pg.display.set_mode((0, 0), pg.FULLSCREEN)  # Set game window
 SCREEN.fill(BACKGROUND_COLOUR)  # Set background color
 x_axis, y_axis = SCREEN.get_size()
-
 BOARD_SIZE = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
 OFFSET = (y_axis // 15, y_axis // 15)  # Amount of offset of the board from the border
-# SCREEN_SIZE = (900, 600)  # Size of game window
-# SCREEN = pg.display.set_mode(SCREEN_SIZE)  # Set game window
 TITLE_FONT = pg.font.SysFont('Arial', 50, bold=True)  # Font for title
 BUTTON_FONT = pg.font.SysFont('Arial', 35)  # Font for button text
 TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text below the board
@@ -41,7 +38,8 @@ BOLD_TEXT_FONT = pg.font.SysFont('Arial', 30, bold=True)
 title_text = Components.Square((x_axis // 100) * 2, 0, (x_axis // 100) * 20, OFFSET[1], pg,
                                BACKGROUND_COLOUR, None, "Knight's Tour Finder", TEXT_COLOUR, TITLE_FONT)
 
-# Play, Reset, and Quit buttons in one area
+# Start, Help, Colour, Reset, and Quit buttons and text in one area
+# The buttons
 start_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 10, (x_axis // 100) * 10, y_axis // 20, pg,
                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Start", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 help_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 30, (x_axis // 100) * 10, y_axis // 20, pg,
@@ -52,8 +50,7 @@ reset_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 70, (x_
                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Reset", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 quit_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 90, (x_axis // 100) * 10, y_axis // 20, pg,
                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Quit", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-
-# Display Colour
+# The text "Colour" above Colour button
 colour_text = Components.Square((x_axis // 100) * 90, colour_button.y_pos - (y_axis // 20), (x_axis // 100) * 10, y_axis // 20, pg,
                                 BACKGROUND_COLOUR, None, "Colour", TEXT_COLOUR, TEXT_FONT)
 
@@ -66,6 +63,7 @@ algorithms_type_button = Components.Square(algorithms_button.x_pos, algorithms_b
                                            algorithms_button.width, algorithms_button.height,
                                            pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "[Backtrack]",
                                            BUTTON_TEXT_COLOUR, BUTTON_FONT)
+
 # Buttons to select Tour Type
 backtrack_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2, y_axis // 20, pg,
                                      BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
@@ -73,6 +71,7 @@ backtrack_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_ax
 warnsdorff_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 3, (x_axis // 10) * 2, y_axis // 20, pg,
                                       BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                       "Warnsdoff's Method", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+
 # Buttons to decrease/increase number of rows
 row_down_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 100) * 5, y_axis // 20, pg,
                                     BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "-1", BUTTON_TEXT_COLOUR, BUTTON_FONT)
@@ -91,18 +90,22 @@ fps_down_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x
 fps_up_button = Components.Square(warnsdorff_button.x_pos + warnsdorff_button.width - (x_axis // 100) * 5,
                                   (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
                                   BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "+10", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-
 # Area to display row number text
 row_text = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 10) * 2, y_axis // 20, pg,
                              BACKGROUND_COLOUR, None, "Rows: 8", TEXT_COLOUR, TEXT_FONT)
-
 # Area to display column number text
 col_text = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 10) * 2, y_axis // 20, pg,
                              BACKGROUND_COLOUR, None, "Columns: 8", TEXT_COLOUR, TEXT_FONT)
-
 # Area to display FPS text
 fps_text = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 10) * 2, y_axis // 20, pg,
                              BACKGROUND_COLOUR, None, "FPS: 30", TEXT_COLOUR, TEXT_FONT)
+
+# Save file button
+save_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 10) * 2, y_axis // 20, pg,
+                                BUTTON_COLOUR, None, "Save tour", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+# Load file button
+load_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 10) * 2, y_axis // 20, pg,
+                                BUTTON_COLOUR, None, "Save tour", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 
 # Game text under the chessboard
 under_board_text = Components.Square(OFFSET[0], OFFSET[1] + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
@@ -111,29 +114,54 @@ under_board_text = Components.Square(OFFSET[0], OFFSET[1] + BOARD_SIZE[1], BOARD
 # Area to display "Help"
 component_title_text = "Board & Components"
 usage_title_text = "How To Use"
+save_load_title_text = "Saving and Loading tours"
 f = open("help_components.txt", "r")
 component_desc_text = f.read()
 f.close()
 f = open("help_how_to_use.txt", "r")
 usage_desc_text = f.read()
 f.close()
+f = open("help_save_load.txt", "r")
+save_load_desc_text = f.read()
+f.close()
 
-component_title_area = Components.Square((x_axis // 100) * 5, (y_axis // 100) * 5, (x_axis // 100) * 92,
-                                         (y_axis // 100) * 5, pg, (0, 0, 0), None, component_title_text,
-                                         (255, 255, 255), BOLD_TEXT_FONT)
-component_desc_area = Components.Square((x_axis // 100) * 5, component_title_area.y_pos+component_title_area.height,
-                                        (x_axis // 100) * 92, (y_axis // 100) * 40, pg, (0, 0, 0), None, component_desc_text,
+help_display_area = Components.Square((x_axis // 100) * 5, (y_axis // 100) * 5,
+                                      (x_axis // 100) * 92, (y_axis // 100) * 95, pg, (0, 0, 0))
+help_title_area = Components.Square(help_display_area.x_pos, help_display_area.y_pos, help_display_area.width,
+                                    help_display_area.height // 10, pg, (0, 0, 0), None, "Help",
+                                    (255, 255, 255), BOLD_TEXT_FONT)
+help_exit_button = Components.Square(help_title_area.x_pos+help_title_area.width-(help_title_area.width // 20),
+                                     help_title_area.y_pos, help_title_area.width // 20,
+                                     help_title_area.height, pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
+                                     "X", (255, 255, 255), TEXT_FONT)
+help_page_num_area = Components.Square(help_display_area.x_pos,
+                                       help_display_area.y_pos+help_display_area.height-(help_display_area.height//10),
+                                       help_display_area.width, help_display_area.height // 10, pg, (0, 0, 0), None, "Page 1/3",
+                                       (255, 255, 255), TEXT_FONT)
+help_prev_page_button = Components.Square(help_page_num_area.x_pos, help_page_num_area.y_pos,
+                                          help_page_num_area.width // 20, help_page_num_area.height,
+                                          pg, (0, 0, 0), HOVER_BUTTON_COLOUR, "<", (255, 255, 255), TEXT_FONT)
+help_next_page_button = Components.Square(help_page_num_area.x_pos+help_page_num_area.width-(help_page_num_area.width // 20),
+                                          help_page_num_area.y_pos, help_page_num_area.width // 20, help_page_num_area.height,
+                                          pg, (0, 0, 0), HOVER_BUTTON_COLOUR, ">", (255, 255, 255), TEXT_FONT)
+component_title_area = Components.Square(help_display_area.x_pos, help_title_area.y_pos+help_title_area.height,
+                                         help_display_area.width, (y_axis // 100) * 5, pg, (0, 0, 0),
+                                         None, component_title_text, (255, 255, 255), BOLD_TEXT_FONT)
+component_desc_area = Components.Square(help_display_area.x_pos, component_title_area.y_pos+component_title_area.height,
+                                        help_display_area.width, (y_axis // 100) * 40, pg, (0, 0, 0), None, component_desc_text,
                                         (255, 255, 255), TEXT_FONT)
-usage_title_area = Components.Square((x_axis // 100) * 5, component_desc_area.y_pos+component_desc_area.height,
-                                     (x_axis // 100) * 92, (y_axis // 100) * 5, pg, (0, 0, 0), None, usage_title_text,
+usage_title_area = Components.Square(help_display_area.x_pos, help_title_area.y_pos+help_title_area.height,
+                                     help_display_area.width, (y_axis // 100) * 5, pg, (0, 0, 0), None, usage_title_text,
                                      (255, 255, 255), BOLD_TEXT_FONT)
-usage_desc_area = Components.Square((x_axis // 100) * 5, usage_title_area.y_pos+usage_title_area.height,
-                                    (x_axis // 100) * 92, (y_axis // 100) * 45, pg, (0, 0, 0), None, usage_desc_text,
+usage_desc_area = Components.Square(help_display_area.x_pos, usage_title_area.y_pos+usage_title_area.height,
+                                    help_display_area.width, (y_axis // 100) * 45, pg, (0, 0, 0), None, usage_desc_text,
                                     (255, 255, 255), TEXT_FONT)
-help_exit_button = Components.Square(component_title_area.x_pos+component_title_area.width-(component_title_area.width // 20),
-                                     (y_axis // 100) * 5, component_title_area.width // 20,
-                                     component_title_area.height, pg,
-                                     (0, 0, 0), HOVER_BUTTON_COLOUR, "X", (255, 255, 255), TEXT_FONT)
+save_load_title_area = Components.Square(help_display_area.x_pos, help_title_area.y_pos+help_title_area.height,
+                                         help_display_area.width, (y_axis // 100) * 5, pg, (0, 0, 0),
+                                         None, save_load_title_text, (255, 255, 255), BOLD_TEXT_FONT)
+save_load_desc_area = Components.Square(help_display_area.x_pos, save_load_title_area.y_pos+save_load_title_area.height,
+                                        help_display_area.width, (y_axis // 100) * 50, pg, (0, 0, 0),
+                                        None, save_load_desc_text, (255, 255, 255), TEXT_FONT)
 
 
 def display_title():
@@ -141,7 +169,8 @@ def display_title():
     SCREEN.blit(title_text.text_render, title_text.text_rect)
 
 
-def display_help_text(surface, text, pos, font, colour):
+# https://stackoverflow.com/questions/42014195/rendering-text-with-multiple-lines-in-pygame
+def display_multiline_text(surface, text, pos, font, colour):
     words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
     space = font.size(' ')[0]  # The width of a space.
     max_width, max_height = surface.get_size()
@@ -205,8 +234,8 @@ class Knight:
 
 
 class Board:
-    def __init__(self, knight: Knight, row_dimension=8, col_dimension=8):
-        self.knight = knight
+    def __init__(self, row_dimension=8, col_dimension=8):
+        self.knight = Knight()
         self.board_size = BOARD_SIZE  # Size of board
         self.sq_colours = [pg.Color("white"), pg.Color("grey")]
         self.row_dimension = row_dimension
@@ -364,24 +393,99 @@ class Board:
                 center=(col * self.sq_x_length + OFFSET[0] + (2+number_length-3) * (self.sq_x_length // 10),
                         row * self.sq_y_length + OFFSET[1] + 2 * (self.sq_y_length // 10))
             )
-        # if number_length > 1:
-        #     number_rect = number_render.get_rect(
-        #         center=(col*self.sq_x_length + OFFSET[0] + (number_length % 3) * (self.sq_x_length // 10),
-        #                 row*self.sq_y_length + OFFSET[1] + (number_length % 3) * (self.sq_y_length // 10))
-        #     )
-        # else:
-        #     number_rect = number_render.get_rect(
-        #         center=(col * self.sq_x_length + OFFSET[0] + (self.sq_x_length // 10),
-        #                 row * self.sq_y_length + OFFSET[1] + (self.sq_y_length // 10))
-        #     )
         SCREEN.blit(number_render, number_rect)
 
 
-class ChessState:
-    def __init__(self, board: Board):
+class HelpState:
+    def __init__(self):
+        self.curr_page = 1
+        self.total_pages = 3
+        self.numbered_tour_img = pg.image.load("numbered_tour.png")
+
+    def display_help_state_components(self, mouse_pos):
+        """
+        Draws the help pop-up
+        :return:
+        """
+        # Displays Help text area
+        pg.draw.rect(SCREEN, help_display_area.colour, help_display_area.rect)
+        # Displays Help title
+        pg.draw.rect(SCREEN, help_title_area.colour, help_title_area.rect)
+        SCREEN.blit(help_title_area.text_render, help_title_area.text_rect)
+        # Displays the exit button of the help section
+        if help_exit_button.x_pos <= mouse_pos[0] <= help_exit_button.x_pos + help_exit_button.width and \
+                help_exit_button.y_pos <= mouse_pos[1] <= help_exit_button.y_pos + help_exit_button.height:
+            pg.draw.rect(SCREEN, help_exit_button.hover_colour, help_exit_button.rect)
+        else:
+            pg.draw.rect(SCREEN, help_exit_button.colour, help_exit_button.rect)
+        # Displays "X" text of exit button
+        SCREEN.blit(help_exit_button.text_render, help_exit_button.text_rect)
+        # Displays current page
+        if self.curr_page == 1:
+            self.display_help_state_1()
+        elif self.curr_page == 2:
+            self.display_help_state_2()
+        elif self.curr_page == 3:
+            self.display_help_state_3()
+        # Displays page number
+        pg.draw.rect(SCREEN, help_page_num_area.colour, help_page_num_area.rect)
+        SCREEN.blit(help_page_num_area.text_render, help_page_num_area.text_rect)
+        # Displays previous page button
+        if help_prev_page_button.x_pos <= mouse_pos[0] <= help_prev_page_button.x_pos+help_prev_page_button.width and \
+                help_prev_page_button.y_pos <= mouse_pos[1] <= help_prev_page_button.y_pos+help_prev_page_button.height:
+            pg.draw.rect(SCREEN, help_prev_page_button.hover_colour, help_prev_page_button.rect)
+        else:
+            pg.draw.rect(SCREEN, help_prev_page_button.colour, help_prev_page_button.rect)
+        SCREEN.blit(help_prev_page_button.text_render, help_prev_page_button.text_rect)
+        # Displays next page button
+        if help_next_page_button.x_pos <= mouse_pos[0] <= help_next_page_button.x_pos + help_next_page_button.width and \
+                help_next_page_button.y_pos <= mouse_pos[1] <= help_next_page_button.y_pos + help_next_page_button.height:
+            pg.draw.rect(SCREEN, help_next_page_button.hover_colour, help_next_page_button.rect)
+        else:
+            pg.draw.rect(SCREEN, help_next_page_button.colour, help_next_page_button.rect)
+        SCREEN.blit(help_next_page_button.text_render, help_next_page_button.text_rect)
+
+    def display_help_state_1(self):
+        # Displays "Board & Components" title
+        pg.draw.rect(SCREEN, component_title_area.colour, component_title_area.rect)
+        SCREEN.blit(component_title_area.text_render, component_title_area.text_rect)
+        # Displays "Board & Components" description
+        pg.draw.rect(SCREEN, component_desc_area.colour, component_desc_area.rect)
+        display_multiline_text(SCREEN, component_desc_text, (component_desc_area.x_pos, component_desc_area.y_pos),
+                               component_desc_area.text_font, component_desc_area.text_colour)
+
+        # Displays image
+        self.numbered_tour_img = pg.transform.scale(self.numbered_tour_img,
+                                                    (component_desc_area.width // 10, component_desc_area.height // 2))
+        SCREEN.blit(self.numbered_tour_img,
+                    pg.Rect((component_desc_area.x_pos + (component_desc_area.width // 100) * 80),
+                            component_desc_area.y_pos,
+                            self.numbered_tour_img.get_width(), self.numbered_tour_img.get_height()))
+
+    def display_help_state_2(self):
+        # Displays "How To Use" title
+        pg.draw.rect(SCREEN, usage_title_area.colour, usage_title_area.rect)
+        SCREEN.blit(usage_title_area.text_render, usage_title_area.text_rect)
+        # Displays "How To Use" description
+        pg.draw.rect(SCREEN, usage_desc_area.colour, usage_desc_area.rect)
+        display_multiline_text(SCREEN, usage_desc_text, (usage_desc_area.x_pos, usage_desc_area.y_pos),
+                               usage_desc_area.text_font, usage_desc_area.text_colour)
+
+    def display_help_state_3(self):
+        # Displays saving and loading title
+        pg.draw.rect(SCREEN, save_load_title_area.colour, save_load_title_area.rect)
+        SCREEN.blit(save_load_title_area.text_render, save_load_title_area.text_rect)
+        # Displays saving and loading description
+        display_multiline_text(SCREEN, save_load_desc_text, (save_load_desc_area.x_pos, save_load_desc_area.y_pos),
+                               save_load_desc_area.text_font, usage_desc_area.text_colour)
+
+
+class GameState:
+    def __init__(self):
+        self.help_state = HelpState()
         # Initialise board array. Board is n x n matrix
-        self.board = board
-        # State of chessboard (start, ready, touring, fail, pause, help)
+        self.board = Board()
+        # State of chessboard (start, ready, touring, finish, fail, pause, help)
         self.game_state = "start"
         # Algorithm selection button
         self.algorithm_selection = False
@@ -396,7 +500,6 @@ class ChessState:
         self.board.draw_board()
         self.time_start = datetime.now()
         self.duration = 0
-        self.numbered_tour_img = pg.image.load("numbered_tour.png")
         # Display text underneath board
         update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
@@ -571,143 +674,199 @@ class ChessState:
             self.board.knight.move_log.append((row, col, 0))
             self.board.draw_knight()
 
-    def check_game_event(self, mouse_pos):
+    def display_components(self):
+        mouse_pos = pg.mouse.get_pos()
+        # self.display_main_buttons(mouse_pos)
+        if self.game_state != "help":
+            self.display_main_buttons(mouse_pos)
+            if self.game_state == "start":
+                self.display_start_state_components(mouse_pos)
+            elif self.game_state == "touring":
+                pass
+            elif self.game_state == "pause":
+                pass
+        else:
+            self.help_state.display_help_state_components(mouse_pos)
+        if self.game_state == "start":
+            self.display_start_state_components(mouse_pos)
+        elif self.game_state == "help":
+            self.help_state.display_help_state_components(mouse_pos)
+        elif self.game_state == "touring":
+            pass
+        elif self.game_state == "pause":
+            pass
+        self.check_events(mouse_pos)
+        pg.display.update()
+
+    def check_events(self, mouse_pos):
+        for event in pg.event.get():
+            # Checks if the ESC key is press. If True, exit the application.
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+                self.running = False
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                if self.game_state != "help":
+                    self.check_main_event(mouse_pos)
+                    if self.game_state == "start":
+                        self.check_start_state_event(mouse_pos)
+                else:
+                    self.check_help_state_event(mouse_pos)
+                    # if self.game_state == "pause"
+
+    def check_main_event(self, mouse_pos):
         """
         Checks the mouse click events
         :param mouse_pos: Position of mouse. [x, y]
         :return:
         """
-        for event in pg.event.get():
-            # Checks if the ESC key is press. If True, exit the application.
-            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
-                self.running = False
-            # Checks if mouse click is on a component
-            elif event.type == pg.MOUSEBUTTONDOWN:
-                # On board area
-                if OFFSET[0] <= mouse_pos[0] <= OFFSET[0] + self.board.board_size[0] and \
-                        OFFSET[1] <= mouse_pos[1] <= OFFSET[1] + self.board.board_size[1]:
-                    row = (mouse_pos[1] - OFFSET[1]) // self.board.sq_y_length
-                    col = (mouse_pos[0] - OFFSET[0]) // self.board.sq_x_length
-                    sq_selected = (row, col)
-                    self.place_first_knight(sq_selected)
-                # On Start Button. To start the tour
-                elif start_button.x_pos <= mouse_pos[0] <= start_button.x_pos + start_button.width \
-                        and start_button.y_pos <= mouse_pos[1] <= start_button.y_pos + start_button.height \
-                        and self.board.knight.knight_placed and not self.tour_found:
-                    if self.game_state == "ready" or self.game_state == "pause":
-                        self.game_state = "touring"
-                        start_button.change_text("Pause")
-                        self.time_start = datetime.now()
-                    elif self.game_state == "touring":
-                        self.game_state = "pause"
-                        start_button.change_text("Start")
-                        self.duration += (datetime.now() - self.time_start).total_seconds()
-                # On Help Button. Displays the text on how to use the application.
-                elif self.game_state != "touring" and self.game_state != "pause" and \
-                        help_button.x_pos <= mouse_pos[0] <= help_button.x_pos + help_button.width and \
-                        help_button.y_pos <= mouse_pos[1] <= help_button.y_pos + help_button.height:
-                    self.game_state = "help"
-                # On Colour Button.
-                elif colour_button.x_pos <= mouse_pos[0] <= colour_button.x_pos + colour_button.width and \
-                        colour_button.y_pos <= mouse_pos[1] <= colour_button.y_pos + colour_button.height:
-                    if self.board.stamp_colour[0] == "red":
-                        self.board.stamp_colour = ("green", STAMP_COLOURS[1], MOVE_COLOURS[1])
-                        colour_button.change_text("Blue")
-                    elif self.board.stamp_colour[0] == "green":
-                        self.board.stamp_colour = ("blue", STAMP_COLOURS[2], MOVE_COLOURS[2])
-                        colour_button.change_text("Colour Blind")
-                    elif self.board.stamp_colour[0] == "blue":
-                        self.board.stamp_colour = ("colour blind", STAMP_COLOURS[3], MOVE_COLOURS[3])
-                        colour_button.change_text("Red")
-                    elif self.board.stamp_colour[0] == "colour blind":
-                        self.board.stamp_colour = ("red", STAMP_COLOURS[0], MOVE_COLOURS[0])
-                        colour_button.change_text("Green")
-                    if self.tour_found:
-                        self.board.draw_board()
-                        self.board.draw_lines()
-                        self.board.draw_numbers()
-                # On Reset Button. Resets the board
-                elif reset_button.x_pos <= mouse_pos[0] <= reset_button.x_pos + reset_button.width \
-                        and reset_button.y_pos <= mouse_pos[1] <= reset_button.y_pos + reset_button.height:
-                    self.reset_game()
-                # Quit Button. Stops the game
-                elif quit_button.x_pos <= mouse_pos[0] <= quit_button.x_pos + quit_button.width \
-                        and quit_button.y_pos <= mouse_pos[1] <= quit_button.y_pos + quit_button.height:
-                    self.running = False
-                # On Algorithms button.
-                elif algorithms_button.x_pos <= mouse_pos[0] <= algorithms_button.x_pos + algorithms_button.width \
-                        and algorithms_button.y_pos <= mouse_pos[1] <= algorithms_type_button.y_pos + algorithms_type_button.height \
-                        and (self.game_state == "start" or self.game_state == "ready") and not self.algorithm_selection:
-                    self.algorithm_selection = True
-                # On Backtrack Button. Change the tour finding method to backtracking
-                elif backtrack_button.x_pos <= mouse_pos[0] <= backtrack_button.x_pos + backtrack_button.width \
-                        and backtrack_button.y_pos <= mouse_pos[1] <= backtrack_button.y_pos + backtrack_button.height \
-                        and (self.game_state == "start" or self.game_state == "ready") and self.algorithm_selection:
-                    self.tour_type = "Backtrack"
-                    self.algorithm_selection = False
-                    algorithms_type_button.change_text(f"[{self.tour_type}]")
-                    # Display text underneath board
-                    if self.fps > 60:
-                        update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
-                    else:
-                        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
-                # On Warnsdorff Button. Change the tour finding method to Warnsdorff
-                elif warnsdorff_button.x_pos <= mouse_pos[0] <= warnsdorff_button.x_pos + warnsdorff_button.width \
-                        and warnsdorff_button.y_pos <= mouse_pos[1] <= warnsdorff_button.y_pos + warnsdorff_button.height \
-                        and (self.game_state == "start" or self.game_state == "ready") and self.algorithm_selection:
-                    self.tour_type = "Warnsdorff"
-                    self.algorithm_selection = False
-                    algorithms_type_button.change_text(f"[{self.tour_type}]")
-                    # Display text underneath board
-                    if self.fps > 60:
-                        update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
-                    else:
-                        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
-                # On decrease row button.
-                elif row_down_button.x_pos <= mouse_pos[0] <= row_down_button.x_pos + row_down_button.width \
-                        and row_down_button.y_pos <= mouse_pos[1] <= row_down_button.y_pos + row_down_button.height \
-                        and self.game_state == "start":
-                    self.board.decrease_row()
-                # On increase row button.
-                elif row_up_button.x_pos <= mouse_pos[0] <= row_up_button.x_pos + row_up_button.width \
-                        and row_up_button.y_pos <= mouse_pos[1] <= row_up_button.y_pos + row_up_button.height \
-                        and self.game_state == "start":
-                    self.board.increase_row()
-                # On decrease column button.
-                elif col_down_button.x_pos <= mouse_pos[0] <= col_down_button.x_pos + col_down_button.width \
-                        and col_down_button.y_pos <= mouse_pos[1] <= col_down_button.y_pos + col_down_button.height \
-                        and self.game_state == "start":
-                    self.board.decrease_col()
-                # On increase column button.
-                elif col_up_button.x_pos <= mouse_pos[0] <= col_up_button.x_pos + col_up_button.width \
-                        and col_up_button.y_pos <= mouse_pos[1] <= col_up_button.y_pos + col_up_button.height \
-                        and self.game_state == "start":
-                    self.board.increase_col()
-                # On decrease FPS button.
-                elif fps_down_button.x_pos <= mouse_pos[0] <= fps_down_button.x_pos + fps_down_button.width \
-                        and fps_down_button.y_pos <= mouse_pos[1] <= fps_down_button.y_pos + fps_down_button.height:
-                    self.decrease_fps()
-                    # Display text underneath board
-                    if self.fps > 60:
-                        update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
-                    else:
-                        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
-                # On increase FPS button.
-                elif fps_up_button.x_pos <= mouse_pos[0] <= fps_up_button.x_pos + fps_up_button.width \
-                        and fps_down_button.y_pos <= mouse_pos[1] <= fps_up_button.y_pos + fps_up_button.height:
-                    self.increase_fps()
-                    # Display text underneath board
-                    if self.fps > 60:
-                        update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
-                    else:
-                        update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+        # Checks if mouse click is on a component
+        # On board area
+        if OFFSET[0] <= mouse_pos[0] <= OFFSET[0] + self.board.board_size[0] and \
+                OFFSET[1] <= mouse_pos[1] <= OFFSET[1] + self.board.board_size[1]:
+            row = (mouse_pos[1] - OFFSET[1]) // self.board.sq_y_length
+            col = (mouse_pos[0] - OFFSET[0]) // self.board.sq_x_length
+            sq_selected = (row, col)
+            self.place_first_knight(sq_selected)
+        # On Start Button. To start the tour
+        elif start_button.x_pos <= mouse_pos[0] <= start_button.x_pos + start_button.width \
+                and start_button.y_pos <= mouse_pos[1] <= start_button.y_pos + start_button.height \
+                and self.board.knight.knight_placed and not self.tour_found:
+            if self.game_state == "ready" or self.game_state == "pause":
+                self.game_state = "touring"
+                start_button.change_text("Pause")
+                self.time_start = datetime.now()
+            elif self.game_state == "touring":
+                self.game_state = "pause"
+                start_button.change_text("Start")
+                self.duration += (datetime.now() - self.time_start).total_seconds()
+        # On Help Button. Displays the text on how to use the application.
+        elif self.game_state != "touring" and self.game_state != "pause" and \
+                help_button.x_pos <= mouse_pos[0] <= help_button.x_pos + help_button.width and \
+                help_button.y_pos <= mouse_pos[1] <= help_button.y_pos + help_button.height:
+            self.game_state = "help"
+        # On Colour Button.
+        elif colour_button.x_pos <= mouse_pos[0] <= colour_button.x_pos + colour_button.width and \
+                colour_button.y_pos <= mouse_pos[1] <= colour_button.y_pos + colour_button.height:
+            if self.board.stamp_colour[0] == "red":
+                self.board.stamp_colour = ("green", STAMP_COLOURS[1], MOVE_COLOURS[1])
+                colour_button.change_text("Blue")
+            elif self.board.stamp_colour[0] == "green":
+                self.board.stamp_colour = ("blue", STAMP_COLOURS[2], MOVE_COLOURS[2])
+                colour_button.change_text("Colour Blind")
+            elif self.board.stamp_colour[0] == "blue":
+                self.board.stamp_colour = ("colour blind", STAMP_COLOURS[3], MOVE_COLOURS[3])
+                colour_button.change_text("Red")
+            elif self.board.stamp_colour[0] == "colour blind":
+                self.board.stamp_colour = ("red", STAMP_COLOURS[0], MOVE_COLOURS[0])
+                colour_button.change_text("Green")
+            if self.tour_found:
+                self.board.draw_board()
+                self.board.draw_lines()
+                self.board.draw_numbers()
+        # On Reset Button. Resets the board
+        elif reset_button.x_pos <= mouse_pos[0] <= reset_button.x_pos + reset_button.width \
+                and reset_button.y_pos <= mouse_pos[1] <= reset_button.y_pos + reset_button.height:
+            self.reset_game()
+        # Quit Button. Stops the game
+        elif quit_button.x_pos <= mouse_pos[0] <= quit_button.x_pos + quit_button.width \
+                and quit_button.y_pos <= mouse_pos[1] <= quit_button.y_pos + quit_button.height:
+            self.running = False
+        # On decrease FPS button.
+        elif fps_down_button.x_pos <= mouse_pos[0] <= fps_down_button.x_pos + fps_down_button.width \
+                and fps_down_button.y_pos <= mouse_pos[1] <= fps_down_button.y_pos + fps_down_button.height \
+                and not self.tour_found:
+            self.decrease_fps()
+            # Display text underneath board
+            if self.fps > 60:
+                update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+            else:
+                update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+        # On increase FPS button.
+        elif fps_up_button.x_pos <= mouse_pos[0] <= fps_up_button.x_pos + fps_up_button.width \
+                and fps_down_button.y_pos <= mouse_pos[1] <= fps_up_button.y_pos + fps_up_button.height \
+                and not self.tour_found:
+            self.increase_fps()
+            # Display text underneath board
+            if self.fps > 60:
+                update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+            else:
+                update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
-    def display_game_buttons(self):
+    def check_start_state_event(self, mouse_pos):
+        # On Algorithms button.
+        if algorithms_button.x_pos <= mouse_pos[0] <= algorithms_button.x_pos + algorithms_button.width \
+             and algorithms_button.y_pos <= mouse_pos[1] <= algorithms_type_button.y_pos + algorithms_type_button.height \
+             and (self.game_state == "start" or self.game_state == "ready") and not self.algorithm_selection:
+            self.algorithm_selection = True
+
+        # On Backtrack Button. Change the tour finding method to backtracking
+        elif backtrack_button.x_pos <= mouse_pos[0] <= backtrack_button.x_pos + backtrack_button.width \
+             and backtrack_button.y_pos <= mouse_pos[1] <= backtrack_button.y_pos + backtrack_button.height \
+             and (self.game_state == "start" or self.game_state == "ready") and self.algorithm_selection:
+            self.tour_type = "Backtrack"
+            self.algorithm_selection = False
+            algorithms_type_button.change_text(f"[{self.tour_type}]")
+            # Display text underneath board
+            if self.fps > 60:
+                update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+            else:
+                update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+        # On Warnsdorff Button. Change the tour finding method to Warnsdorff
+        elif warnsdorff_button.x_pos <= mouse_pos[0] <= warnsdorff_button.x_pos + warnsdorff_button.width \
+                and warnsdorff_button.y_pos <= mouse_pos[1] <= warnsdorff_button.y_pos + warnsdorff_button.height \
+                and (self.game_state == "start" or self.game_state == "ready") and self.algorithm_selection:
+            self.tour_type = "Warnsdorff"
+            self.algorithm_selection = False
+            algorithms_type_button.change_text(f"[{self.tour_type}]")
+            # Display text underneath board
+            if self.fps > 60:
+                update_below_board_text(f"{self.tour_type} Algorithm at Max Frames Per Second (FPS)")
+            else:
+                update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
+        # On decrease row button.
+        elif row_down_button.x_pos <= mouse_pos[0] <= row_down_button.x_pos + row_down_button.width \
+                and row_down_button.y_pos <= mouse_pos[1] <= row_down_button.y_pos + row_down_button.height \
+                and self.game_state == "start":
+            self.board.decrease_row()
+        # On increase row button.
+        elif row_up_button.x_pos <= mouse_pos[0] <= row_up_button.x_pos + row_up_button.width \
+                and row_up_button.y_pos <= mouse_pos[1] <= row_up_button.y_pos + row_up_button.height \
+                and self.game_state == "start":
+            self.board.increase_row()
+        # On decrease column button.
+        elif col_down_button.x_pos <= mouse_pos[0] <= col_down_button.x_pos + col_down_button.width \
+             and col_down_button.y_pos <= mouse_pos[1] <= col_down_button.y_pos + col_down_button.height \
+             and self.game_state == "start":
+            self.board.decrease_col()
+        # On increase column button.
+        elif col_up_button.x_pos <= mouse_pos[0] <= col_up_button.x_pos + col_up_button.width \
+             and col_up_button.y_pos <= mouse_pos[1] <= col_up_button.y_pos + col_up_button.height \
+             and self.game_state == "start":
+            self.board.increase_col()
+
+    def check_help_state_event(self, mouse_pos):
+        # Displays the exit button of the help section
+        if help_exit_button.x_pos <= mouse_pos[0] <= help_exit_button.x_pos + help_exit_button.width and \
+                help_exit_button.y_pos <= mouse_pos[1] <= help_exit_button.y_pos + help_exit_button.height:
+            self.game_state = "start"
+            self.reset_game()
+        elif help_prev_page_button.x_pos <= mouse_pos[0] <= help_prev_page_button.x_pos + help_prev_page_button.width and \
+                help_prev_page_button.y_pos <= mouse_pos[1] <= help_prev_page_button.y_pos + help_prev_page_button.height:
+            self.help_state.curr_page -= 1
+            if self.help_state.curr_page < 1:
+                self.help_state.curr_page = self.help_state.total_pages
+            help_page_num_area.change_text(f"Page {self.help_state.curr_page}/{self.help_state.total_pages}")
+        elif help_next_page_button.x_pos <= mouse_pos[0] <= help_next_page_button.x_pos + help_next_page_button.width and \
+                help_next_page_button.y_pos <= mouse_pos[1] <= help_next_page_button.y_pos + help_next_page_button.height:
+            self.help_state.curr_page += 1
+            if self.help_state.curr_page > self.help_state.total_pages:
+                self.help_state.curr_page = 1
+            help_page_num_area.change_text(f"Page {self.help_state.curr_page}/{self.help_state.total_pages}")
+
+    def display_main_buttons(self, mouse_pos):
         """
-        Draws the buttons and text
+        Draws the main buttons that will not be removed.
         :return:
         """
-        mouse_pos = pg.mouse.get_pos()
         # Display Start/Pause button
         if start_button.x_pos <= mouse_pos[0] <= start_button.x_pos + start_button.width \
                 and start_button.y_pos <= mouse_pos[1] <= start_button.y_pos + start_button.height:
@@ -752,6 +911,27 @@ class ChessState:
             pg.draw.rect(SCREEN, quit_button.colour, quit_button.rect)
         # Display Quit button text
         SCREEN.blit(quit_button.text_render, quit_button.text_rect)
+        # Display FPS text
+        pg.draw.rect(SCREEN, fps_text.colour, fps_text.rect)
+        SCREEN.blit(fps_text.text_render, fps_text.text_rect)
+        # Display fps decrease button
+        if fps_down_button.x_pos <= mouse_pos[0] <= fps_down_button.x_pos + fps_down_button.width \
+                and fps_down_button.y_pos <= mouse_pos[1] <= fps_down_button.y_pos + fps_down_button.height \
+                and not self.tour_found:
+            pg.draw.rect(SCREEN, fps_down_button.hover_colour, fps_down_button.rect)
+        else:
+            pg.draw.rect(SCREEN, fps_down_button.colour, fps_down_button.rect)
+        SCREEN.blit(fps_down_button.text_render, fps_down_button.text_rect)
+        # Display fps increase button
+        if fps_up_button.x_pos <= mouse_pos[0] <= fps_up_button.x_pos + fps_up_button.width \
+                and fps_up_button.y_pos <= mouse_pos[1] <= fps_up_button.y_pos + fps_up_button.height \
+                and not self.tour_found:
+            pg.draw.rect(SCREEN, fps_up_button.hover_colour, fps_up_button.rect)
+        else:
+            pg.draw.rect(SCREEN, fps_up_button.colour, fps_up_button.rect)
+        SCREEN.blit(fps_up_button.text_render, fps_up_button.text_rect)
+
+    def display_start_state_components(self, mouse_pos):
         # Display Algorithms button or the Algorithm selection buttons
         # Reset the area of Algorithms to redraw
         pg.draw.rect(SCREEN, BACKGROUND_COLOUR, algorithms_button.rect)
@@ -821,71 +1001,6 @@ class ChessState:
         else:
             pg.draw.rect(SCREEN, col_up_button.colour, col_up_button.rect)
         SCREEN.blit(col_up_button.text_render, col_up_button.text_rect)
-        # Display FPS text
-        pg.draw.rect(SCREEN, fps_text.colour, fps_text.rect)
-        SCREEN.blit(fps_text.text_render, fps_text.text_rect)
-        # Display fps decrease button
-        if fps_down_button.x_pos <= mouse_pos[0] <= fps_down_button.x_pos + fps_down_button.width \
-                and fps_down_button.y_pos <= mouse_pos[1] <= fps_down_button.y_pos + fps_down_button.height:
-            pg.draw.rect(SCREEN, fps_down_button.hover_colour, fps_down_button.rect)
-        else:
-            pg.draw.rect(SCREEN, fps_down_button.colour, fps_down_button.rect)
-        SCREEN.blit(fps_down_button.text_render, fps_down_button.text_rect)
-        # Display fps increase button
-        if fps_up_button.x_pos <= mouse_pos[0] <= fps_up_button.x_pos + fps_up_button.width \
-                and fps_up_button.y_pos <= mouse_pos[1] <= fps_up_button.y_pos + fps_up_button.height:
-            pg.draw.rect(SCREEN, fps_up_button.hover_colour, fps_up_button.rect)
-        else:
-            pg.draw.rect(SCREEN, fps_up_button.colour, fps_up_button.rect)
-        SCREEN.blit(fps_up_button.text_render, fps_up_button.text_rect)
-        self.check_game_event(mouse_pos)
-        pg.display.update()
-
-    def check_help_event(self, mouse_pos):
-        for event in pg.event.get():
-            # Checks if the ESC key is press. If True, exit the application.
-            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
-                self.running = False
-            elif event.type == pg.MOUSEBUTTONDOWN:
-                if help_exit_button.x_pos <= mouse_pos[0] <= help_exit_button.x_pos + help_exit_button.width and \
-                        help_exit_button.y_pos <= mouse_pos[1] <= help_exit_button.y_pos + help_exit_button.height:
-                    self.game_state = "start"
-                    self.reset_game()
-
-    def display_help(self):
-        mouse_pos = pg.mouse.get_pos()
-        # Displays "Board & Components" title
-        pg.draw.rect(SCREEN, component_title_area.colour, component_title_area.rect)
-        SCREEN.blit(component_title_area.text_render, component_title_area.text_rect)
-        # Displays the exit button of the help section
-        if help_exit_button.x_pos <= mouse_pos[0] <= help_exit_button.x_pos + help_exit_button.width and \
-                help_exit_button.y_pos <= mouse_pos[1] <= help_exit_button.y_pos + help_exit_button.height:
-            pg.draw.rect(SCREEN, help_exit_button.hover_colour, help_exit_button.rect)
-        else:
-            pg.draw.rect(SCREEN, help_exit_button.colour, help_exit_button.rect)
-        # Displays "X" text of exit button
-        SCREEN.blit(help_exit_button.text_render, help_exit_button.text_rect)
-        # Displays "Board & Components" description
-        pg.draw.rect(SCREEN, component_desc_area.colour, component_desc_area.rect)
-        display_help_text(SCREEN, component_desc_text, (component_desc_area.x_pos, component_desc_area.y_pos),
-                          component_desc_area.text_font, component_desc_area.text_colour)
-        # Displays image
-        self.numbered_tour_img = pg.transform.scale(self.numbered_tour_img,
-                                                    (component_desc_area.width // 10, component_desc_area.height // 2))
-        SCREEN.blit(self.numbered_tour_img,
-                    pg.Rect((component_desc_area.x_pos + (component_desc_area.width // 100) * 80),
-                            component_desc_area.y_pos,
-                            self.numbered_tour_img.get_width(), self.numbered_tour_img.get_height())
-                    )
-        # Displays "How To Use" title
-        pg.draw.rect(SCREEN, usage_title_area.colour, usage_title_area.rect)
-        SCREEN.blit(usage_title_area.text_render, usage_title_area.text_rect)
-        # Displays "How To Use" description
-        pg.draw.rect(SCREEN, usage_desc_area.colour, usage_desc_area.rect)
-        display_help_text(SCREEN, usage_desc_text, (usage_desc_area.x_pos, usage_desc_area.y_pos),
-                          usage_desc_area.text_font, usage_desc_area.text_colour)
-        self.check_help_event(mouse_pos)
-        pg.display.update()
 
     def is_valid_move(self, x, y):
         """
@@ -1044,10 +1159,10 @@ class ChessState:
         :return:
         """
         display_title()
-        if self.game_state == "help":
-            self.display_help()
-        else:
-            self.display_game_buttons()
+        # if self.game_state == "help":
+        #     self.display_help_state_components()
+        # else:
+        self.display_components()
         if self.game_state == "touring":
             self.find_tour()
         if self.game_state == "fail" and self.tour_type == "Warnsdorff":
@@ -1057,8 +1172,8 @@ class ChessState:
                 update_below_board_text("Warnsdorff Algorithm failed to find a tour after 5 tries.", "Stopping the tour.")
         if self.game_state == "fail" and self.tour_type == "Backtrack":
             update_below_board_text("Backtrack algorithm failed to find a tour.", "No reason to brute force again.")
-        if self.game_state == "pause":
-            pass
+        # if self.game_state == "pause":
+        #     pass
         if not self.running:
             pg.quit()
             sys.exit()
@@ -1066,9 +1181,7 @@ class ChessState:
 
 
 def main():
-    knight = Knight()
-    board = Board(knight)
-    chess_state = ChessState(board)
+    chess_state = GameState()
     while True:
         chess_state.update_frame()
 
