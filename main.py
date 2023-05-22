@@ -4,7 +4,6 @@ import pygame as pg
 import numpy as np
 import random
 import json
-from os.path import exists
 import ctypes
 from ctypes import windll
 from datetime import datetime
@@ -712,6 +711,8 @@ class GameState:
             start_button.change_text("Resume")
             self.file_loaded = True
             algorithms_type_button.change_text(f"[{self.tour_type}]")
+            row_text.change_text(f"Rows: {self.board.row_dimension}")
+            col_text.change_text(f"Columns: {self.board.col_dimension}")
             if self.fps > 60:
                 fps_text.change_text("FPS: MAX")
                 update_below_board_text("Tour loaded", f"{self.tour_type} algorithm at Max Frames Per Second (FPS)")
@@ -719,6 +720,7 @@ class GameState:
                 fps_text.change_text(f"FPS: {self.fps}")
                 update_below_board_text("Tour loaded", f"{self.tour_type} algorithm at {self.fps} Frames Per Second (FPS)")
             self.check_fps()
+            self.display_start_state_components(pg.mouse.get_pos())
             self.redraw_board()
         except FileNotFoundError as fe:
             update_below_board_text("No save file detected to load tour.")

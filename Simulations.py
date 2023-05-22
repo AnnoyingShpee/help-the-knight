@@ -393,7 +393,6 @@ class Simulations:
         else:
             return False
 
-    # Count the number of steps in one random tour
     def generate_tours(self):
         if self.sim_type == "random" or self.sim_type == "specific":
             while self.successful_tours < self.total_successful_tours:
