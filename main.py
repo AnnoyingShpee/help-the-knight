@@ -281,7 +281,7 @@ class Board:
         self.row_dimension = row_dimension  # Number of rows of the board
         self.col_dimension = col_dimension  # Number of columns of the board
         # 2D array representation of board
-        self.graph = np.negative(np.ones([row_dimension, col_dimension], dtype=int))
+        self.graph = np.zeros([row_dimension, col_dimension], dtype=int)
         # 2D array to store number of times Knight traversed each square
         self.board_moves = np.zeros([row_dimension, col_dimension], dtype=int)
         # Width and height of each square on the board
@@ -364,7 +364,7 @@ class Board:
             return
         self.row_dimension -= 1
         # Reinitialise the board and board moves
-        self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
+        self.graph = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.board_moves = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.check_dimensions_then_draw()
         row_text.change_text(f"Rows: {self.row_dimension}")
@@ -379,7 +379,7 @@ class Board:
             return
         self.row_dimension += 1
         # Reinitialise the board
-        self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
+        self.graph = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.board_moves = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.check_dimensions_then_draw()
         row_text.change_text(f"Rows: {self.row_dimension}")
@@ -394,7 +394,7 @@ class Board:
             return
         self.col_dimension -= 1
         # Reinitialise the board
-        self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
+        self.graph = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.board_moves = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.check_dimensions_then_draw()
         col_text.change_text(f"Columns: {self.col_dimension}")
@@ -409,7 +409,7 @@ class Board:
             return
         self.col_dimension += 1
         # Reinitialise the board
-        self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
+        self.graph = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.board_moves = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.check_dimensions_then_draw()
         col_text.change_text(f"Columns: {self.col_dimension}")
@@ -450,7 +450,7 @@ class Board:
         furthest_node = self.graph.max()
         # Draw stamp and step number on traversed squares that the Knight is currently not on AND for the last square
         # of a complete tour
-        if (self.graph[row][col] != -1 and self.graph[row][col] != furthest_node) \
+        if (self.graph[row][col] != 0 and self.graph[row][col] != furthest_node) \
                 or self.graph[row][col] == self.row_dimension * self.col_dimension:
             # Set position of stamp
             stamp = ((col * self.sq_x_length) + OFFSET[0] + self.sq_x_length // 2,
@@ -620,7 +620,7 @@ class GameState:
         update_below_board_text(f"{self.tour_type} Algorithm at {self.fps} Frames Per Second (FPS)")
 
     def reset_game(self):
-        self.board.graph = np.negative(np.ones([8, 8], dtype=int))
+        self.board.graph = np.zeros([8, 8], dtype=int)
         self.board.board_moves = np.zeros([8, 8], dtype=int)
         self.board.row_dimension = 8
         self.board.col_dimension = 8
@@ -658,7 +658,7 @@ class GameState:
 
     def redo_tour(self):
         self.game_state = "touring"
-        self.board.graph = np.negative(np.ones([self.board.row_dimension, self.board.col_dimension], dtype=int))
+        self.board.graph = np.zeros([self.board.row_dimension, self.board.col_dimension], dtype=int)
         self.board.graph[self.board.knight.knight_initial_pos[0]][self.board.knight.knight_initial_pos[1]] = 1
         self.board.knight.knight_step = 1
         self.board.knight.move_log = [
@@ -812,7 +812,7 @@ class GameState:
         # If user selected square where knight is already on, remove the knight
         if selected_sq == self.board.knight.knight_pos:
             self.board.draw_square(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
-            self.board.graph[row][col] = -1
+            self.board.graph[row][col] = 0
             self.board.board_moves[row][col] = 0
             self.board.knight.knight_placed = False
             self.board.knight.knight_pos = None
@@ -832,7 +832,7 @@ class GameState:
         # If knight is place and user clicks on a different square, place knight in the new square
         elif self.board.knight.knight_placed:
             self.board.knight.move_log.pop()
-            self.board.graph[self.board.knight.knight_pos[0]][self.board.knight.knight_pos[1]] = -1
+            self.board.graph[self.board.knight.knight_pos[0]][self.board.knight.knight_pos[1]] = 0
             self.board.board_moves[self.board.knight.knight_pos[0]][self.board.knight.knight_pos[1]] = 0
             self.board.draw_square(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
             self.board.knight.knight_pos = (row, col)
@@ -1206,7 +1206,7 @@ class GameState:
         :param x: Row number of square
         :param y: Column number of square
         """
-        if 0 <= x < self.board.row_dimension and 0 <= y < self.board.col_dimension and self.board.graph[x][y] == -1:
+        if 0 <= x < self.board.row_dimension and 0 <= y < self.board.col_dimension and self.board.graph[x][y] == 0:
             return True
         return False
 
@@ -1355,7 +1355,7 @@ class GameState:
                 break
         # If no valid moves can be done, remove square from stack
         if not contains_valid:
-            self.board.graph[self.board.knight.knight_pos[0]][self.board.knight.knight_pos[1]] = -1
+            self.board.graph[self.board.knight.knight_pos[0]][self.board.knight.knight_pos[1]] = 0
             self.board.knight.knight_step -= 1
             self.board.knight.move_log.pop()
             if len(self.board.knight.move_log) == 0:

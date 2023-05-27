@@ -24,7 +24,7 @@ class Simulations:
         self.row_dimension = row_dimension
         self.col_dimension = col_dimension
         self.total_squares = row_dimension * col_dimension
-        self.graph = np.negative(np.ones([row_dimension, col_dimension], dtype=int))
+        self.graph = np.zeros([row_dimension, col_dimension], dtype=int)
         self.moves = np.zeros([row_dimension, col_dimension], dtype=int)
         self.graph[x][y] = 1
         self.moves[x][y] = 1
@@ -152,7 +152,7 @@ class Simulations:
                 print(e)
 
     def reset_board(self):
-        self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
+        self.graph = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.knight_step = 1
         if self.tour_found:
             self.total_steps = 1
@@ -212,6 +212,7 @@ class Simulations:
         self.move_log = [(self.knight_initial_pos[0], self.knight_initial_pos[1], 0)]
 
     def print_tour(self):
+        print("Time taken =", self.duration, "; Moves done =", self.total_steps)
         print("--Steps--")
         for i in range(self.row_dimension):
             for j in range(self.col_dimension):
@@ -439,7 +440,7 @@ class Simulations:
             :param x: row number of square
             :param y: column number of square
         """
-        if 0 <= x < self.row_dimension and 0 <= y < self.col_dimension and self.graph[x][y] == -1:
+        if 0 <= x < self.row_dimension and 0 <= y < self.col_dimension and self.graph[x][y] == 0:
             return True
         return False
 
@@ -478,7 +479,7 @@ class Simulations:
                     break
             # If no valid moves can be done, remove square from stack
             if not contains_valid:
-                self.graph[self.knight_pos[0]][self.knight_pos[1]] = -1
+                self.graph[self.knight_pos[0]][self.knight_pos[1]] = 0
                 self.knight_step -= 1
                 self.move_log.pop()
                 if len(self.move_log) == 0:
