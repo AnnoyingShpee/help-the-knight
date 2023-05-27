@@ -262,48 +262,60 @@ class Knight:
             y = vertical movement. POSITIVE value moves knight DOWN while NEGATIVE value moves knight UP
         """
         self.knight_moves = ((2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1))
-        self.knight_placed = False
-        self.knight_initial_pos = None
-        self.knight_pos = None
-        self.knight_step = 1
-        self.move_log = []  # Contains the squares traversed and next
+        self.knight_placed = False  # Whether a knight has been placed on the board
+        self.knight_initial_pos = None  # The starting position of the knight of the tour sequence.
+        self.knight_pos = None  # Current position of the Knight on the board.
+        self.knight_step = 1  # Current step number of the Knight
+        self.move_log = []  # Contains the squares traversed and next move to use
         self.possible_moves = []
-        self.total_steps = 0
-        self.knight_img = pg.image.load("knight_piece.png")
+        self.total_steps = 0  # Total number of moves the knight has made
+        self.knight_img = pg.image.load("./img/knight_piece.png")  # Image of the Knight on the Board
         self.step_font = None
 
 
 class Board:
     def __init__(self, row_dimension=8, col_dimension=8):
-        self.knight = Knight()
+        self.knight = Knight() # Every board has a Knight
         self.board_size = BOARD_SIZE  # Size of board
-        self.sq_colours = [pg.Color("white"), pg.Color("grey")]
-        self.row_dimension = row_dimension
-        self.col_dimension = col_dimension
+        self.sq_colours = [pg.Color("white"), pg.Color("grey")]  # Colours of the board's squares
+        self.row_dimension = row_dimension  # Number of rows of the board
+        self.col_dimension = col_dimension  # Number of columns of the board
+        # 2D array representation of board
         self.graph = np.negative(np.ones([row_dimension, col_dimension], dtype=int))
+        # 2D array to store number of times Knight traversed each square
         self.board_moves = np.zeros([row_dimension, col_dimension], dtype=int)
+        # Width and height of each square on the board
         self.sq_x_length = BOARD_SIZE[0] // col_dimension
         self.sq_y_length = BOARD_SIZE[1] // row_dimension
+        # Fonts
         self.moves_font = pg.font.SysFont("Arial", self.sq_x_length // 4)
         self.knight.step_font = pg.font.SysFont("Arial", self.sq_x_length // 4)
+        # Colour of stamps left by the Knight
         self.stamp_colour = ("red", STAMP_COLOURS[0], MOVE_COLOURS[0])
-
-    def draw_board(self):
-        # Draw chessboard. Top left square is always light color
-        pg.draw.rect(SCREEN, BACKGROUND_COLOUR, pg.Rect(OFFSET[0], OFFSET[1], BOARD_SIZE[0], BOARD_SIZE[1]))
-        for row in range(self.row_dimension):
-            for col in range(self.col_dimension):
-                color = self.sq_colours[(row + col) % 2]
-                pg.draw.rect(SCREEN, color,
-                             # x-axis = column (left to right) , y-axis = row (top to bottom)
-                             # Draw the starting point of the square
-                             # Add off set if chessboard not touching the border of window
-                             pg.Rect((col * self.sq_x_length) + OFFSET[0], (row * self.sq_y_length) + OFFSET[1],
-                                     self.sq_x_length, self.sq_y_length))
-
-    def draw_knight(self):
         self.knight.knight_img = pg.transform.scale(self.knight.knight_img,
                                                     ((self.sq_x_length // 10) * 8, (self.sq_y_length // 10) * 8))
+
+    def draw_board(self):
+        """
+        Draws the chessboard. Every square is drawn one by one that alternates between one colour and another. A large
+        square with the same colour as the background and the same size of the 8 x 8 board is drawn over the old board
+        every time to display smaller boards.
+        :return:
+        """
+        # Clean the board area with a large square
+        pg.draw.rect(SCREEN, BACKGROUND_COLOUR, pg.Rect(OFFSET[0], OFFSET[1], BOARD_SIZE[0], BOARD_SIZE[1]))
+        # Draw chessboard. Top left square is always light color
+        for row in range(self.row_dimension):
+            for col in range(self.col_dimension):
+                # Draw square
+                self.draw_square(row, col)
+
+    def draw_knight(self):
+        """
+        Draws the Knight image on the board.
+        :return:
+        """
+        # Draw knight image
         SCREEN.blit(self.knight.knight_img,
                     pg.Rect((self.knight.knight_pos[1] * self.sq_x_length) + OFFSET[0] + self.sq_x_length // 8,
                             (self.knight.knight_pos[0] * self.sq_y_length) + OFFSET[1] + self.sq_y_length // 8,
@@ -311,14 +323,23 @@ class Board:
                     )
 
     def check_dimensions_then_draw(self):
+        """
+        Checks the number of dimensions the board has to scale the dimensions of the squares. If the size of the board
+        is smaller than 8 x 8, the size of the squares will not change, merely making the board smaller due to less
+        rows or columns. If either dimensions are bigger than 8, the dimensions of the squares will be changed to fit
+        all the squares in a 8-by-8-sized looking board.
+        :return:
+        """
         row = self.row_dimension
         col = self.col_dimension
-        # Fixes the size of the board as a 8 dimension board even if dimensions are more than 8
+        # Fixes the size of the board as an 8 x 8 board if dimensions are more than 8
         if self.row_dimension > 8:
             row = 8
         if self.col_dimension > 8:
             col = 8
+        # If there are fewer than 8 rows or columns, the board size decreases
         self.board_size = ((y_axis // 10) * col, (y_axis // 10) * row)
+        # Scale the square size based on board size and number of rows and columns of the board
         self.sq_x_length = self.board_size[0] // self.col_dimension
         self.sq_y_length = self.board_size[1] // self.row_dimension
         if self.sq_x_length < self.sq_y_length:
@@ -327,57 +348,92 @@ class Board:
         else:
             self.knight.step_font = pg.font.SysFont("Arial", self.sq_y_length // 4)
             self.moves_font = pg.font.SysFont("Arial", self.sq_y_length // 4)
-        self.knight.knight_img = pg.image.load("knight_piece.png")
+        self.knight.knight_img = pg.image.load("./img/knight_piece.png")
+        # Scale dimensions of knight image with board's squares' dimensions
         self.knight.knight_img = pg.transform.scale(self.knight.knight_img,
                                                     ((self.sq_x_length // 10) * 8, (self.sq_y_length // 10) * 8))
         self.draw_board()
 
     def decrease_row(self):
+        """
+        Decreases number of rows of board by 1 unless number of rows is less than or equal to 3.
+        :return:
+        """
         global row_text
         if self.row_dimension <= 3:
             return
         self.row_dimension -= 1
+        # Reinitialise the board and board moves
         self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
         self.board_moves = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.check_dimensions_then_draw()
         row_text.change_text(f"Rows: {self.row_dimension}")
 
     def increase_row(self):
+        """
+        Increases number of rows of board by 1 unless number of rows is greater than or equal to 20.
+        :return:
+        """
         global row_text
         if self.row_dimension >= 20:
             return
         self.row_dimension += 1
+        # Reinitialise the board
         self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
         self.board_moves = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.check_dimensions_then_draw()
         row_text.change_text(f"Rows: {self.row_dimension}")
 
     def decrease_col(self):
+        """
+        Decreases number of columns of board by 1 unless number of columns is less than or equal to 3.
+        :return:
+        """
         global col_text
         if self.col_dimension <= 3:
             return
         self.col_dimension -= 1
+        # Reinitialise the board
         self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
         self.board_moves = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.check_dimensions_then_draw()
         col_text.change_text(f"Columns: {self.col_dimension}")
 
     def increase_col(self):
+        """
+        Increases number of columns of board by 1 unless number of columns is greater than or equal to 20.
+        :return:
+        """
         global col_text
         if self.col_dimension >= 20:
             return
         self.col_dimension += 1
+        # Reinitialise the board
         self.graph = np.negative(np.ones([self.row_dimension, self.col_dimension], dtype=int))
         self.board_moves = np.zeros([self.row_dimension, self.col_dimension], dtype=int)
         self.check_dimensions_then_draw()
         col_text.change_text(f"Columns: {self.col_dimension}")
 
     def draw_square(self, row, col):
+        """
+        Draws a square of the chessboard.
+        :param row: Row number of the square on the board
+        :param col: Column number of the square on the board
+        """
+        # Used to determine colour of square
         color = self.sq_colours[(row + col) % 2]
+        # x-axis = Board columns (left to right) , y-axis = Board rows (top to bottom)
+        # Draw the starting point of the square
+        # Add off set if chessboard not touching the border of window
         pg.draw.rect(SCREEN, color, pg.Rect((col * self.sq_x_length) + OFFSET[0], (row * self.sq_y_length) + OFFSET[1],
                                             self.sq_x_length, self.sq_y_length))
 
     def draw_numbers(self):
+        """
+        Draws the numbers on the board. Both the step number of the Knight and the number of times the Knight moves to
+        that square
+        :return:
+        """
         for row in range(self.row_dimension):
             for col in range(self.col_dimension):
                 self.draw_knight_step(row, col)
@@ -385,27 +441,40 @@ class Board:
 
     def draw_knight_step(self, row, col):
         """
-        This function is responsible for drawing the stamp and step number made by the knight
-        :param row: Row number of board
-        :param col: Column number of board
+        Draws the stamp and step number made by the knight
+        :param row: Current row number of Knight on board
+        :param col: Current column number of Knight on board
         :return:None
         """
+        # Get the highest number in the board, which is also the current step of the Knight.
         furthest_node = self.graph.max()
+        # Draw stamp and step number on traversed squares that the Knight is currently not on AND for the last square
+        # of a complete tour
         if (self.graph[row][col] != -1 and self.graph[row][col] != furthest_node) \
                 or self.graph[row][col] == self.row_dimension * self.col_dimension:
+            # Set position of stamp
             stamp = ((col * self.sq_x_length) + OFFSET[0] + self.sq_x_length // 2,
                      (row * self.sq_y_length) + OFFSET[1] + self.sq_y_length // 2)
+            # Get step number value from board
             number = self.graph[row][col]
+            # Draw the stamp circle
             if self.sq_x_length < self.sq_y_length:
                 pg.draw.circle(SCREEN, self.stamp_colour[1], stamp, self.sq_x_length // 4)
             else:
                 pg.draw.circle(SCREEN, self.stamp_colour[1], stamp, self.sq_y_length // 4)
+            # Draw the number text on the stamp
             number_render = self.knight.step_font.render(f"{number}", True, self.stamp_colour[2])
             number_rect = number_render.get_rect(center=(col*self.sq_x_length + OFFSET[0] + self.sq_x_length // 2,
                                                          row*self.sq_y_length + OFFSET[1] + self.sq_y_length // 2))
             SCREEN.blit(number_render, number_rect)
 
     def draw_lines(self):
+        """
+        Draw lines between connecting squares.
+        Since a line can only be drawn if there are 2 points to start and end from, move_log requires at least 2
+        elements to draw lines.
+        :return:
+        """
         i = 2
         while i <= len(self.knight.move_log):
             start_point = self.knight.move_log[i - 2]
@@ -418,11 +487,16 @@ class Board:
             i += 1
 
     def draw_move_number(self, row, col):
-        # stamp = ((col * self.sq_x_length) + OFFSET[0],
-        #          (row * self.sq_y_length) + OFFSET[1])
+        """
+        Draws the number of times a Knight has move to this square at the top left corner of the square
+        :param row: Row number of the board
+        :param col: Column number of the board
+        :return:
+        """
         number = self.board_moves[row][col]
         number_length = len(str(number))
         number_render = self.moves_font.render(f"{number}", True, (0, 0, 0))
+        # Keeps the number in the top left corner as much as possible
         if number_length <= 3:
             number_rect = number_render.get_rect(
                 center=(col * self.sq_x_length + OFFSET[0] + 2 * (self.sq_x_length // 10),
@@ -440,7 +514,7 @@ class HelpState:
     def __init__(self):
         self.curr_page = 1
         self.total_pages = 3
-        self.numbered_tour_img = pg.image.load("numbered_tour.png")
+        self.numbered_tour_img = pg.image.load("./img/numbered_tour.png")
 
     def display_help_state_components(self, mouse_pos):
         """
@@ -534,6 +608,7 @@ class GameState:
         self.tour_found = False  # Whether knight tour is found
         self.running = True  # Whether game is running
         self.tour_type = "Backtrack"
+        # Whether a step of a Knight's Tour has already been made and display has not been updated
         self.move_done = False
         self.fps = 30
         self.last_frame_tick = 0
@@ -559,7 +634,10 @@ class GameState:
         self.board.knight.knight_step = 1
         self.board.knight.move_log = []
         self.board.knight.total_steps = 0
-        self.board.knight.knight_img = pg.image.load("knight_piece.png")
+        self.board.knight.knight_img = pg.image.load("./img/knight_piece.png")
+        self.board.knight.knight_img = pg.transform.scale(self.board.knight.knight_img,
+                                                          ((self.board.sq_x_length // 10) * 8,
+                                                           (self.board.sq_y_length // 10) * 8))
         self.board.knight.step_font = pg.font.SysFont("Arial", self.board.sq_x_length // 4)
         self.board.board_size = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
         self.board.sq_x_length = self.board.board_size[0] // 8
@@ -596,7 +674,7 @@ class GameState:
         if self.fps > 60:
             self.redraw_board()
         else:
-            if self.move_done and (pg.time.get_ticks() - self.last_frame_tick) > 1000 / self.fps:
+            if (pg.time.get_ticks() - self.last_frame_tick) > 1000 / self.fps:
                 self.redraw_board()
 
     def redraw_board(self):
@@ -936,6 +1014,11 @@ class GameState:
         SCREEN.blit(save_button.text_render, save_button.text_rect)
 
     def check_events(self, mouse_pos):
+        """
+        Checks for keyboard and mouse inputs
+        :param mouse_pos:
+        :return:
+        """
         for event in pg.event.get():
             # Checks if the ESC key is press. If True, exit the application.
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
@@ -1119,16 +1202,21 @@ class GameState:
 
     def is_valid_move(self, x, y):
         """
-            A utility function to check if i,j are valid indexes
-            for N*N chessboard
-            :param x: row number of square
-            :param y: column number of square
+        A utility function to check if square (x, y) is valid and untraversed on the chessboard
+        :param x: Row number of square
+        :param y: Column number of square
         """
         if 0 <= x < self.board.row_dimension and 0 <= y < self.board.col_dimension and self.board.graph[x][y] == -1:
             return True
         return False
 
     def count_empty_squares(self, next_x, next_y):
+        """
+        Counts number of valid and untraversed squares from square (next_x, next_y)
+        :param next_x: Row number of square
+        :param next_y: Column number of square
+        :return:
+        """
         count = 0
         for i in range(8):
             if self.is_valid_move(next_x + self.board.knight.knight_moves[i][0],
@@ -1137,6 +1225,11 @@ class GameState:
         return count
 
     def check_if_closed_tour(self):
+        """
+        Checks if completed tour is closed. Checks whether first and last square of the tour can be reached by one
+        another
+        :return:
+        """
         if (abs(self.board.knight.knight_initial_pos[0] - self.board.knight.knight_pos[0]) == 2
             and abs(self.board.knight.knight_initial_pos[1] - self.board.knight.knight_pos[1]) == 1) or \
                 (abs(self.board.knight.knight_initial_pos[0] - self.board.knight.knight_pos[0]) == 1 and
@@ -1152,6 +1245,7 @@ class GameState:
         """
         # First checks whether tour has already been found
         if not self.tour_found:
+            # Then checks whether display has been updated
             if not self.move_done:
                 if self.board.knight.knight_step < self.board.row_dimension * self.board.col_dimension:
                     # Checks type of algorithm used to find tour
@@ -1186,11 +1280,12 @@ class GameState:
 
     def find_tour_warnsdorff(self):
         """
-        This function uses Warnsdorff's Heuristic to solve the knight's tour.
+        An iterative Warnsdorff's Heuristic to solve the knight's tour. This function relies on frame updates to
+        perform the loop of every knight tour step.
         :return:
         """
-        most_empty = 9
-        most_empty_index = -1
+        fewest_empty = 9
+        fewest_empty_index = -1
 
         # To give some randomness when choosing a square. Only useful for next squares with the same number of next
         # valid squares
@@ -1200,14 +1295,14 @@ class GameState:
             new_x = self.board.knight.knight_pos[0] + self.board.knight.knight_moves[index][0]
             new_y = self.board.knight.knight_pos[1] + self.board.knight.knight_moves[index][1]
             empty_sq_count = self.count_empty_squares(new_x, new_y)
-            if self.is_valid_move(new_x, new_y) and empty_sq_count < most_empty:
-                most_empty_index = index
-                most_empty = empty_sq_count
-            if self.is_valid_move(new_x, new_y) and empty_sq_count == most_empty:
+            if self.is_valid_move(new_x, new_y) and empty_sq_count < fewest_empty:
+                fewest_empty_index = index
+                fewest_empty = empty_sq_count
+            if self.is_valid_move(new_x, new_y) and empty_sq_count == fewest_empty:
                 possible_move = (new_x, new_y)
                 self.board.knight.possible_moves.append(possible_move)
 
-        if most_empty_index == -1:
+        if fewest_empty_index == -1:
             self.game_state = "fail"
             self.tour_failures += 1
             if self.tour_failures >= 5:
@@ -1215,8 +1310,8 @@ class GameState:
                                         "Stopping the tour")
             return False
 
-        new_x = self.board.knight.knight_pos[0] + self.board.knight.knight_moves[most_empty_index][0]
-        new_y = self.board.knight.knight_pos[1] + self.board.knight.knight_moves[most_empty_index][1]
+        new_x = self.board.knight.knight_pos[0] + self.board.knight.knight_moves[fewest_empty_index][0]
+        new_y = self.board.knight.knight_pos[1] + self.board.knight.knight_moves[fewest_empty_index][1]
         self.board.knight.knight_step += 1
         self.board.graph[new_x][new_y] = self.board.knight.knight_step
         self.board.board_moves[new_x][new_y] += 1
@@ -1227,8 +1322,9 @@ class GameState:
 
     def find_tour_backtrack_iterative(self):
         """
-        This function uses a non-recursive backtracking algorithm to solve the knight's tour. This is a brute force
-        method which isn't practical as the time complexity is O(8**(N**2)).
+        An iterative backtracking algorithm to solve the knight's tour. This is a brute force method which isn't
+        practical as the time complexity is O(8**(N**2)). This function relies on frame updates to perform the loop of
+        every knight tour step.
 
         The steps are as follows
         1.  Get last square of the move log
