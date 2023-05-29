@@ -1,38 +1,43 @@
 # Python3 program to solve Knight Tour problem using Backtracking or Warnsdorff
-import sys
-import pygame as pg
-import numpy as np
-import random
-import json
-import ctypes
-from ctypes import windll
-from datetime import datetime
+import sys  # Only used to stop the application if user wishes to exit the game.
+import pygame as pg  # Python's library to create the game's GUI.
+import numpy as np  # Python's array library.
+import random  # Pseudo-random number generator.
+import json  # Library that handles JSON objects and files.
+import ctypes  # Used for properly fitting the GUI onto the display.
+from datetime import datetime  # Used for recording the time taken to find a Knight's Tour.
 import Components
 
-pg.init()
+# Used to fit display into correct resolution
+ctypes.windll.user32.SetProcessDPIAware()
+
+# true_res = (windll.user32.GetSystemMetrics(0),windll.user32.GetSystemMetrics(1))
 
 # Colours
 BACKGROUND_COLOUR = (180, 241, 255)
-BUTTON_COLOUR = (100, 100, 100)  # Default button color
-HOVER_BUTTON_COLOUR = (170, 170, 170)  # Color of button when cursor hovers over
-BUTTON_TEXT_COLOUR = (255, 255, 255)
-TEXT_COLOUR = (0, 0, 0)
+BUTTON_COLOUR = (100, 100, 100)  # Default button colour
+HOVER_BUTTON_COLOUR = (170, 170, 170)  # Colour of button when cursor hovers over
+BUTTON_TEXT_COLOUR = (255, 255, 255)  # Colour of text inside buttons
+TEXT_COLOUR = (0, 0, 0)  # Colour of text not in buttons
 # Colours for move stamps and lines
 STAMP_COLOURS = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (144, 142, 0)]  # Red, Green, Blue, Colour Blind
+# Colours for text of move numbers inside stamps
 MOVE_COLOURS = [(0, 0, 0), (0, 0, 0), (255, 255, 255), (255, 255, 255)]
 
-# Global variables for display
-ctypes.windll.user32.SetProcessDPIAware()
-true_res = (windll.user32.GetSystemMetrics(0),windll.user32.GetSystemMetrics(1))
+# Start up the game windows
+pg.init()
 SCREEN = pg.display.set_mode((0, 0), pg.FULLSCREEN)  # Set game window
 SCREEN.fill(BACKGROUND_COLOUR)  # Set background color
 x_axis, y_axis = SCREEN.get_size()
+
+
 BOARD_SIZE = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
 OFFSET = (y_axis // 15, y_axis // 15)  # Amount of offset of the board from the border
+
 TITLE_FONT = pg.font.SysFont('Arial', 50, bold=True)  # Font for title
 BUTTON_FONT = pg.font.SysFont('Arial', 35)  # Font for button text
 TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text below the board
-BOLD_TEXT_FONT = pg.font.SysFont('Arial', 30, bold=True)
+BOLD_TEXT_FONT = pg.font.SysFont('Arial', 30, bold=True)  # Font for bold text used in help display
 
 # Title
 title_text = Components.Square((x_axis // 100) * 2, 0, (x_axis // 100) * 20, OFFSET[1], pg,
@@ -275,7 +280,7 @@ class Knight:
 
 class Board:
     def __init__(self, row_dimension=8, col_dimension=8):
-        self.knight = Knight() # Every board has a Knight
+        self.knight = Knight()  # Every board has a Knight
         self.board_size = BOARD_SIZE  # Size of board
         self.sq_colours = [pg.Color("white"), pg.Color("grey")]  # Colours of the board's squares
         self.row_dimension = row_dimension  # Number of rows of the board

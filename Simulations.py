@@ -33,6 +33,7 @@ class Simulations:
         self.state = "touring"  # touring, fail, finished
         self.tour_found = False
         self.knight_step = 1
+        self.tour_failures = 0
         self.successful_tours = 0
         self.total_successful_tours = total_successful_tours
         self.save_tours = save_tours
@@ -212,6 +213,7 @@ class Simulations:
         self.move_log = [(self.knight_initial_pos[0], self.knight_initial_pos[1], 0)]
 
     def print_tour(self):
+        self.tour_failures = 0
         print("Time taken =", self.duration, "; Moves done =", self.total_steps)
         print("--Steps--")
         for i in range(self.row_dimension):
@@ -398,13 +400,16 @@ class Simulations:
         if self.sim_type == "random" or self.sim_type == "specific":
             while self.successful_tours < self.total_successful_tours:
                 self.time_start = datetime.now()
-                if self.tour_type == "Random":
-                    print("Random walk tour being made")
-                    self.find_tour_random_walk()
-                elif self.tour_type == "Backtrack":
+                if self.tour_type == "Backtrack":
+                    if self.tour_failures >= 1:
+                        print("Tour unable to be made")
+                        return False
                     print("Backtrack tour being made")
                     self.find_tour_backtrack_iterative()
                 elif self.tour_type == "Warnsdorff":
+                    if self.tour_failures > 5:
+                        print("Tour unable to be made")
+                        return False
                     print("Warnsdorff tour being made")
                     self.find_tour_warnsdorff()
                 if self.tour_found:
@@ -416,9 +421,15 @@ class Simulations:
             while self.state == "touring":
                 self.time_start = datetime.now()
                 if self.tour_type == "Backtrack":
+                    if self.tour_failures >= 1:
+                        print("Tour unable to be made")
+                        return False
                     print("Backtrack tour being made")
                     self.find_tour_backtrack_iterative()
                 elif self.tour_type == "Warnsdorff":
+                    if self.tour_failures > 5:
+                        print("Tour unable to be made")
+                        return False
                     print("Warnsdorff tour being made")
                     self.find_tour_warnsdorff()
                 if self.tour_found:
@@ -485,6 +496,7 @@ class Simulations:
                 if len(self.move_log) == 0:
                     print(len(self.move_log))
                     self.tour_found = False
+                    self.tour_failures += 1
                     return False
                 self.knight_pos = (self.move_log[-1][0], self.move_log[-1][1])
         self.tour_found = True
@@ -507,6 +519,7 @@ class Simulations:
                     least_empty = empty_sq_count
             if least_empty_index == -1:
                 self.tour_found = False
+                self.tour_failures += 1
                 return False
 
             new_x = self.knight_pos[0] + self.knight_moves[least_empty_index][0]
