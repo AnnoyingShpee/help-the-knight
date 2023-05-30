@@ -438,6 +438,12 @@ class Simulations:
                 self.reset_board()
 
     def count_empty_squares(self, next_x, next_y):
+        """
+        Counts number of valid and untraversed squares from square (next_x, next_y)
+        :param next_x: Row number of square
+        :param next_y: Column number of square
+        :return:
+        """
         count = 0
         for i in range(8):
             if self.is_valid_move(next_x + self.knight_moves[i][0], next_y + self.knight_moves[i][1]):
@@ -446,10 +452,9 @@ class Simulations:
 
     def is_valid_move(self, x, y):
         """
-            A utility function to check if i,j are valid indexes
-            for N*N chessboard
-            :param x: row number of square
-            :param y: column number of square
+        A utility function to check if square (x, y) is valid and untraversed on the chessboard
+        :param x: Row number of square
+        :param y: Column number of square
         """
         if 0 <= x < self.row_dimension and 0 <= y < self.col_dimension and self.graph[x][y] == 0:
             return True

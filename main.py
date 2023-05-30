@@ -40,101 +40,101 @@ TEXT_FONT = pg.font.SysFont('Arial', 30)  # Font for text below the board
 BOLD_TEXT_FONT = pg.font.SysFont('Arial', 30, bold=True)  # Font for bold text used in help display
 
 # Title
-title_text = Components.Square((x_axis // 100) * 2, 0, (x_axis // 100) * 20, OFFSET[1], pg,
-                               BACKGROUND_COLOUR, None, "Knight's Tour Finder", TEXT_COLOUR, TITLE_FONT)
+title_text = Components.Rectangle((x_axis // 100) * 2, 0, (x_axis // 100) * 20, OFFSET[1], pg,
+                                  BACKGROUND_COLOUR, None, "Knight's Tour Finder", TEXT_COLOUR, TITLE_FONT)
 
 # Start, Help, Colour, Reset, and Quit buttons and text in one area
 # The buttons
-start_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 10, (x_axis // 100) * 10, y_axis // 20, pg,
-                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Start", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-help_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 30, (x_axis // 100) * 10, y_axis // 20, pg,
-                                BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Help", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-colour_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 50, (x_axis // 100) * 10, y_axis // 20, pg,
-                                  BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Green", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-reset_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 70, (x_axis // 100) * 10, y_axis // 20, pg,
-                                 BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Reset", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-quit_button = Components.Square((x_axis // 100) * 90, (y_axis // 100) * 90, (x_axis // 100) * 10, y_axis // 20, pg,
-                                BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Quit", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+start_button = Components.Rectangle((x_axis // 100) * 90, (y_axis // 100) * 10, (x_axis // 100) * 10, y_axis // 20, pg,
+                                    BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Start", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+help_button = Components.Rectangle((x_axis // 100) * 90, (y_axis // 100) * 30, (x_axis // 100) * 10, y_axis // 20, pg,
+                                   BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Help", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+colour_button = Components.Rectangle((x_axis // 100) * 90, (y_axis // 100) * 50, (x_axis // 100) * 10, y_axis // 20, pg,
+                                     BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Green", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+reset_button = Components.Rectangle((x_axis // 100) * 90, (y_axis // 100) * 70, (x_axis // 100) * 10, y_axis // 20, pg,
+                                    BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Reset", BUTTON_TEXT_COLOUR, BUTTON_FONT)
+quit_button = Components.Rectangle((x_axis // 100) * 90, (y_axis // 100) * 90, (x_axis // 100) * 10, y_axis // 20, pg,
+                                   BUTTON_COLOUR, HOVER_BUTTON_COLOUR, "Quit", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # The text "Colour" above Colour button
-colour_text = Components.Square((x_axis // 100) * 90, colour_button.y_pos - (y_axis // 20), (x_axis // 100) * 10, y_axis // 20, pg,
-                                BACKGROUND_COLOUR, None, "Colour", TEXT_COLOUR, TEXT_FONT)
+colour_text = Components.Rectangle((x_axis // 100) * 90, colour_button.y_pos - (y_axis // 20), (x_axis // 100) * 10, y_axis // 20, pg,
+                                   BACKGROUND_COLOUR, None, "Colour", TEXT_COLOUR, TEXT_FONT)
 
 # Tour Type, FPS, and Dimension buttons in another area
-algorithms_button = Components.Square((x_axis // 100) * 55, (y_axis // 100) * 10,
-                                      (x_axis // 10) * 2, (y_axis // 100) * 10,
-                                      pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+algorithms_button = Components.Rectangle((x_axis // 100) * 55, (y_axis // 100) * 10,
+                                         (x_axis // 10) * 2, (y_axis // 100) * 10,
+                                         pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                       "Algorithms", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-algorithms_type_button = Components.Square(algorithms_button.x_pos, algorithms_button.y_pos + algorithms_button.height,
-                                           algorithms_button.width, algorithms_button.height,
-                                           pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+algorithms_type_button = Components.Rectangle(algorithms_button.x_pos, algorithms_button.y_pos + algorithms_button.height,
+                                              algorithms_button.width, algorithms_button.height,
+                                              pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                            "[Backtrack]", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Buttons to select Tour Type
-backtrack_button = Components.Square(algorithms_button.x_pos, algorithms_button.y_pos,
-                                     algorithms_button.width, y_axis // 20,
-                                     pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+backtrack_button = Components.Rectangle(algorithms_button.x_pos, algorithms_button.y_pos,
+                                        algorithms_button.width, y_axis // 20,
+                                        pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                      "Backtrack Method", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-warnsdorff_button = Components.Square(algorithms_button.x_pos, algorithms_type_button.y_pos+algorithms_type_button.height-(y_axis // 20),
-                                      algorithms_button.width, y_axis // 20,
-                                      pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+warnsdorff_button = Components.Rectangle(algorithms_button.x_pos, algorithms_type_button.y_pos + algorithms_type_button.height - (y_axis // 20),
+                                         algorithms_button.width, y_axis // 20,
+                                         pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                       "Warnsdoff's Method", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Area to display row number text
-row_text = Components.Square(algorithms_button.x_pos, (y_axis // 100) * 45,
-                             algorithms_button.width, y_axis // 20,
-                             pg, BACKGROUND_COLOUR, None,
+row_text = Components.Rectangle(algorithms_button.x_pos, (y_axis // 100) * 45,
+                                algorithms_button.width, y_axis // 20,
+                                pg, BACKGROUND_COLOUR, None,
                              "Rows: 8", TEXT_COLOUR, TEXT_FONT)
 # Area to display column number text
-col_text = Components.Square(algorithms_button.x_pos, (y_axis // 100) * 60,
-                             algorithms_button.width, y_axis // 20,
-                             pg, BACKGROUND_COLOUR, None,
+col_text = Components.Rectangle(algorithms_button.x_pos, (y_axis // 100) * 60,
+                                algorithms_button.width, y_axis // 20,
+                                pg, BACKGROUND_COLOUR, None,
                              "Columns: 8", TEXT_COLOUR, TEXT_FONT)
 # Area to display FPS text
-fps_text = Components.Square(algorithms_button.x_pos, (y_axis // 100) * 75,
-                             algorithms_button.width, y_axis // 20,
-                             pg, BACKGROUND_COLOUR, None,
+fps_text = Components.Rectangle(algorithms_button.x_pos, (y_axis // 100) * 75,
+                                algorithms_button.width, y_axis // 20,
+                                pg, BACKGROUND_COLOUR, None,
                              "FPS: 30", TEXT_COLOUR, TEXT_FONT)
 # Buttons to decrease/increase number of rows
-row_down_button = Components.Square(row_text.x_pos, row_text.y_pos,  # Position on screen
-                                    row_text.width // 5, row_text.height,  # Width and height
-                                    pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,  # Button Colours
+row_down_button = Components.Rectangle(row_text.x_pos, row_text.y_pos,  # Position on screen
+                                       row_text.width // 5, row_text.height,  # Width and height
+                                       pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,  # Button Colours
                                     "-1", BUTTON_TEXT_COLOUR, BUTTON_FONT)  # Text colour
-row_up_button = Components.Square(row_text.x_pos + row_text.width - row_down_button.width, row_text.y_pos,
-                                  row_down_button.width, row_down_button.height,
-                                  pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+row_up_button = Components.Rectangle(row_text.x_pos + row_text.width - row_down_button.width, row_text.y_pos,
+                                     row_down_button.width, row_down_button.height,
+                                     pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                   "+1", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Buttons to decrease/increase number of columns
-col_down_button = Components.Square(col_text.x_pos, col_text.y_pos,
-                                    col_text.width // 5, col_text.height,
-                                    pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+col_down_button = Components.Rectangle(col_text.x_pos, col_text.y_pos,
+                                       col_text.width // 5, col_text.height,
+                                       pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                     "-1", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-col_up_button = Components.Square(col_text.x_pos + col_text.width - col_down_button.width, col_text.y_pos,
-                                  col_down_button.width, col_down_button.height,
-                                  pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+col_up_button = Components.Rectangle(col_text.x_pos + col_text.width - col_down_button.width, col_text.y_pos,
+                                     col_down_button.width, col_down_button.height,
+                                     pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                   "+1", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Buttons to decrease/increase FPS
-fps_down_button = Components.Square(fps_text.x_pos, fps_text.y_pos,
-                                    fps_text.width // 5, fps_text.height,
-                                    pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+fps_down_button = Components.Rectangle(fps_text.x_pos, fps_text.y_pos,
+                                       fps_text.width // 5, fps_text.height,
+                                       pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                     "-5", BUTTON_TEXT_COLOUR, BUTTON_FONT)
-fps_up_button = Components.Square(fps_text.x_pos + fps_text.width - fps_down_button.width, fps_text.y_pos,
-                                  fps_down_button.width, fps_down_button.height,
-                                  pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+fps_up_button = Components.Rectangle(fps_text.x_pos + fps_text.width - fps_down_button.width, fps_text.y_pos,
+                                     fps_down_button.width, fps_down_button.height,
+                                     pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                   "+10", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 
 # Button to load save file
-load_button = Components.Square(algorithms_button.x_pos, (y_axis // 100) * 90,
-                                algorithms_button.width, y_axis // 20,
-                                pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+load_button = Components.Rectangle(algorithms_button.x_pos, (y_axis // 100) * 90,
+                                   algorithms_button.width, y_axis // 20,
+                                   pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                 "Load Tour", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 # Button to save knight's tour
-save_button = Components.Square(load_button.x_pos, load_button.y_pos,
-                                load_button.width, load_button.height,
-                                pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
+save_button = Components.Rectangle(load_button.x_pos, load_button.y_pos,
+                                   load_button.width, load_button.height,
+                                   pg, BUTTON_COLOUR, HOVER_BUTTON_COLOUR,
                                 "Save Tour", BUTTON_TEXT_COLOUR, BUTTON_FONT)
 
 # Game text under the chessboard
-under_board_text = Components.Square(OFFSET[0], OFFSET[1] + BOARD_SIZE[1],
-                                     BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8,
-                                     pg, BACKGROUND_COLOUR, None, "", TEXT_COLOUR, TEXT_FONT)
+under_board_text = Components.Rectangle(OFFSET[0], OFFSET[1] + BOARD_SIZE[1],
+                                        BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8,
+                                        pg, BACKGROUND_COLOUR, None, "", TEXT_COLOUR, TEXT_FONT)
 
 # Area to display "Help"
 component_title_text = "Board & Components"
@@ -149,53 +149,53 @@ f.close()
 f = open("help_save_load.txt", "r")
 save_load_desc_text = f.read()
 f.close()
-help_display_area = Components.Square((x_axis // 100) * 5, (y_axis // 100) * 5,
-                                      (x_axis // 100) * 92, (y_axis // 100) * 95,
-                                      pg, (0, 0, 0))
-help_title_area = Components.Square(help_display_area.x_pos, help_display_area.y_pos,
-                                    help_display_area.width, help_display_area.height // 10,
-                                    pg, (0, 0, 0), None,
-                                    "Help", (255, 255, 255), BOLD_TEXT_FONT)
-help_exit_button = Components.Square(help_title_area.x_pos+help_title_area.width-(help_title_area.width // 20), help_title_area.y_pos,
-                                     help_title_area.width // 20, help_title_area.height,
-                                     pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
-                                     "X", (255, 255, 255), TEXT_FONT)
-help_page_num_area = Components.Square(help_display_area.x_pos, help_display_area.y_pos+help_display_area.height-(help_display_area.height//10),
+help_display_area = Components.Rectangle((x_axis // 100) * 5, (y_axis // 100) * 5,
+                                         (x_axis // 100) * 92, (y_axis // 100) * 95,
+                                         pg, (0, 0, 0))
+help_title_area = Components.Rectangle(help_display_area.x_pos, help_display_area.y_pos,
                                        help_display_area.width, help_display_area.height // 10,
                                        pg, (0, 0, 0), None,
+                                    "Help", (255, 255, 255), BOLD_TEXT_FONT)
+help_exit_button = Components.Rectangle(help_title_area.x_pos + help_title_area.width - (help_title_area.width // 20), help_title_area.y_pos,
+                                        help_title_area.width // 20, help_title_area.height,
+                                        pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
+                                     "X", (255, 255, 255), TEXT_FONT)
+help_page_num_area = Components.Rectangle(help_display_area.x_pos, help_display_area.y_pos + help_display_area.height - (help_display_area.height // 10),
+                                          help_display_area.width, help_display_area.height // 10,
+                                          pg, (0, 0, 0), None,
                                        "Page 1/3", (255, 255, 255), TEXT_FONT)
-help_prev_page_button = Components.Square(help_page_num_area.x_pos, help_page_num_area.y_pos,
-                                          help_page_num_area.width // 20, help_page_num_area.height,
-                                          pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
+help_prev_page_button = Components.Rectangle(help_page_num_area.x_pos, help_page_num_area.y_pos,
+                                             help_page_num_area.width // 20, help_page_num_area.height,
+                                             pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
                                           "<", (255, 255, 255), TEXT_FONT)
-help_next_page_button = Components.Square(help_page_num_area.x_pos+help_page_num_area.width-(help_page_num_area.width // 20), help_page_num_area.y_pos,
-                                          help_page_num_area.width // 20, help_page_num_area.height,
-                                          pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
+help_next_page_button = Components.Rectangle(help_page_num_area.x_pos + help_page_num_area.width - (help_page_num_area.width // 20), help_page_num_area.y_pos,
+                                             help_page_num_area.width // 20, help_page_num_area.height,
+                                             pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
                                           ">", (255, 255, 255), TEXT_FONT)
-component_title_area = Components.Square(help_display_area.x_pos, help_title_area.y_pos+help_title_area.height,
-                                         help_display_area.width, (y_axis // 100) * 5,
-                                         pg, (0, 0, 0), None,
-                                         component_title_text, (255, 255, 255), BOLD_TEXT_FONT)
-component_desc_area = Components.Square(help_display_area.x_pos, component_title_area.y_pos+component_title_area.height,
-                                        help_display_area.width, (y_axis // 100) * 40,
+component_title_area = Components.Rectangle(help_display_area.x_pos, help_title_area.y_pos + help_title_area.height,
+                                            help_display_area.width, (y_axis // 100) * 5,
+                                            pg, (0, 0, 0), None,
+                                            component_title_text, (255, 255, 255), BOLD_TEXT_FONT)
+component_desc_area = Components.Rectangle(help_display_area.x_pos, component_title_area.y_pos + component_title_area.height,
+                                           help_display_area.width, (y_axis // 100) * 40,
+                                           pg, (0, 0, 0), None,
+                                           component_desc_text, (255, 255, 255), TEXT_FONT)
+usage_title_area = Components.Rectangle(help_display_area.x_pos, help_title_area.y_pos + help_title_area.height,
+                                        help_display_area.width, (y_axis // 100) * 5,
                                         pg, (0, 0, 0), None,
-                                        component_desc_text, (255, 255, 255), TEXT_FONT)
-usage_title_area = Components.Square(help_display_area.x_pos, help_title_area.y_pos+help_title_area.height,
-                                     help_display_area.width, (y_axis // 100) * 5,
-                                     pg, (0, 0, 0), None,
-                                     usage_title_text, (255, 255, 255), BOLD_TEXT_FONT)
-usage_desc_area = Components.Square(help_display_area.x_pos, usage_title_area.y_pos+usage_title_area.height,
-                                    help_display_area.width, (y_axis // 100) * 45,
-                                    pg, (0, 0, 0), None,
-                                    usage_desc_text, (255, 255, 255), TEXT_FONT)
-save_load_title_area = Components.Square(help_display_area.x_pos, help_title_area.y_pos+help_title_area.height,
-                                         help_display_area.width, (y_axis // 100) * 5,
-                                         pg, (0, 0, 0), None,
-                                         save_load_title_text, (255, 255, 255), BOLD_TEXT_FONT)
-save_load_desc_area = Components.Square(help_display_area.x_pos, save_load_title_area.y_pos+save_load_title_area.height,
-                                        help_display_area.width, (y_axis // 100) * 50,
-                                        pg, (0, 0, 0), None,
-                                        save_load_desc_text, (255, 255, 255), TEXT_FONT)
+                                        usage_title_text, (255, 255, 255), BOLD_TEXT_FONT)
+usage_desc_area = Components.Rectangle(help_display_area.x_pos, usage_title_area.y_pos + usage_title_area.height,
+                                       help_display_area.width, (y_axis // 100) * 45,
+                                       pg, (0, 0, 0), None,
+                                       usage_desc_text, (255, 255, 255), TEXT_FONT)
+save_load_title_area = Components.Rectangle(help_display_area.x_pos, help_title_area.y_pos + help_title_area.height,
+                                            help_display_area.width, (y_axis // 100) * 5,
+                                            pg, (0, 0, 0), None,
+                                            save_load_title_text, (255, 255, 255), BOLD_TEXT_FONT)
+save_load_desc_area = Components.Rectangle(help_display_area.x_pos, save_load_title_area.y_pos + save_load_title_area.height,
+                                           help_display_area.width, (y_axis // 100) * 50,
+                                           pg, (0, 0, 0), None,
+                                           save_load_desc_text, (255, 255, 255), TEXT_FONT)
 
 
 def display_title():
@@ -627,6 +627,9 @@ class GameState:
     def reset_game(self):
         self.board.graph = np.zeros([8, 8], dtype=int)
         self.board.board_moves = np.zeros([8, 8], dtype=int)
+        self.board.board_size = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
+        self.board.sq_x_length = self.board.board_size[0] // 8
+        self.board.sq_y_length = self.board.board_size[0] // 8
         self.board.row_dimension = 8
         self.board.col_dimension = 8
         self.game_state = "start"
@@ -644,11 +647,9 @@ class GameState:
                                                           ((self.board.sq_x_length // 10) * 8,
                                                            (self.board.sq_y_length // 10) * 8))
         self.board.knight.step_font = pg.font.SysFont("Arial", self.board.sq_x_length // 4)
-        self.board.board_size = ((y_axis // 10) * 8, (y_axis // 10) * 8)  # Size of board
-        self.board.sq_x_length = self.board.board_size[0] // 8
-        self.board.sq_y_length = self.board.board_size[0] // 8
-        self.time_start = 0.0
-        self.duration = 0.0
+        self.board.moves_font = pg.font.SysFont("Arial", self.board.sq_x_length // 4)
+        self.time_start = 0
+        self.duration = 0
         self.file_loaded = False
         SCREEN.fill(BACKGROUND_COLOUR)
         self.board.draw_board()
@@ -691,6 +692,20 @@ class GameState:
 
         if furthest_node == self.board.row_dimension * self.board.col_dimension:
             self.board.draw_knight_step(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
+            if self.check_if_closed_tour():
+                start_point = self.board.knight.move_log[0]
+                line_start_point = (
+                (start_point[1] * self.board.sq_x_length) + OFFSET[0] + self.board.sq_x_length // 2,
+                (start_point[0] * self.board.sq_y_length) + OFFSET[1] + self.board.sq_y_length // 2)
+                end_point = self.board.knight.move_log[-1]
+                line_end_point = (
+                    (end_point[1] * self.board.sq_x_length) + OFFSET[0] + self.board.sq_x_length // 2,
+                    (end_point[0] * self.board.sq_y_length) + OFFSET[1] + self.board.sq_y_length // 2
+                )
+                pg.draw.line(SCREEN, "green", line_start_point, line_end_point, 5)
+                self.board.draw_knight_step(self.board.knight.knight_initial_pos[0],
+                                            self.board.knight.knight_initial_pos[1])
+                self.board.draw_knight_step(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
         else:
             SCREEN.blit(self.board.knight.knight_img,
                         pg.Rect((self.board.knight.knight_pos[1] * self.board.sq_x_length) +
@@ -789,6 +804,7 @@ class GameState:
             self.board.knight.knight_step = data["knight_step"]
             self.board.knight.total_steps = data["total_steps"]
             self.fps = data["fps"]
+            self.board.check_dimensions_then_draw()
             fj.close()
             self.game_state = "pause"
             start_button.change_text("Resume")
@@ -1087,6 +1103,8 @@ class GameState:
         # Quit Button. Stops the game
         elif quit_button.x_pos <= mouse_pos[0] <= quit_button.x_pos + quit_button.width \
                 and quit_button.y_pos <= mouse_pos[1] <= quit_button.y_pos + quit_button.height:
+            if self.game_state == "touring" or self.game_state == "pause":
+                self.save_tour()
             self.running = False
         # On Algorithms button.
         elif algorithms_button.x_pos <= mouse_pos[0] <= algorithms_button.x_pos + algorithms_button.width \
@@ -1260,21 +1278,9 @@ class GameState:
                         self.find_tour_backtrack_iterative()
                 else:
                     self.tour_found = True
+                    self.game_state = "finished"
                     self.duration += (datetime.now() - self.time_start).total_seconds()
                     if self.check_if_closed_tour():
-                        start_point = self.board.knight.move_log[0]
-                        line_start_point = (
-                        (start_point[1] * self.board.sq_x_length) + OFFSET[0] + self.board.sq_x_length // 2,
-                        (start_point[0] * self.board.sq_y_length) + OFFSET[1] + self.board.sq_y_length // 2)
-                        end_point = self.board.knight.move_log[-1]
-                        line_end_point = (
-                            (end_point[1] * self.board.sq_x_length) + OFFSET[0] + self.board.sq_x_length // 2,
-                            (end_point[0] * self.board.sq_y_length) + OFFSET[1] + self.board.sq_y_length // 2
-                        )
-                        pg.draw.line(SCREEN, "green", line_start_point, line_end_point, 5)
-                        self.board.draw_knight_step(self.board.knight.knight_initial_pos[0],
-                                                    self.board.knight.knight_initial_pos[1])
-                        self.board.draw_knight_step(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
                         update_below_board_text(f"Closed Knight's Tour found using {self.tour_type}",
                                                 f"({self.board.knight.total_steps} moves in {round(self.duration, 2)} seconds)")
                     else:
@@ -1400,3 +1406,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

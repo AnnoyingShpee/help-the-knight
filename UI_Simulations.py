@@ -34,37 +34,37 @@ button_color = (100, 100, 100)  # Default button color
 hover_button_color = (170, 170, 170)  # Color of button when cursor hovers over
 # Play, Reset, and Quit buttons in one group
 # Button(x_pos, y_pos, width, height, button_colour, hover_colour, button_text_colour)
-start_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 2, (x_axis // 100) * 15, y_axis // 20, pg,
-                                  button_color, button_text_color, hover_button_color)
-reset_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 5, (x_axis // 100) * 15, y_axis // 20, pg,
-                                  button_color, button_text_color, hover_button_color)
-quit_details = Components.Square((x_axis // 10) * 8, (y_axis // 10) * 8, (x_axis // 100) * 15, y_axis // 20, pg,
-                                 button_color, button_text_color, hover_button_color)
+start_details = Components.Rectangle((x_axis // 10) * 8, (y_axis // 10) * 2, (x_axis // 100) * 15, y_axis // 20, pg,
+                                     button_color, button_text_color, hover_button_color)
+reset_details = Components.Rectangle((x_axis // 10) * 8, (y_axis // 10) * 5, (x_axis // 100) * 15, y_axis // 20, pg,
+                                     button_color, button_text_color, hover_button_color)
+quit_details = Components.Rectangle((x_axis // 10) * 8, (y_axis // 10) * 8, (x_axis // 100) * 15, y_axis // 20, pg,
+                                    button_color, button_text_color, hover_button_color)
 
 # Tour Type, FPS, and Dimension buttons in another group
 # Buttons to select Tour Type
-backtrack_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2, y_axis // 20, pg,
-                                      button_color, button_text_color, hover_button_color)
-warnsdorff_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 3, (x_axis // 10) * 2, y_axis // 20, pg,
-                                       button_color, button_text_color, hover_button_color)
+backtrack_details = Components.Rectangle((x_axis // 10) * 5.5, (y_axis // 10), (x_axis // 10) * 2, y_axis // 20, pg,
+                                         button_color, button_text_color, hover_button_color)
+warnsdorff_details = Components.Rectangle((x_axis // 10) * 5.5, (y_axis // 10) * 3, (x_axis // 10) * 2, y_axis // 20, pg,
+                                          button_color, button_text_color, hover_button_color)
 # Buttons to decrease/increase number of rows
-row_down_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 100) * 5, y_axis // 20, pg,
-                                     button_color, button_text_color, hover_button_color)
-row_up_details = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
-                                   (y_axis // 10) * 5, (x_axis // 100) * 5, y_axis // 20, pg,
-                                   button_color, button_text_color, hover_button_color)
+row_down_details = Components.Rectangle((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 100) * 5, y_axis // 20, pg,
+                                        button_color, button_text_color, hover_button_color)
+row_up_details = Components.Rectangle(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
+                                      (y_axis // 10) * 5, (x_axis // 100) * 5, y_axis // 20, pg,
+                                      button_color, button_text_color, hover_button_color)
 # Buttons to decrease/increase number of columns
-col_down_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
-                                     button_color, button_text_color, hover_button_color)
-col_up_details = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
-                                   (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
-                                   button_color, button_text_color, hover_button_color)
+col_down_details = Components.Rectangle((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+                                        button_color, button_text_color, hover_button_color)
+col_up_details = Components.Rectangle(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
+                                      (y_axis // 10) * 7, (x_axis // 100) * 5, y_axis // 20, pg,
+                                      button_color, button_text_color, hover_button_color)
 # Buttons to decrease/increase FPS
-fps_down_button = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
-                                    button_color, button_text_color, hover_button_color)
-fps_up_button = Components.Square(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
-                                  (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
-                                  button_color, button_text_color, hover_button_color)
+fps_down_button = Components.Rectangle((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
+                                       button_color, button_text_color, hover_button_color)
+fps_up_button = Components.Rectangle(warnsdorff_details.x_pos + warnsdorff_details.width - (x_axis // 100) * 5,
+                                     (y_axis // 10) * 9, (x_axis // 100) * 5, y_axis // 20, pg,
+                                     button_color, button_text_color, hover_button_color)
 
 # Button text color
 start_text = BUTTON_FONT.render("Start", True, start_details.text_color)
@@ -128,13 +128,13 @@ fps_up_text_rect = fps_up_text.get_rect(
 
 # Game text under the chessboard
 text_color = (0, 0, 0)
-under_board_text = Components.Square(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
-                                     BACKGROUND_COLOUR, text_color)
+under_board_text = Components.Rectangle(50, 50 + BOARD_SIZE[1], BOARD_SIZE[0], 1.5 * BOARD_SIZE[1] // 8, pg,
+                                        BACKGROUND_COLOUR, text_color)
 under_board_rect = under_board_text.rect
 
 # Area to display row number text
-row_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 10) * 2, y_axis // 20, pg,
-                                button_color, text_color)
+row_details = Components.Rectangle((x_axis // 10) * 5.5, (y_axis // 10) * 5, (x_axis // 10) * 2, y_axis // 20, pg,
+                                   button_color, text_color)
 row_text = BUTTON_FONT.render("Rows", True, row_details.text_color)
 row_text_rect = row_text.get_rect(
     center=(row_details.x_pos + (row_details.width // 2),
@@ -142,8 +142,8 @@ row_text_rect = row_text.get_rect(
 )
 
 # Area to display column number text
-col_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 10) * 2, y_axis // 20, pg,
-                                button_color, text_color)
+col_details = Components.Rectangle((x_axis // 10) * 5.5, (y_axis // 10) * 7, (x_axis // 10) * 2, y_axis // 20, pg,
+                                   button_color, text_color)
 col_text = BUTTON_FONT.render("Columns", True, col_details.text_color)
 col_text_rect = col_text.get_rect(
     center=(col_details.x_pos + (col_details.width // 2),
@@ -151,8 +151,8 @@ col_text_rect = col_text.get_rect(
 )
 
 # Area to display FPS text
-fps_details = Components.Square((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 10) * 2, y_axis // 20, pg,
-                                button_color, text_color)
+fps_details = Components.Rectangle((x_axis // 10) * 5.5, (y_axis // 10) * 9, (x_axis // 10) * 2, y_axis // 20, pg,
+                                   button_color, text_color)
 fps_text = BUTTON_FONT.render("FPS", True, fps_details.text_color)
 fps_text_rect = fps_text.get_rect(
     center=(fps_details.x_pos + (fps_details.width // 2),
