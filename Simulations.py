@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from random import randint
 import numpy as np
@@ -585,120 +586,166 @@ save_tour_input = None
 save_time_input = None
 save_open_close_input = None
 save_structured_input = None
+running = True
 
-while not 3 <= row_input <= 20:
-    try:
-        row_input = int(input("Choose number of rows for the chessboard (Min 3, Max 20):"))
-        if not 3 <= row_input <= 20:
-            print("Input needs to be a positive integer between 3 and 20")
-    except Exception as e:
-        print("Input needs to be a positive integer between 3 and 20")
-
-while not 3 <= col_input <= 20:
-    try:
-        col_input = int(input("Choose number of columns for the chessboard (Min 3, Max 20):"))
-        if not 3 <= col_input <= 20:
-            print("Input needs to be a positive integer between 3 and 20")
-    except Exception as e:
-        print("Input needs to be a positive integer between 3 and 20")
-
-while tour_type_input != "Backtrack" and tour_type_input != "Warnsdorff":
-    tour_type_input = input("Choose type of tour (Backtrack, Warnsdorff): ")
-    if tour_type_input != "Backtrack" and tour_type_input != "Warnsdorff":
-        print("Input must be Backtrack or Warnsdorff")
-
-while sim_input != "all" and sim_input != "random" and sim_input != "specific":
-    sim_input = input("Choose type of simulation \n"
-                      "-    all = Find a tour for every square on the board \n"
-                      "-    random = Find a number of tours using random squares \n"
-                      "-    specific = Find a number of tours using a selected square \n")
-    if sim_input != "all" and sim_input != "random" and sim_input != "specific":
-        print("Input must be all, random or specific")
-
-if sim_input == "specific":
-    print("Simulation selected is", sim_input, ". Selecting a square is required.")
-    while not 0 <= x_input <= row_input - 1:
+while running:
+    print("To exit the application, type exit")
+    while not 3 <= row_input <= 20:
         try:
-            x_input = int(input(f"Choose row number of square between 0 and {row_input - 1}: "))
-            if not 0 <= x_input <= row_input - 1:
+            row_input = input("Choose number of rows for the chessboard (Min 3, Max 20):")
+            if row_input.lower() == "exit":
+                sys.exit()
+            row_input = int(row_input)
+            if not 3 <= row_input <= 20:
+                print("Input needs to be a positive integer between 3 and 20")
+        except Exception as e:
+            print("Input needs to be a positive integer between 3 and 20")
+            row_input = 0
+
+    while not 3 <= col_input <= 20:
+        try:
+            col_input = input("Choose number of columns for the chessboard (Min 3, Max 20):")
+            if col_input.lower() == "exit":
+                sys.exit()
+            col_input = int(col_input)
+            if not 3 <= col_input <= 20:
+                print("Input needs to be a positive integer between 3 and 20")
+        except Exception as e:
+            print("Input needs to be a positive integer between 3 and 20")
+            col_input = 0
+
+    while tour_type_input != "Backtrack" and tour_type_input != "Warnsdorff":
+        tour_type_input = input("Choose type of tour (Backtrack, Warnsdorff): ")
+        if tour_type_input.lower() == "exit":
+            sys.exit()
+        if tour_type_input != "Backtrack" and tour_type_input != "Warnsdorff":
+            print("Input must be Backtrack or Warnsdorff")
+
+    while sim_input != "all" and sim_input != "random" and sim_input != "specific":
+        sim_input = input("Choose type of simulation \n"
+                          "-    all = Find a tour for every square on the board \n"
+                          "-    random = Find a number of tours using random squares \n"
+                          "-    specific = Find a number of tours using a selected square \n")
+        if sim_input.lower() == "exit":
+            sys.exit()
+        if sim_input != "all" and sim_input != "random" and sim_input != "specific":
+            print("Input must be all, random or specific")
+
+    if sim_input == "specific":
+        print("Simulation selected is", sim_input, ". Selecting a square is required.")
+        while not 0 <= x_input <= row_input - 1:
+            try:
+                x_input = input(f"Choose row number of square between 0 and {row_input - 1}: ")
+                if x_input.lower() == "exit":
+                    sys.exit()
+                x_input = int(x_input)
+                if not 0 <= x_input <= row_input - 1:
+                    print(f"Input must be an integer between 0 and {row_input - 1}")
+            except:
                 print(f"Input must be an integer between 0 and {row_input - 1}")
-        except:
-            print(f"Input must be an integer between 0 and {row_input - 1}")
-    while not 0 <= y_input <= col_input - 1:
-        print("Simulation selected is", sim_input, ", selecting a square is required.")
-        try:
-            y_input = int(input(f"Choose col number of square between 0 and {col_input - 1}: "))
-            if not 0 <= y_input <= col_input - 1:
+                x_input = -1
+        while not 0 <= y_input <= col_input - 1:
+            try:
+                y_input = input(f"Choose col number of square between 0 and {col_input - 1}: ")
+                if y_input.lower() == "exit":
+                    sys.exit()
+                y_input = int(y_input)
+                if not 0 <= y_input <= col_input - 1:
+                    print(f"Input must be an integer between 0 and {col_input - 1}")
+            except:
                 print(f"Input must be an integer between 0 and {col_input - 1}")
-        except:
-            print(f"Input must be an integer between 0 and {col_input - 1}")
-elif sim_input == "all" or sim_input == "random":
-    print("Simulation selected is", sim_input, ". No need to select a square.")
+                y_input = -1
+    elif sim_input == "all" or sim_input == "random":
+        print("Simulation selected is", sim_input, ". No need to select a square.")
 
-if sim_input == "specific" or sim_input == "random":
-    print("Simulation selected is", sim_input, ". Input the number of tours to be generated.")
-    while total_tours_input <= 0:
-        try:
-            total_tours_input = int(input(f"Input number of tours to be generated: "))
-            if total_tours_input <= 0:
+    if sim_input == "specific" or sim_input == "random":
+        print("Simulation selected is", sim_input, ". Input the number of tours to be generated.")
+        while total_tours_input <= 0:
+            try:
+                total_tours_input = input(f"Input number of tours to be generated: ")
+                if total_tours_input.lower() == "exit":
+                    sys.exit()
+                total_tours_input = int(total_tours_input)
+                if total_tours_input <= 0:
+                    print("Input must be a positive integer greater than 0")
+            except:
                 print("Input must be a positive integer greater than 0")
-        except:
-            print("Input must be a positive integer greater than 0")
-elif sim_input == "all":
-    print("Simulation selected is", sim_input, ". No need to input the number of tours to be generated.")
+                total_tours_input = 0
+    elif sim_input == "all":
+        print("Simulation selected is", sim_input, ". No need to input the number of tours to be generated.")
 
-while save_tour_input is None:
-    save_tour_input = input("Do you wish to save the tours generated? Yes or No?")
-    if save_tour_input.lower() == "yes":
-        save_tour_input = True
-    elif save_tour_input.lower() == "no":
-        save_tour_input = False
-    else:
-        save_tour_input = None
-        print("Please input Yes or No")
+    while save_tour_input is None:
+        save_tour_input = input("Do you wish to save the tours generated? Yes or No?")
+        if save_tour_input.lower() == "exit":
+            sys.exit()
+        if save_tour_input.lower() == "yes":
+            save_tour_input = True
+        elif save_tour_input.lower() == "no":
+            save_tour_input = False
+        else:
+            save_tour_input = None
+            print("Please input Yes or No")
 
-while save_time_input is None:
-    save_time_input = input("Do you wish to save the time taken to generate tours? Yes or No?")
-    if save_time_input.lower() == "yes":
-        save_time_input = True
-    elif save_time_input.lower() == "no":
-        save_time_input = False
-    else:
-        save_time_input = None
-        print("Please input Yes or No")
+    while save_time_input is None:
+        save_time_input = input("Do you wish to save the time taken to generate tours? Yes or No?")
+        if save_time_input.lower() == "exit":
+            sys.exit()
+        if save_time_input.lower() == "yes":
+            save_time_input = True
+        elif save_time_input.lower() == "no":
+            save_time_input = False
+        else:
+            save_time_input = None
+            print("Please input Yes or No")
 
-while save_open_close_input is None:
-    save_open_close_input = input("Do you wish to save open and closed tours separately? Yes or No?")
-    if save_open_close_input.lower() == "yes":
-        save_open_close_input = True
-    elif save_open_close_input.lower() == "no":
-        save_open_close_input = False
-    else:
-        save_open_close_input = None
-        print("Please input Yes or No")
+    while save_open_close_input is None:
+        save_open_close_input = input("Do you wish to save open and closed tours separately? Yes or No?")
+        if save_open_close_input.lower() == "exit":
+            sys.exit()
+        if save_open_close_input.lower() == "yes":
+            save_open_close_input = True
+        elif save_open_close_input.lower() == "no":
+            save_open_close_input = False
+        else:
+            save_open_close_input = None
+            print("Please input Yes or No")
 
-while save_structured_input is None:
-    save_structured_input = input("Do you wish to save the structured and unstructured tours separately? Yes or No?")
-    if save_structured_input.lower() == "yes":
-        save_structured_input = True
-    elif save_structured_input.lower() == "no":
-        save_structured_input = False
-    else:
-        save_structured_input = None
-        print("Please input Yes or No")
+    while save_structured_input is None:
+        save_structured_input = input("Do you wish to save the structured and unstructured tours separately? Yes or No?")
+        if save_structured_input.lower() == "exit":
+            sys.exit()
+        if save_structured_input.lower() == "yes":
+            save_structured_input = True
+        elif save_structured_input.lower() == "no":
+            save_structured_input = False
+        else:
+            save_structured_input = None
+            print("Please input Yes or No")
 
-simulations = Simulations(row_dimension=row_input, col_dimension=col_input, tour_type=tour_type_input, sim_type=sim_input,
-                          pos_x=x_input, pos_y=y_input, total_successful_tours=total_tours_input, save_tours=save_tour_input,
-                          save_time=save_time_input, save_open_close=save_open_close_input, save_structured=save_structured_input)
+    simulations = Simulations(row_dimension=row_input, col_dimension=col_input, tour_type=tour_type_input, sim_type=sim_input,
+                              pos_x=x_input, pos_y=y_input, total_successful_tours=total_tours_input, save_tours=save_tour_input,
+                              save_time=save_time_input, save_open_close=save_open_close_input, save_structured=save_structured_input)
 
-# Go through every square on the board
-# simulations = Simulations(row_dimension=8, col_dimension=8, tour_type="Backtrack", sim_type="all", pos_x=None, pos_y=None,
-#                           total_successful_tours=1, save_tours=True, save_time=True, save_open_close=False,
-#                           save_structured=False)
-# # Generate a tour on the same square for a number of tours
-# simulations = Simulations(row_dimension=8, col_dimension=8, tour_type="Backtrack", pos_x=0, pos_y=0, sim_type="specific",
-#                           total_successful_tours=1000, save_tours=True, save_time=True, save_open_close=False, save_structured=False)
-# # Generate a tour on random squares for a number of tours
-# simulations = Simulations(row_dimension=8, col_dimension=8, tour_type="Backtrack", pos_x=0, pos_y=0, sim_type="random",
-#                           total_successful_tours=1000, save_tours=True, save_time=True, save_open_close=False, save_structured=False)
-simulations.generate_tours()
+    # Go through every square on the board
+    # simulations = Simulations(row_dimension=8, col_dimension=8, tour_type="Backtrack", sim_type="all", pos_x=None, pos_y=None,
+    #                           total_successful_tours=1, save_tours=True, save_time=True, save_open_close=False,
+    #                           save_structured=False)
+    # # Generate a tour on the same square for a number of tours
+    # simulations = Simulations(row_dimension=8, col_dimension=8, tour_type="Backtrack", pos_x=0, pos_y=0, sim_type="specific",
+    #                           total_successful_tours=1000, save_tours=True, save_time=True, save_open_close=False, save_structured=False)
+    # # Generate a tour on random squares for a number of tours
+    # simulations = Simulations(row_dimension=8, col_dimension=8, tour_type="Backtrack", pos_x=0, pos_y=0, sim_type="random",
+    #                           total_successful_tours=1000, save_tours=True, save_time=True, save_open_close=False, save_structured=False)
+    simulations.generate_tours()
+
+    row_input = 0
+    col_input = 0
+    tour_type_input = ""
+    sim_input = ""
+    x_input = -1
+    y_input = -1
+    total_tours_input = 0
+    save_tour_input = None
+    save_time_input = None
+    save_open_close_input = None
+    save_structured_input = None

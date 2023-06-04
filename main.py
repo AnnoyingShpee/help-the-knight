@@ -702,7 +702,7 @@ class GameState:
                     (end_point[1] * self.board.sq_x_length) + OFFSET[0] + self.board.sq_x_length // 2,
                     (end_point[0] * self.board.sq_y_length) + OFFSET[1] + self.board.sq_y_length // 2
                 )
-                pg.draw.line(SCREEN, "green", line_start_point, line_end_point, 5)
+                pg.draw.line(SCREEN, (0,255,0), line_start_point, line_end_point, 5)
                 self.board.draw_knight_step(self.board.knight.knight_initial_pos[0],
                                             self.board.knight.knight_initial_pos[1])
                 self.board.draw_knight_step(self.board.knight.knight_pos[0], self.board.knight.knight_pos[1])
