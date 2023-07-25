@@ -149,29 +149,30 @@ f.close()
 f = open("help_save_load.txt", "r")
 save_load_desc_text = f.read()
 f.close()
+
 help_display_area = Components.Rectangle((x_axis // 100) * 5, (y_axis // 100) * 5,
                                          (x_axis // 100) * 92, (y_axis // 100) * 95,
                                          pg, (0, 0, 0))
 help_title_area = Components.Rectangle(help_display_area.x_pos, help_display_area.y_pos,
                                        help_display_area.width, help_display_area.height // 10,
                                        pg, (0, 0, 0), None,
-                                    "Help", (255, 255, 255), BOLD_TEXT_FONT)
+                                       "Help", (255, 255, 255), BOLD_TEXT_FONT)
 help_exit_button = Components.Rectangle(help_title_area.x_pos + help_title_area.width - (help_title_area.width // 20), help_title_area.y_pos,
                                         help_title_area.width // 20, help_title_area.height,
                                         pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
-                                     "X", (255, 255, 255), TEXT_FONT)
+                                        "X", (255, 255, 255), TEXT_FONT)
 help_page_num_area = Components.Rectangle(help_display_area.x_pos, help_display_area.y_pos + help_display_area.height - (help_display_area.height // 10),
                                           help_display_area.width, help_display_area.height // 10,
                                           pg, (0, 0, 0), None,
-                                       "Page 1/3", (255, 255, 255), TEXT_FONT)
+                                          "Page 1/3", (255, 255, 255), TEXT_FONT)
 help_prev_page_button = Components.Rectangle(help_page_num_area.x_pos, help_page_num_area.y_pos,
                                              help_page_num_area.width // 20, help_page_num_area.height,
                                              pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
-                                          "<", (255, 255, 255), TEXT_FONT)
+                                             "<", (255, 255, 255), TEXT_FONT)
 help_next_page_button = Components.Rectangle(help_page_num_area.x_pos + help_page_num_area.width - (help_page_num_area.width // 20), help_page_num_area.y_pos,
                                              help_page_num_area.width // 20, help_page_num_area.height,
                                              pg, (0, 0, 0), HOVER_BUTTON_COLOUR,
-                                          ">", (255, 255, 255), TEXT_FONT)
+                                             ">", (255, 255, 255), TEXT_FONT)
 component_title_area = Components.Rectangle(help_display_area.x_pos, help_title_area.y_pos + help_title_area.height,
                                             help_display_area.width, (y_axis // 100) * 5,
                                             pg, (0, 0, 0), None,
