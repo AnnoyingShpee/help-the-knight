@@ -1,5 +1,0 @@
-1.  If a tour is knight is finding a tour, click on Pause to pause the tour generation. A Save button will appear.
-2.  Click on Save to save the incomplete tour. This will save the tour, duration, and total steps done by the knight.
-3.  Click on Start to resume the tour generation.
-4.  If there is no tour being generated, and you wish to load the incomplete tour, click on the Load button.
-5.  The incomplete tour will be displayed and can be continued by clicking Resume.
